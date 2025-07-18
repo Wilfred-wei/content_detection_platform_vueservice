@@ -115,6 +115,4 @@ services/video_analysis_module2/requirements.txt
 
 
 ## 📚 文档
-
-- [部署指南](docs/DEPLOYMENT.md) - 详细的部署说明
 - [API文档](docs/API.md) - 完整的API接口文档
