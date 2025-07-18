@@ -1,4 +1,4 @@
-# 内容检测平台微服务架构
+# 多模态检测平台微服务架构
 
 ## 🌟 项目概述
 
@@ -107,11 +107,13 @@ services/video_analysis_module1/requirements.txt
 services/video_analysis_module2/requirements.txt
 ```
 
-### 扩展服务
-1. **实现算法**: 在对应服务的`services.py`中替换模拟逻辑
-2. **添加新服务**: 按照现有服务的结构创建新的服务
+### 扩展服务步骤（包括但不限于，需要根据各自算法实际情况调整）
+1. **实现算法**: 在对应服务的`services.py`中编写算法逻辑
+2. **添加新服务**: 按照现有服务的结构创建新的服务（如app.py,config.py等）
 3. **更新API网关**: 在`gateway/routes.py`中添加新的路由
 4. **更新代理**： 在\frontend\vite.config.ts添加代理机制
+5. **确认前端API**： 在\frontend\src\api\index.ts确认
+
 
 
 ## 📚 文档

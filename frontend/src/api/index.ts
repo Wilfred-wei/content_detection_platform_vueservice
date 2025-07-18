@@ -102,7 +102,11 @@ export const aiImageAPI = {
     try {
       // 使用代理检查AI检测服务状态
       const aiResponse = await fetch('/ai-detect/health')
+      const rumorResponse = await fetch('/rumor/health')  
+      const videoResponse = await fetch('/video/health')
       const aiStatus = await aiResponse.json()
+      const rumorStatus = await rumorResponse.json()
+      const videoStatus = await videoResponse.json()
       
       return {
         services: {
@@ -113,23 +117,22 @@ export const aiImageAPI = {
           },
           rumor_detection: {
             name: '图文谣言检测服务',
-            status: 'unhealthy',
+            status: rumorStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
             url: 'http://localhost:8010'
           },
           video_analysis_module1: {
             name: '视频分析模块1',
-            status: 'unhealthy',
+            status: videoStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
             url: 'http://localhost:8003'
           },
           video_analysis_module2: {
             name: '视频分析模块2',
-            status: 'unhealthy',
+            status: videoStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
             url: 'http://localhost:8004'
           }
         },
-        completed_detections_24h: 0, // 实际环境中需要从数据库获取
-        success_rate: 100.0,
-        model_version: 'SAFE-v2.1.0'
+        success_rate: 98.0,
+        model_version: 'SAFE-v1.0.0'
       }
     } catch (error) {
       // 如果服务不可用，返回默认状态
