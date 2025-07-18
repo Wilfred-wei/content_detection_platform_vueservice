@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="/">
-          <img src="/static/images/logo.png" alt="Logo" />
+          <img src="/static/images/logo_temp.png" alt="Logo" style="max-width: 50px; max-height: 50px;" />
           <div class="nav-title">多模态数据分类平台</div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
