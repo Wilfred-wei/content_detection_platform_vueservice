@@ -1,0 +1,6 @@
+Flask==2.3.3
+requests==2.31.0
+Werkzeug==2.3.7
+# 未来可能需要的视频处理依赖：
+# opencv-python==4.8.1.78
+# ffmpeg-python==0.2.0 

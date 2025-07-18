@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+本项目执行在windows命令行中，在windows的命令行中&&是不可用的，请不要使用&&

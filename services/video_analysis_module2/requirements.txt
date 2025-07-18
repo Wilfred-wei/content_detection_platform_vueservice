@@ -1,0 +1,9 @@
+# 基础依赖
+Flask==2.3.3
+requests==2.31.0
+Werkzeug==2.3.7
+
+# 后续开发可能需要的依赖 (目前注释掉)
+# tensorflow==2.13.0        # 深度学习框架
+# opencv-python==4.8.1.78   # 视频处理
+# ffmpeg-python==0.2.0      # 视频编解码 

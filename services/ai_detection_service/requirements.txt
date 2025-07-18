@@ -1,0 +1,10 @@
+Flask>=2.0.0
+Flask-CORS>=3.0.10
+torch>=1.10.0
+torchvision>=0.11.0
+Pillow>=9.0.0
+opencv-python>=4.5.0
+numpy>=1.21.0
+Werkzeug==2.3.7
+pytorch-wavelets>=1.3.0 
+PyWavelets>=1.4.1
