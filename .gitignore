@@ -73,6 +73,18 @@ backend/ai_detection/*/
 services/*/uploads/
 gateway/uploads/
 
+# Large model files
+*.pt
+*.pth
+*.h5
+*.pkl
+*.joblib
+*.bin
+*.model
+*.weights
+services/rumor_detection/C3N_models.pt
+services/ai_detection_service/*.pth
+
 # Logs
 *.log
 logs/
