@@ -132,7 +132,7 @@ export const aiImageAPI = {
           }
         },
         success_rate: 98.0,
-        model_version: 'SAFE-v1.0.0'
+        model_version: 'HCF-v1.0'
       }
     } catch (error) {
       // 如果服务不可用，返回默认状态
@@ -161,7 +161,7 @@ export const aiImageAPI = {
         },
         completed_detections_24h: 0,
         success_rate: 0,
-        model_version: 'SAFE-v2.1.0'
+        model_version: 'HCF-v1.0'
       }
     }
   }

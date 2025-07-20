@@ -505,7 +505,7 @@ export default defineComponent({
             prediction: response.prediction?.toLowerCase() === 'fake' ? 'fake' : 'real',
             confidence: response.confidence || 0.95,
             processing_time: response.processing_time || 2.5,
-            model_version: response.model_version || 'SAFE-v1.0',
+            model_version: response.model_version || 'HCF-v1.0',
             heatmap_url: response.heatmap_url,
             original_image_url: response.original_image_url,
             image_width: response.image_info?.width,
@@ -551,7 +551,7 @@ export default defineComponent({
         image_width: result.value.result.image_width,
         image_height: result.value.result.image_height,
         file_size: selectedFile.value?.size || 0,
-        model_version: result.value.result.model_version || 'SAFE-v1.0',
+        model_version: result.value.result.model_version || 'HCF-v1.0',
         detected_at: new Date().toISOString(),
         patch_info: result.value.result.patch_info
       }

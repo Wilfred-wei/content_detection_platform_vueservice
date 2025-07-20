@@ -178,7 +178,7 @@ class Bottleneck(nn.Module):
 
 
 class SAFEResNet(nn.Module):
-    """SAFE算法的ResNet架构"""
+    """HCF算法的ResNet架构"""
     
     def __init__(self, num_classes=2):
         super(SAFEResNet, self).__init__()
@@ -267,7 +267,7 @@ class SAFEResNet(nn.Module):
 
 
 class SAFEModel:
-    """SAFE模型服务"""
+    """HCF模型服务"""
     
     def __init__(self, model_path: str, device: str = 'cpu'):
         self.model_path = './20250509_204548-2.5allprocess'
@@ -275,7 +275,7 @@ class SAFEModel:
         self.model = None
         self.last_energy_patch = None  # 保存最后一次的energy patch
         self.last_patch_info = None    # 保存patch的位置信息
-        logger.info(f"初始化SAFEModel - 模型路径: {self.model_path}, 设备: {self.device}")
+        logger.info(f"初始化HCFModel - 模型路径: {self.model_path}, 设备: {self.device}")
         self._load_model()
     
     def _load_model(self):
@@ -313,7 +313,7 @@ class SAFEModel:
             
             self.model.to(self.device)
             self.model.eval()
-            logger.info(f"SAFE模型初始化成功，设备: {self.device}")
+            logger.info(f"HCF模型初始化成功，设备: {self.device}")
             
         except Exception as e:
             logger.error(f"模型加载失败: {e}")

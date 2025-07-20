@@ -61,12 +61,12 @@ safe_model = None
 heatmap_generator = None
 
 def init_model():
-    """初始化SAFE模型"""
+    """初始化HCF模型"""
     global safe_model, heatmap_generator
     try:
         safe_model = SAFEModel(Config.MODEL_PATH, Config.DEVICE)
         heatmap_generator = HeatmapGenerator(safe_model)
-        logger.info("SAFE模型初始化成功")
+        logger.info("HCF模型初始化成功")
         return True
     except Exception as e:
         logger.error(f"模型初始化失败: {e}")
@@ -184,7 +184,7 @@ def detect_single():
             'prediction': result['prediction'],
             'confidence': result['confidence'],
             'processing_time': processing_time,
-            'model_version': 'SAFE-v1.0',
+            'model_version': 'HCF-v1.0',
             'image_info': {
                 'width': img.size[0],
                 'height': img.size[1],
@@ -416,7 +416,7 @@ if __name__ == '__main__':
     
     if model_loaded:
         logger.info("🎉 AI检测服务启动成功！")
-        logger.info("✅ SAFE模型已加载")
+        logger.info("✅ HCF模型已加载")
     else:
         logger.warning("⚠️  AI检测服务启动成功，但模型未加载")
         logger.warning("🔄 将使用启发式方法进行检测")

@@ -2,7 +2,7 @@
 
 ## 概述
 
-这是一个独立的AI图像检测服务，基于AIDE_Django项目中的SAFE模型实现。该服务提供了完整的AI生成图像检测功能，包括单张检测、批量检测和热力图生成。
+这是一个独立的AI图像检测服务，基于AIDE_Django项目中的HCF模型实现。该服务提供了完整的AI生成图像检测功能，包括单张检测、批量检测和热力图生成。
 
 ## 功能特性
 
@@ -11,7 +11,7 @@
 - ✅ **热力图生成**: 为AI生成图像生成热力图
 - ✅ **多格式支持**: 支持PNG、JPG、JPEG格式
 - ✅ **实时API**: 基于Flask的RESTful API
-- ✅ **SAFE模型**: 使用先进的SAFE算法进行检测
+- ✅ **HCF模型**: 使用先进的HCF算法进行检测
 
 ## 环境要求
 
@@ -67,7 +67,7 @@ Content-Type: multipart/form-data
   "prediction": "fake|real",
   "confidence": 0.95,
   "processing_time": 2.3,
-  "model_version": "SAFE-v2.1.0",
+  "model_version": "HCF-v2.1.0",
   "image_info": {
     "width": 512,
     "height": 512,
@@ -106,7 +106,7 @@ Content-Type: multipart/form-data
 
 ## 模型信息
 
-- **模型类型**: SAFE (Spectral Analysis for Forgery Examination)
+- **模型类型**: HCF
 - **架构**: ResNet-based
 - **输入尺寸**: 256x256
 - **检测类别**: Real vs Fake
@@ -117,7 +117,7 @@ Content-Type: multipart/form-data
 ```
 services/ai_detection_service/
 ├── app.py                 # Flask应用主文件
-├── safe_model.py         # SAFE模型实现
+├── safe_model.py         # HCF模型实现
 ├── heatmap_generator.py  # 热力图生成器
 ├── config.py            # 配置文件
 ├── requirements.txt     # Python依赖
@@ -129,7 +129,7 @@ services/ai_detection_service/
 
 在 `config.py` 中可以修改以下配置：
 
-- `MODEL_PATH`: SAFE模型路径
+- `MODEL_PATH`: HCF模型路径
 - `DEVICE`: 计算设备 (cpu/cuda)
 - `MAX_FILE_SIZE`: 最大文件大小
 - `MAX_BATCH_SIZE`: 批量检测最大文件数
