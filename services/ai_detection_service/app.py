@@ -156,16 +156,14 @@ def detect_single():
         
         start_time = time.time()
         
-
         result = safe_model.predict(temp_file_path)     
-
         
         processing_time = time.time() - start_time
         
         # 生成热力图（仅对AI生成图像）
         heatmap_url = None
         if result['prediction'] == 'fake' and heatmap_generator:
-            # 保存到 heatmaps 目录 - 使用相对路径
+            # 保存到 heatmaps 目录
             heatmap_dir = 'heatmaps'
             os.makedirs(heatmap_dir, exist_ok=True)
             heatmap_filename = f"heatmap_{uuid.uuid4()}.jpg"
@@ -194,7 +192,7 @@ def detect_single():
             'heatmap_url': heatmap_url
         })
         
-        # 清理临时文件和目录 - 确保在返回前安全清理
+        # 清理临时文件和目录
         try:
             # 使用安全的删除方式
             shutil.rmtree(temp_dir, ignore_errors=True)
@@ -223,8 +221,6 @@ def detect_batch():
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
         return response
-    
-    # 注意：即使模型未加载，我们也可以使用启发式方法提供服务
     
     # 检查是ZIP文件还是多文件上传
     if 'zip_file' in request.files:
@@ -263,7 +259,7 @@ def handle_zip_batch(zip_file, task_name):
         job_id = str(uuid.uuid4())
         task_name = task_name or f"批量任务_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
-        # 启动后台处理（这里简化为同步处理）
+        # 启动后台处理
         results = process_batch_images(image_files, job_id)
         
         return jsonify({

@@ -6,8 +6,9 @@ from PIL import Image
 import numpy as np
 import os
 import logging
-import random
+import sys
 from typing import Dict, Any, Tuple
+from models.resnet import resnet50
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -260,8 +261,8 @@ class SAFEResNet(nn.Module):
         x = self.layer2(x)
         
         x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
+        features = x.view(x.size(0), -1)
+        x = self.fc1(features)
         
         return x
 
@@ -283,7 +284,9 @@ class SAFEModel:
         """加载模型"""
         try:
             logger.info("开始创建模型架构...")
-            self.model = SAFEResNet(num_classes=2)
+            sys.path.append('/sda/home/temp/weiwenfei/AIDE_Django/detection_Model')
+            
+            self.model = resnet50(num_classes=2)
             
             # 添加安全全局变量，解决权重加载问题
             # import argparse
@@ -352,7 +355,7 @@ class SAFEModel:
         
         logger.info(f"Energy patch位置: x={patch_info['x']}, y={patch_info['y']}, size=256x256")
         
-        return energy_patch, patch_info, original_image
+        return energy_patch, patch_info
 
     def predict(self, image_path: str) -> Dict[str, Any]:
         """预测图像是否为AI生成"""
@@ -363,7 +366,7 @@ class SAFEModel:
             return self._fallback_prediction(image_path)
         
         # 提取energy patch
-        energy_patch, patch_info, original_image = self._extract_energy_patch(image_path)
+        energy_patch, patch_info = self._extract_energy_patch(image_path)
         
         # 保存用于热力图生成
         self.last_energy_patch = energy_patch
