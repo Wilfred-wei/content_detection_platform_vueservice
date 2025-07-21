@@ -1,9 +1,11 @@
 import os
+import torch
 
 class Config:
     # 模型配置
     MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'AIDE_Django', 'detection_Model')
-    DEVICE = 'cuda' if os.environ.get('USE_CUDA') == 'true' else 'cpu'
+    print(os.environ.get('USE_CUDA'))
+    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     # 文件配置
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB

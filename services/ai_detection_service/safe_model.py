@@ -269,9 +269,10 @@ class SAFEResNet(nn.Module):
 class SAFEModel:
     """HCF模型服务"""
     
-    def __init__(self, model_path: str, device: str = 'cpu'):
+    def __init__(self, model_path: str, device: str = 'cuda'):
         self.model_path = './20250509_204548-2.5allprocess'
         self.device = device if torch.cuda.is_available() else 'cpu'
+        # logger.info(f"CUDA 可用: {torch.cuda.is_available()}")
         self.model = None
         self.last_energy_patch = None  # 保存最后一次的energy patch
         self.last_patch_info = None    # 保存patch的位置信息
@@ -285,17 +286,17 @@ class SAFEModel:
             self.model = SAFEResNet(num_classes=2)
             
             # 添加安全全局变量，解决权重加载问题
-            import argparse
-            torch.serialization.add_safe_globals([argparse.Namespace])
-            
-            # 尝试加载预训练权重
+            # import argparse
+            # torch.serialization.add_safe_globals([argparse.Namespace])
+
+             # 尝试加载预训练权重
             checkpoint_path = os.path.join(self.model_path, 'checkpoint-best.pth')
             logger.info(f"尝试加载权重文件: {checkpoint_path}")
             logger.info(f"权重文件是否存在: {os.path.exists(checkpoint_path)}")
-            
+
             if os.path.exists(checkpoint_path):
                 logger.info("开始加载权重...")
-                checkpoint = torch.load(checkpoint_path, map_location=self.device)
+                checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
                 logger.info(f"权重文件加载成功，包含键: {list(checkpoint.keys())}")
                 
                 # 检查权重结构
