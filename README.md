@@ -67,7 +67,7 @@ curl -X POST http://localhost:8000/api/v1/rumor/detect \
 
 ## 🎯 核心特性
 
-### 1. 微服务分离
+### 1. 后端服务分离
 - 每个服务独立运行，可以使用不同Python环境
 - 服务间通过HTTP API通信，避免依赖冲突
 - 支持独立部署和扩展
