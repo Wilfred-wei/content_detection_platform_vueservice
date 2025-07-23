@@ -262,7 +262,7 @@ interface RumorDetectionResult {
   reasoning?: string[]
   sources_checked?: string[]
   risk_level?: string
-  probability?: number   // 谣言概率 (0~1)
+  probability?: number
 }
 
 interface ExampleData {
@@ -396,7 +396,6 @@ const performDetection = async () => {
   errorMessage.value = ''
   isLoading.value = true
 
-    // 检查是否上传了图片
   if (!selectedFile.value) {
     errorMessage.value = '请上传图片，图文结合检测必须上传图片';
     isLoading.value = false;
@@ -409,7 +408,7 @@ const performDetection = async () => {
       image: selectedFile.value
     })
 
-    console.log('API响应:', response) // 调试日志
+    console.log('API响应:', response)
 
     if (response.success) {
       detectionResult.value = {
@@ -417,9 +416,8 @@ const performDetection = async () => {
         confidence: response.confidence,
         result: response.is_rumor ? '谣言' : '非谣言',
         created_at: new Date().toISOString(),
-        // 确保新字段正确映射
         risk_level: response.result?.risk_level || '未知',
-        probability: response.result?.probability ?? 0, // 使用空值合并运算符
+        probability: response.result?.probability ?? 0,
         reasoning: response.result?.reasoning ?? [],
         sources_checked: response.result?.sources_checked ?? []
       }
@@ -526,7 +524,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 全局布局样式 */
+
 .container-fluid {
   padding: 0;
 }
@@ -538,7 +536,6 @@ onMounted(() => {
   overflow-y: auto;
 }
 
-/* 检测容器 */
 .detection-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -555,7 +552,6 @@ onMounted(() => {
   grid-column: span 2;
 }
 
-/* 卡片样式 */
 .card {
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -567,7 +563,6 @@ onMounted(() => {
   font-weight: 600;
 }
 
-/* 文本输入区域 */
 textarea {
   width: 100%;
   padding: 12px;
@@ -586,7 +581,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(59, 135, 216, 0.1);
 }
 
-/* 文件上传区域 */
 .upload-area {
   border: 2px dashed #ddd;
   padding: 15px;
@@ -621,7 +615,6 @@ textarea:focus {
   margin: 5px 0;
 }
 
-/* 上传预览区域 */
 .upload-preview {
   width: 100%;
   text-align: center;
@@ -668,7 +661,6 @@ textarea:focus {
   font-size: 14px;
 }
 
-/* 结果区域样式 */
 .result-placeholder,
 .result-loading {
   padding: 30px 20px;
@@ -727,7 +719,6 @@ textarea:focus {
   line-height: 20px;
 }
 
-/* 结果详情样式 */
 .result-details {
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -757,7 +748,6 @@ textarea:focus {
   font-size: 20px;
 }
 
-/* 风险等级样式 */
 .risk-level {
   padding: 3px 10px;
   border-radius: 12px;
@@ -786,14 +776,12 @@ textarea:focus {
   color: #383d41;
 }
 
-/* 样例容器 */
 .examples-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
-/* 样例项 */
 .example-item {
   border: 1px solid #eaeaea;
   border-radius: 8px;
@@ -807,7 +795,6 @@ textarea:focus {
   transform: translateY(-5px);
 }
 
-/* 样例头部 */
 .example-header {
   display: flex;
   justify-content: space-between;
@@ -827,7 +814,6 @@ textarea:focus {
   margin-left: 10px;
 }
 
-/* 样例内容 */
 .example-content {
   max-height: 150px;
   overflow-y: auto;
@@ -837,7 +823,6 @@ textarea:focus {
   position: relative;
 }
 
-/* 滚动条样式 */
 .example-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -855,7 +840,6 @@ textarea:focus {
   background: #a8a8a8;
 }
 
-/* 响应式设计 */
 @media (max-width: 992px) {
   .detection-container {
     grid-template-columns: 1fr;
