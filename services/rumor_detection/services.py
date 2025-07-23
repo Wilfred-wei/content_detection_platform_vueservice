@@ -89,7 +89,7 @@ class RumorDetectionService:
                 print("[C3N] 预训练权重加载成功")
             else:
                 print(f"[C3N] 未找到预训练权重文件: {model_path}")
-            
+            self.model.to(self.device)
             self.model.eval()
             print("[C3N] 模型初始化完成")
             
@@ -120,7 +120,8 @@ class RumorDetectionService:
             
             # 准备输入数据
             data = self._prepare_input_data(content, image_path)
-            
+            data['text_input'] = data['text_input'].to(self.device)
+            data['crop_input'] = data['crop_input'].to(self.device)
             # 模型推理 - 参考main.py的compute_test方法
             with torch.no_grad():
                 logits = self.model(data)

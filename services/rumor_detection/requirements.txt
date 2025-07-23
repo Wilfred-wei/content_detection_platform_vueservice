@@ -5,3 +5,4 @@ torch
 Pillow 
 patch_ng
 lmdb
+cn_clip

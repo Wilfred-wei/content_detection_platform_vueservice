@@ -87,7 +87,7 @@ class HeatmapGenerator:
                 full_heatmap = self._map_patch_to_full_image(patch_heatmap, patch_info, original_image.size)
                 
                 # 保存热力图
-                success = self._save_heatmap(full_heatmap, original_image, output_path)
+                success = self._save_heatmap(full_heatmap, original_image, output_path, patch_info)
                 if success:
                     logger.info(f"热力图生成成功: {output_path}")
                 return success
@@ -150,7 +150,7 @@ class HeatmapGenerator:
             logger.error(f"生成基础热力图失败: {e}")
             return False
     
-    def _save_heatmap(self, heatmap, original_image, output_path):
+    def _save_heatmap(self, heatmap, original_image, output_path, patch_info=None):
         """保存热力图"""
         try:
             logger.info(f"开始保存热力图到: {output_path}")
@@ -182,8 +182,32 @@ class HeatmapGenerator:
             
             # 叠加热力图和原始图像
             logger.info("叠加热力图和原始图像...")
-            overlay = cv2.addWeighted(original_bgr, 0.6, heatmap_colored, 0.4, 0)
+            overlay = cv2.addWeighted(original_bgr, 0.5, heatmap_colored, 0.5, 0)
             logger.info(f"叠加后图像形状: {overlay.shape}")
+
+            # ==========================================================
+            # 新增：如果提供了patch_info，则绘制红框
+            # ==========================================================
+            if patch_info:
+                try:
+                    logger.info(f"正在绘制边界框: {patch_info}")
+                    x, y = patch_info['x'], patch_info['y']
+                    w, h = patch_info['width'], patch_info['height']
+                    
+                    # 定义矩形的左上角和右下角坐标
+                    top_left = (x, y)
+                    bottom_right = (x + w, y + h)
+                    
+                    # 定义颜色 (BGR格式，红色是 (0, 0, 255)) 和线宽
+                    color = (0, 0, 255)  # 红色
+                    thickness = 2       # 2像素宽
+                    
+                    # 在叠加后的图像上绘制矩形
+                    cv2.rectangle(overlay, top_left, bottom_right, color, thickness)
+                    logger.info("边界框绘制成功")
+                except Exception as e:
+                    logger.error(f"绘制边界框失败: {e}")
+            # ==========================================================
             
             # 保存结果
             logger.info(f"开始写入文件: {output_path}")

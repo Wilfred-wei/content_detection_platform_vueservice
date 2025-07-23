@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from cn_clip.clip import load_from_name
 import torch.nn.functional as F
-import clip
 
 
 class C3N(nn.Module):
@@ -12,7 +11,7 @@ class C3N(nn.Module):
 
         # 加载中文CLIP模型
         clip_model, _ = load_from_name('ViT-B-16', device=args.device,
-                                       download_root='/sda/qiaojiao/pretrained_models/cn-clip/')
+                                       download_root='./pretrained_models/cn-clip/')
         self.clip_model = clip_model.float()
 
         # 冻结CLIP模型的参数

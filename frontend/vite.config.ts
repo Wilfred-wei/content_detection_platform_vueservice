@@ -26,6 +26,14 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/rumor/, '')
       }
+    },
+    watch: {
+      ignored: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/.git/**',
+        '**/logs/**'
+      ]
     }
   },
   build: {
@@ -33,3 +41,4 @@ export default defineConfig({
     assetsDir: 'assets'
   }
 }) 
+
