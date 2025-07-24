@@ -120,3 +120,4 @@ coverage.xml
 .env.development.local
 .env.test.local
 .env.production.local 
+content_detection_platform_vueservice-master.code-workspace

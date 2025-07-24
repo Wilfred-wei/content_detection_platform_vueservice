@@ -74,7 +74,7 @@ class RumorDetectionService:
             self.model = C3N(args)
             
             # 加载预训练权重
-            model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), './C3N_models.pt')
+            model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'C3N_models.pt')
             if os.path.exists(model_path):
                 print(f"[C3N] 加载预训练权重: {model_path}")
                 checkpoint = torch.load(model_path, map_location=self.device)
@@ -120,8 +120,6 @@ class RumorDetectionService:
             
             # 准备输入数据
             data = self._prepare_input_data(content, image_path)
-            data['text_input'] = data['text_input'].to(self.device)
-            data['crop_input'] = data['crop_input'].to(self.device)
             # 模型推理 - 参考main.py的compute_test方法
             with torch.no_grad():
                 logits = self.model(data)
