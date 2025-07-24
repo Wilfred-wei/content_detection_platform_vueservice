@@ -2,118 +2,693 @@
   <div class="container-fluid">
     <div class="row d-flex flex-nowrap">
       <!-- 侧边栏 -->
-      <Sidebar />
+      <aside class="sidebar col-2">
+        <h3>功能模块</h3>
+        <ul>
+          <li><a href="/rumor_detection/">图文谣言检测</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle active" data-target="#video-analysis-submenu">视频分析</a>
+            <ul id="video-analysis-submenu" class="submenu show">
+              <li class="active"><a href="/video_analysis/module1/">子模块一</a></li>
+              <li><a href="/video_analysis/module2/">子模块二</a></li>
+            </ul>
+          </li>
+          <li><a href="/ai_image_detection/">AI生成图片检测</a></li>
+        </ul>
+      </aside>
       
       <!-- 主要内容区域 -->
       <main class="content col-10">
         <div class="content-area">
-          <h2>视频分析 - 子模块一</h2>
-          <p class="description">上传视频文件，系统将进行专业的视频分析处理</p>
-          
-          <!-- 文件上传区域 -->
-          <div class="upload-section">
-            <FileUpload 
-              :accept="'video/*'"
-              :file-type="'video'"
-              @file-selected="handleFileSelected"
-            />
+            <h2>视频谣言检测</h2>
+          <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
+          基于先进AI技术的视频内容可信度检测系统，对上传视频进行可信度分析并给出其可信度，越接近100表示越可能为真实视频。
           </div>
           
-          <!-- 检测按钮 -->
-          <div class="action-section" v-if="selectedFile">
-            <button 
-              class="btn btn-primary btn-lg"
-              @click="performAnalysis"
-              :disabled="isLoading"
-            >
-              <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-              {{ isLoading ? '分析中...' : '开始分析' }}
-            </button>
-          </div>
-          
-          <!-- 分析结果 -->
-          <div class="result-section" v-if="analysisResult">
-            <div class="result-card">
-              <h4>分析结果</h4>
-              <div class="result-content">
-                <div class="result-item">
-                  <label>分析状态：</label>
-                  <span class="status-badge status-success">{{ analysisResult.result }}</span>
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- 上传和结果区域 -->
+            <div style="display: flex; gap: 20px;">
+              <!-- 左侧上传区域 -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 10px; box-sizing: border-box;">
+                <!-- 单视频上传 -->
+                <div class="feature-item" style="height: 300px; box-sizing: border-box;">
+                  <h4>单视频检测</h4>
+                  <label 
+                    style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
+                      display: flex; flex-direction: column; justify-content: center; 
+                      align-items: center; cursor: pointer; box-sizing: border-box;"
+                    for="singleVideoInput">
+                    <p>点击或拖放视频文件,支持mp4，avi格式，最大500MB</p>
+                    <input type="file" id="singleVideoInput" style="display: none;" accept="video/*" @change="handleSingleUpload">
+                  </label>
                 </div>
-                <div class="result-item">
-                  <label>置信度：</label>
-                  <span class="confidence">{{ (analysisResult.confidence * 100).toFixed(2) }}%</span>
+                
+                <!-- 多视频上传 -->
+                <div class="feature-item" style="height: 300px; box-sizing: border-box;">
+                  <h4>批量视频检测</h4>
+                  <label 
+                    style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
+                      display: flex; flex-direction: column; justify-content: center; 
+                      align-items: center; cursor: pointer; box-sizing: border-box;"
+                    for="multiVideoInput">
+                    <p>点击或拖放多个视频,支持mp4，avi格式，最大500MB</p>
+                    <input type="file" id="multiVideoInput" style="display: none;" accept="video/*" multiple @change="handleMultiUpload">
+                  </label>
                 </div>
-                <div class="result-item">
-                  <label>分析时间：</label>
-                  <span>{{ formatTime(analysisResult.timestamp) }}</span>
+              </div>
+              
+              <!-- 右侧结果区域 -->
+              <div style="flex: 1.5; display: flex; flex-direction: column; gap: 20px;">
+                <!-- 检测结果 -->
+                <div class="feature-item" style="flex: 1;">
+                  <h4>检测结果</h4>
+                  <div style="padding: 15px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="text-align: center;">
+                      <div style="font-size: 24px; font-weight: bold; color: #0056b3;">
+                        可信度: <span id="scoreValue">{{ currentScore }}%</span>
+                      </div>
+                      <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
+                        <div id="progressBar" :style="{ width: currentScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
+                      </div>
+                    </div>
+                    <div id="resultDetails" style="text-align: center; color: #666;">
+                      <p>{{ resultMessage }}</p>
+                      <p v-if="currentVideoName">视频: {{ currentVideoName }}</p>
+                      <p v-if="currentDate">检测时间: {{ currentDate }}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 最新记录展示区 -->
+                <div class="feature-item" style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0;">最新记录</h4>
+                    <button class="btn-primary" style="padding: 5px 10px;" @click="showHistoryModal">更多</button>
+                  </div>
+                  <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <div id="latestRecord" style="text-align: center; color: #666;">
+                      <p v-if="historyData.length === 0">暂无检测记录</p>
+                      <div v-else>
+                        <p><strong>{{ latestRecord.filename }}</strong></p>
+                        <p>可信度: {{ latestRecord.score }}%</p>
+                        <p>{{ latestRecord.date }}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <!-- 错误信息 -->
-          <div class="alert alert-danger" v-if="errorMessage">
-            {{ errorMessage }}
+
+            <!-- 示例视频分析区域 -->
+            <div class="content-area">
+              <h2>示例视频分析</h2>
+              
+              <div class="feature-overview" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="feature-item">
+                  <div style="width: 100%; height: 200px;
+                    overflow: hidden;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #000;">
+                    <video controls 
+                      style="max-width: 100%; 
+                              max-height: 100%;
+                              object-fit: contain;">
+                      <source :src="getVideoUrl('example3_2_1_T.mp4')" type="video/mp4">
+                    </video>
+                  </div>
+                  <h4>真实视频示例</h4>
+                  <p>真实视频,上传后可信度分数应高于70%。</p>
+                  <button class="btn-primary" @click="analyzeExample('example3_2_1_T.mp4')">分析此示例</button>
+                </div>
+                
+                <div class="feature-item">
+                  <div style="width: 100%; height: 200px;
+                    overflow: hidden;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #000;">
+                    <video controls 
+                      style="max-width: 100%; 
+                              max-height: 100%;
+                              object-fit: contain;">
+                      <source :src="getVideoUrl('example3_2_1_U.mp4')" type="video/mp4">
+                    </video>
+                  </div>
+                  <h4>可疑视频示例</h4>
+                  <p>无法明确确认真假的视频，上传后可信度分数应介于30%到70%之间。</p>
+                  <button class="btn-primary" @click="analyzeExample('example3_2_1_U.mp4')">分析此示例</button>
+                </div>
+                
+                <div class="feature-item">
+                  <div style="width: 100%; height: 200px;
+                    overflow: hidden;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #000;">
+                    <video controls 
+                      style="max-width: 100%; 
+                              max-height: 100%;
+                              object-fit: contain;">
+                      <source :src="getVideoUrl('example3_2_1_F.mp4')" type="video/mp4">
+                    </video>
+                  </div>
+                  <h4>虚假视频示例</h4>
+                  <p>虚假视频，上传后可信度分数应低于30%。</p>
+                  <button class="btn-primary" @click="analyzeExample('example3_2_1_F.mp4')">分析此示例</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
     </div>
   </div>
+
+  <!-- 历史记录列表模态框 -->
+  <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">历史检测记录</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 搜索功能区 -->
+          <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+            <input type="text" id="searchInput" class="form-control" placeholder="输入搜索内容" v-model="searchQuery">
+            <button class="btn-primary" @click="searchHistory">搜索</button>
+            <button class="btn btn-secondary" @click="resetSearch">重置</button>
+          </div>
+          
+          <div class="task-table-wrapper">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>提交时间</th>
+                  <th>视频名称</th>
+                  <th>可信度</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr v-for="(item, index) in filteredHistory" :key="item.id">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ item.date }}</td>
+                  <td>{{ item.filename }}</td>
+                  <td>{{ item.score }}%</td>
+                  <td class="task-actions">
+                    <button class="btn-view" @click="showDetailModal(item.id)">查看</button>
+                    <button class="btn-delete" @click="deleteRecord(item.id)">删除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" @click="deleteAllRecords">一键删除</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史记录详情模态框 -->
+  <div class="modal fade" id="historyDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">检测结果详情</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <div style="font-size: 24px; font-weight: bold; color: #0056b3;">
+            可信度: <span id="detailScoreValue">{{ detailScore }}%</span>
+          </div>
+          <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
+            <div id="detailProgressBar" :style="{ width: detailScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
+          </div>
+          <div id="detailVideoName" style="font-weight: bold; margin-bottom: 10px;">视频: {{ detailVideoName }}</div>
+          <div id="detailResultText" style="color: #666;">{{ detailResultText }}</div>
+          <div id="detailTimestamp" style="color: #888; margin-top: 15px;">检测时间: {{ detailTimestamp }}</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import Sidebar from '../components/Sidebar.vue'
-import FileUpload from '../components/FileUpload.vue'
-import { videoAPI } from '../api'
-import type { DetectionResult } from '../types'
+<script>
+import { Modal } from 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const selectedFile = ref<File | null>(null)
-const isLoading = ref(false)
-const analysisResult = ref<DetectionResult | null>(null)
-const errorMessage = ref('')
-
-const handleFileSelected = (file: File | null) => {
-  selectedFile.value = file
-  analysisResult.value = null
-  errorMessage.value = ''
-}
-
-const performAnalysis = async () => {
-  if (!selectedFile.value) return
-  
-  isLoading.value = true
-  errorMessage.value = ''
-  
-  try {
-    const response = await videoAPI.analyzeVideo(1, {
-      video: selectedFile.value
-    })
-    
-    if (response.success && response.data) {
-      analysisResult.value = response.data
-    } else {
-      errorMessage.value = response.message || '分析失败，请重试'
+export default {
+  name: 'VideoAnalysisModule1',
+  data() {
+    return {
+      API_BASE_URL: 'http://127.0.0.1:8003',
+      historyData: [],
+      searchQuery: '',
+      currentScore: '--',
+      currentVideoName: '',
+      currentDate: '',
+      resultMessage: '请上传视频进行检测',
+      detailScore: '--',
+      detailVideoName: '',
+      detailResultText: '',
+      detailTimestamp: '',
+      historyModal: null,
+      detailModal: null
+    };
+  },
+  computed: {
+    filteredHistory() {
+      if (!this.searchQuery) {
+        return this.historyData;
+      }
+      const query = this.searchQuery.toLowerCase();
+      return this.historyData.filter(item => 
+        item.filename.toLowerCase().includes(query) ||
+        item.date.includes(query)
+      );
+    },
+    latestRecord() {
+      return this.historyData.length > 0 ? this.historyData[this.historyData.length - 1] : {};
     }
-  } catch (error) {
-    console.error('视频分析错误:', error)
-    errorMessage.value = '分析服务暂时不可用，请稍后重试'
-  } finally {
-    isLoading.value = false
-  }
-}
+  },
+  mounted() {
+    this.historyModal = new Modal(document.getElementById('historyModal'));
+    this.detailModal = new Modal(document.getElementById('historyDetailModal'));
+    this.loadHistory();
+  },
+  methods: {
+    loadHistory() {
+      fetch(`${this.API_BASE_URL}/video_analysis/module1/history`)
+        .then(response => response.json())
+        .then(data => {
+          this.historyData = data;
+        })
+        .catch(error => {
+          console.error('加载历史记录失败:', error);
+        });
+    },
+    showHistoryModal() {
+      this.historyModal.show();
+    },
+    showDetailModal(id) {
+      fetch(`${this.API_BASE_URL}/video_analysis/module1/history/${id}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('网络响应不正常');
+          }
+          return response.json();
+        })
+        .then(response => {
+          if (response.error) {
+            alert(response.error);
+            return;
+          }
 
-const formatTime = (timestamp: string) => {
-  return new Date(timestamp).toLocaleString('zh-CN')
-}
+          const record = response.result;
+          if (!record) {
+            alert('未获取到记录数据');
+            return;
+          }
+          
+          this.detailScore = record.score;
+          this.detailVideoName = record.filename;
+          
+          if(record.score > 70) this.detailResultText = '内容可信度较高';
+          else if(record.score > 30) this.detailResultText = '内容存在可疑之处';
+          else this.detailResultText = '内容可信度较低';
+          
+          this.detailTimestamp = record.date;
+          
+          this.detailModal.show();
+        })
+        .catch(error => {
+          console.error('获取详情失败:', error);
+          alert('获取详情失败: ' + error.message);
+        });
+    },
+    deleteRecord(id) {
+      if(confirm('确定删除这条记录吗？')) {
+        fetch(`${this.API_BASE_URL}/video_analysis/module1/history/${id}`, {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === "success") {
+            this.loadHistory();
+          }
+        })
+        .catch(error => {
+          console.error('删除失败:', error);
+          alert('删除失败，请稍后重试');
+        });
+      }
+    },
+    deleteAllRecords() {
+      const confirmMessage = this.searchQuery 
+        ? `确定要删除所有搜索结果吗？` 
+        : "确定要删除所有历史记录吗？";
+      
+      if (confirm(confirmMessage)) {
+        fetch(`${this.API_BASE_URL}/video_analysis/module1/history`, {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === "success") {
+            this.loadHistory();
+            this.searchQuery = '';
+          }
+        })
+        .catch(error => {
+          console.error('删除失败:', error);
+          alert('删除失败，请稍后重试');
+        });
+      }
+    },
+    searchHistory() {
+      // Computed property handles the filtering
+    },
+    resetSearch() {
+      this.searchQuery = '';
+    },
+    handleSingleUpload(event) {
+      if (event.target.files.length > 0) {
+        this.handleFileUpload(event.target.files[0], true);
+      }
+    },
+    handleMultiUpload(event) {
+      if (event.target.files.length > 0) {
+        this.handleBatchUpload(event.target.files);
+      }
+    },
+    handleFileUpload(file, isSingle) {
+      this.resultMessage = isSingle ? `正在分析视频: ${file.name}...` : '';
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      fetch(`${this.API_BASE_URL}/video_analysis/module1/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('上传失败');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if(data.status === "success") {
+          this.currentScore = data.result.score;
+          
+          if(data.result.score > 70) this.resultMessage = '内容可信度较高';
+          else if(data.result.score > 30) this.resultMessage = '内容存在可疑之处';
+          else this.resultMessage = '内容可信度较低';
+          
+          this.currentVideoName = file.name;
+          this.currentDate = data.result.date;
+          
+          this.loadHistory();
+        } else {
+          throw new Error(data.error || '上传失败');
+        }
+      })
+      .catch(error => {
+        console.error('上传失败:', error);
+        this.resultMessage = `上传失败: ${error.message}`;
+      });
+    },
+    handleBatchUpload(files) {
+      this.resultMessage = `开始批量上传 ${files.length} 个视频...`;
+      
+      let completed = 0;
+      let hasError = false;
+      
+      Array.from(files).forEach(file => {
+        if (!hasError) {
+          const formData = new FormData();
+          formData.append('file', file);
+          
+          fetch(`${this.API_BASE_URL}/video_analysis/module1/uploads`, {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('上传失败');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if(data.status === "success") {
+              completed++;
+              this.resultMessage = `已完成 ${completed}/${files.length} 个视频分析...`;
+              
+              if (completed === files.length) {
+                this.resultMessage += `\n批量分析完成`;
+                this.loadHistory();
+              }
+            } else {
+              throw new Error(data.error || '上传失败');
+            }
+          })
+          .catch(error => {
+            console.error('上传失败:', error);
+            hasError = true;
+            this.resultMessage = `上传失败: ${file.name} - ${error.message}`;
+          });
+        }
+      });
+    },
+    getVideoUrl(videoName) {
+      return `/static/videos/${videoName}`;
+    },
+    analyzeExample(videoName) {
+      this.handleExampleVideo(videoName);
+    },
+    async handleExampleVideo(videoName) {
+      this.resultMessage = '正在准备示例视频分析...';
+      
+      try {
+        const videoPath = `/static/videos/${videoName}`;
+        const response = await fetch(videoPath);
+        if (!response.ok) throw new Error('无法加载示例视频');
+        
+        const blob = await response.blob();
+        const file = new File([blob], videoName, { type: blob.type });
+        
+        this.resultMessage = `正在分析示例视频: ${videoName}...`;
+        await this.handleFileUpload(file, true);
+        
+      } catch (error) {
+        console.error('示例视频处理失败:', error);
+        this.resultMessage = `示例视频分析失败: ${error.message}`;
+      }
+    }
+  }
+};
 </script>
 
-<style scoped>
-.container-fluid {
+<style>
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background: #f5f7fa;
+  margin: 0;
   padding: 0;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: rgb(227, 236, 250);
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.sidebar > ul > li {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: left;
+}
+
+.sidebar .dropdown {
+  padding: 0 !important;
+  background: none !important;
+  position: relative;
+}
+
+.sidebar .dropdown > .dropdown-toggle {
+  padding: 12px;
+  display: block;
+  width: 100%;
+}
+
+.sidebar li.active {
+  background: #3b87d8;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  display: block;
+}
+
+.sidebar > ul > li:not(.dropdown):hover {
+  background: #3b87d8;
+  color: white;
+}
+
+.sidebar .dropdown:hover > .dropdown-toggle {
+  background-color: rgba(59, 135, 216, 0.1);
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .dropdown:hover {
+  background: none !important;
+  color: inherit !important;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar .dropdown-toggle {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.sidebar .dropdown-toggle::before {
+  display: none !important;
+}
+
+.sidebar .dropdown-toggle::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/candropdown.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent !important;
+  transition: all 0.3s ease;
+  display: block;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.sidebar .dropdown-toggle.active::after {
+  background-image: url('../img/dropdown.png');
+}
+
+.sidebar .submenu {
+  display: none;
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.sidebar .submenu.show {
+  display: block;
+}
+
+.sidebar .submenu li {
+  margin: 5px 0;
+  padding: 8px 12px;
+  background: none !important;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  color: inherit !important;
+  font-weight: normal !important;
+}
+
+.sidebar .submenu li:hover {
+  background-color: rgba(59, 135, 216, 0.15) !important;
+  transform: translateX(3px);
+  color: inherit !important;
+}
+
+.sidebar .submenu li.active {
+  background-color: rgba(59, 135, 216, 0.25) !important;
+  border-left: 3px solid #3b87d8;
+}
+
+.sidebar .submenu a {
+  padding: 0;
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  transition: color 0.3s ease;
+}
+
+.sidebar .submenu li:hover a {
+  color: #3b87d8 !important;
+}
+
+.sidebar .submenu li.active a {
+  color: #3b87d8 !important;
+  font-weight: bold;
+}
+
+/* Main Content */
 .content {
   flex: 1;
   padding: 30px;
@@ -122,120 +697,147 @@ const formatTime = (timestamp: string) => {
 }
 
 .content-area {
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 40px;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 12px;  /* 改为12px圆角 */
+  margin: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);  /* 保持原有阴影 */
+  overflow-y: auto;
 }
 
 .content-area h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 15px;
+  color: #0056b3;
+  margin-bottom: 20px;
+  font-size: 2em;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
 }
 
-.description {
+.content-area p {
   color: #666;
-  margin-bottom: 30px;
-  font-size: 1.1rem;
+  font-size: 1.1em;
   line-height: 1.6;
 }
 
-.upload-section {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+.task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-.action-section {
-  text-align: center;
-  margin-bottom: 30px;
+.task-header .d-flex {
+  width: 100%;
+  justify-content: space-between;
 }
 
-.btn-primary {
-  background: #3b87d8;
-  border: none;
-  padding: 12px 30px;
-  font-size: 1.1rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #2c6ac4;
-  transform: translateY(-2px);
-}
-
-.btn-primary:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.result-section {
+/* Feature Items */
+.feature-overview {
+  display: grid;
+  gap: 30px;
   margin-top: 30px;
 }
 
-.result-card {
+.feature-item {
   background: white;
-  padding: 30px;
+  padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
-.result-card h4 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
-.result-content {
-  display: grid;
-  gap: 15px;
+.feature-item h4 {
+  color: #0056b3;
+  margin-bottom: 15px;
+  font-size: 1.3em;
 }
 
-.result-item {
-  display: flex;
-  align-items: center;
+.feature-item p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 15px;
 }
 
-.result-item label {
-  font-weight: 500;
-  min-width: 100px;
-  color: #555;
-}
-
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.status-success {
-  background: #e6ffe6;
-  color: #00b894;
-}
-
-.confidence {
-  font-weight: 600;
-  color: #3b87d8;
-  font-size: 1.1rem;
-}
-
-.alert {
-  padding: 15px;
-  margin-top: 20px;
-  border-radius: 6px;
+/* Buttons */
+.btn-primary {
+  background: #3b87d8;
+  color: white;
   border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.alert-danger {
-  background: #f8d7da;
-  color: #721c24;
+.btn-primary:hover {
+  background: #4875b0;
 }
 
-.spinner-border-sm {
-  width: 1rem;
-  height: 1rem;
+/* Task Table */
+.task-table-wrapper {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  max-height: calc(100vh - 300px);
 }
-</style> 
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background: #f1f1f1;
+  z-index: 10;
+}
+
+th, td {
+  padding: 16px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 18px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.task-actions button {
+  font-size: 16px;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 5px;
+  transition: 0.3s;
+}
+
+.btn-view {
+  background: #5e9dc8;
+  color: white;
+}
+
+.btn-view:hover {
+  background: #4c87b0;
+}
+
+.btn-delete {
+  background: #d27b85;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #b86470;
+}
+</style>
