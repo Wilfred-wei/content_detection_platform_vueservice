@@ -121,3 +121,7 @@ coverage.xml
 .env.test.local
 .env.production.local 
 content_detection_platform_vueservice-master.code-workspace
+
+# 允许 frontend/public 目录下的所有内容被同步
+!frontend/public/
+!frontend/public/**
