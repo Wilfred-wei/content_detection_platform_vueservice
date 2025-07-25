@@ -52,19 +52,8 @@
                          @click="!isAnalyzing && ($refs.fileInput as HTMLInputElement)?.click()">
                       
                       <div class="upload-content">
-                        <div v-if="!selectedFile && imagePreviewUrl === defaultImageUrl" class="upload-preview">
-                          <div class="image-preview">
-                            <img :src="imagePreviewUrl" alt="预览图片" class="preview-img">
-                          </div>
-                          <div class="file-info mt-3">
-                            <div>
-                              <strong>示例图片：a_photo_of_a_bear_above_a_clock.png</strong>
-                              <br>
-                              <small class="text-muted">默认示例图片，您可以上传自己的图片进行检测</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div v-else-if="!selectedFile" class="upload-empty">
+                        <!-- 删除默认图片展示，初始无图片时直接显示上传提示 -->
+                        <div v-if="!selectedFile" class="upload-empty">
                           <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
                           <h5>拖拽图像文件到此处</h5>
                           <p class="text-muted">或点击选择文件</p>
@@ -310,6 +299,122 @@
             </div>
           </div>
 
+          <!-- 示例图片2×2布局区域 -->
+          <div v-if="currentMode === 'single'" class="example-carousel-section mt-3">
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <h5 class="mb-3 d-flex align-items-center">
+                  <i class="fas fa-check-circle me-2"></i>
+                  真实图像示例
+                </h5>
+                <div class="carousel-wrapper">
+                  <button class="carousel-btn carousel-btn-prev" @click="handleCarousel('realImg', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div class="image-carousel-outer">
+                    <div class="image-carousel-track" :style="getTrackStyle('realImg')">
+                      <div 
+                        v-for="image in realImages" 
+                        :key="image"
+                        class="image-card"
+                        @click="selectExampleImage('real_img', image)"
+                      >
+                        <img :src="`/examples/real_img/${encodeURIComponent(image)}`" :alt="image" />
+                        <div class="image-name">{{ image }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="carousel-btn carousel-btn-next" @click="handleCarousel('realImg', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <h5 class="mb-3 d-flex align-items-center">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  AI生成图像示例
+                </h5>
+                <div class="carousel-wrapper">
+                  <button class="carousel-btn carousel-btn-prev" @click="handleCarousel('fakeImg', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div class="image-carousel-outer">
+                    <div class="image-carousel-track" :style="getTrackStyle('fakeImg')">
+                      <div 
+                        v-for="image in fakeImages" 
+                        :key="image"
+                        class="image-card"
+                        @click="selectExampleImage('fake_img', image)"
+                      >
+                        <img :src="`/examples/fake_img/${encodeURIComponent(image)}`" :alt="image" />
+                        <div class="image-name">{{ image.replace('.png', '').replace('.jpg', '') }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="carousel-btn carousel-btn-next" @click="handleCarousel('fakeImg', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <h5 class="mb-3 d-flex align-items-center">
+                  <i class="fas fa-user-check me-2"></i>
+                  真实人脸示例
+                </h5>
+                <div class="carousel-wrapper">
+                  <button class="carousel-btn carousel-btn-prev" @click="handleCarousel('realFace', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div class="image-carousel-outer">
+                    <div class="image-carousel-track" :style="getTrackStyle('realFace')">
+                      <div 
+                        v-for="image in realFaces" 
+                        :key="image"
+                        class="image-card"
+                        @click="selectExampleImage('real_face', image)"
+                      >
+                        <img :src="`/examples/real_face/${encodeURIComponent(image)}`" :alt="image" />
+                        <div class="image-name">{{ image }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="carousel-btn carousel-btn-next" @click="handleCarousel('realFace', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <h5 class="mb-3 d-flex align-items-center">
+                  <i class="fas fa-user-times me-2"></i>
+                  AI生成人脸示例
+                </h5>
+                <div class="carousel-wrapper">
+                  <button class="carousel-btn carousel-btn-prev" @click="handleCarousel('fakeFace', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <div class="image-carousel-outer">
+                    <div class="image-carousel-track" :style="getTrackStyle('fakeFace')">
+                      <div 
+                        v-for="image in fakeFaces" 
+                        :key="image"
+                        class="image-card"
+                        @click="selectExampleImage('fake_face', image)"
+                      >
+                        <img :src="`/examples/fake_face/${encodeURIComponent(image)}`" :alt="image" />
+                        <div class="image-name">{{ image }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="carousel-btn carousel-btn-next" @click="handleCarousel('fakeFace', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 批量检测模式 -->
           <div v-if="currentMode === 'batch'" class="batch-detection-mode">
             <BatchDetection @job-created="onBatchJobCreated" />
@@ -364,7 +469,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
 import BatchDetection from '../components/BatchDetection.vue'
 import { aiImageAPI } from '../api'
@@ -382,12 +487,10 @@ export default defineComponent({
     BatchDetection
   },
   setup() {
-    // 默认图片路径
-    const defaultImageUrl = '/static/images/a_photo_of_a_bear_above_a_clock.png'
     // 响应式数据
     const currentMode = ref<'single' | 'batch' | 'history'>('single')
     const selectedFile = ref<File | null>(null)
-    // imagePreviewUrl初始为默认图片
+    // imagePreviewUrl初始为空
     const imagePreviewUrl = ref<string>('')
     const uploadProgress = ref<number>(0)
     const isAnalyzing = ref<boolean>(false)
@@ -396,6 +499,47 @@ export default defineComponent({
     const error = ref<string | null>(null)
     const serviceStatus = ref<AIDetectionServiceStatus | null>(null)
     const showHeatmapModal = ref<boolean>(false)
+    
+    // 轮播 refs
+    const realImgTrack = ref<HTMLElement | null>(null)
+    const fakeImgTrack = ref<HTMLElement | null>(null)
+    const realFaceTrack = ref<HTMLElement | null>(null)
+    const fakeFaceTrack = ref<HTMLElement | null>(null)
+    
+    // 轮播区域ref
+    const realImgCarousel = ref<HTMLElement | null>(null)
+    const fakeImgCarousel = ref<HTMLElement | null>(null)
+    const realFaceCarousel = ref<HTMLElement | null>(null)
+    const fakeFaceCarousel = ref<HTMLElement | null>(null)
+    let scrollTimers: any[] = []
+
+    // 示例图片数据
+    const realImages = ref([
+      'j16.jpg', 'J163.jpg', 'j10_j16.jpg', 'J162.jpg', 'J16.jpg', 'Y20.png', 'J35A.jpg', 'J10.jpg', 'J15T.jpg', 'H6.jpg'
+    ])
+    const fakeImages = ref<string[]>([
+      'a photo of a microwave and a truck.png',
+      'a photo of a motorcycle.png',
+      'a photo of a parking meter above a broccoli.png',
+      'a photo of a parking meter and a teddy bear.png',
+      'a photo of a parking meter.png',
+      'a photo of a person and an apple.png',
+      'a photo of a person and a bear.png',
+      'a photo of a person and a sink.png',
+      'a photo of a person and a snowboard.png',
+      'a photo of a person and a stop sign.png',
+      'a photo of a person and a traffic light.png',
+      'a photo of a person.png'
+    ])
+    const realFaces = ref<string[]>([
+      '10150.png', '10114.png', '1147.png', '1137.png', '1132.png', '1102.png', '1079.png', '1068.png', '1051.png', '1015.png', '1005.png', '100.png', '10165.png'
+    ])
+    const fakeFaces = ref<string[]>([
+      '182638_0.png', '182639_4.png', '182640_11.png', '182642_4.png', '182642_9.png',
+      '182644_11.png', '182645_4.png', '182645_7.png', '182646_0.png', '182646_3.png',
+      '182649_3.png', '182651_3.png', '182652_7.png', '182652_8.png', '182653_3.png',
+      '182653_6.png', '182655_4.png', '182655_5.png', '182655_9.png'
+    ])
 
     // 计算属性
     const resultAlertClass = computed(() => {
@@ -643,6 +787,138 @@ export default defineComponent({
       console.log('批量检测任务已创建:', job)
     }
 
+    // 图片错误处理方法
+    const handleImageError = (event: Event, category: string, imageName: string) => {
+      console.error(`图片加载失败: ${category}/${imageName}`)
+      console.error(`尝试的路径: /examples/${category}/${imageName}`)
+      const img = event.target as HTMLImageElement
+      img.style.border = '2px solid red'
+      img.alt = `${imageName} (加载失败)`
+    }
+
+    // 轮播控制方法
+    const scrollCarousel = (carouselType: string, direction: number) => {
+      const trackMap: { [key: string]: any } = {
+        'realImg': realImgCarousel,
+        'fakeImg': fakeImgCarousel, 
+        'realFace': realFaceCarousel,
+        'fakeFace': fakeFaceCarousel
+      }
+      const trackRef = trackMap[carouselType]
+      if (!trackRef?.value) return
+      const track = trackRef.value
+      // 获取第一个图片卡片的宽度（含margin/gap）
+      const firstCard = track.querySelector('.image-card')
+      let scrollAmount = 220 // 默认
+      if (firstCard) {
+        const style = window.getComputedStyle(firstCard)
+        const width = firstCard.offsetWidth
+        // 尝试 gap 或 margin-right
+        let gap = 0
+        if (track && track.children.length > 1) {
+          const nextCard = track.children[1]
+          gap = (nextCard as HTMLElement).offsetLeft - (firstCard as HTMLElement).offsetLeft - width
+        }
+        scrollAmount = width + gap
+      }
+      track.scrollBy({
+        left: scrollAmount * direction,
+        behavior: 'smooth'
+      })
+    }
+
+    // 自动滚动函数
+    function setAutoScroll(carouselRef: any) {
+      return setInterval(() => {
+        const el = carouselRef.value
+        if (el) {
+          if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
+            el.scrollLeft = 0
+          } else {
+            el.scrollLeft += 1
+          }
+        }
+      }, 20)
+    }
+
+    // 选择示例图片方法
+    const selectExampleImage = async (category: string, imageName: string) => {
+      try {
+        const imagePath = `/examples/${category}/${imageName}`
+        const response = await fetch(imagePath)
+        
+        if (!response.ok) {
+          throw new Error('无法加载示例图片')
+        }
+        
+        const blob = await response.blob()
+        const file = new File([blob], imageName, { type: blob.type })
+        
+        // 使用现有的选择文件方法
+        selectFile(file)
+        
+        // 清除之前的检测结果
+        result.value = null
+        error.value = null
+        
+        console.log(`已选择示例图片: ${imageName}`)
+      } catch (err: any) {
+        console.error('选择示例图片失败:', err)
+        error.value = `加载示例图片失败: ${err.message}`
+      }
+    }
+
+    // 新增：每个轮播区的索引
+    const visibleCount = 4
+    const cardWidth = 200
+    const cardGap = 16 // 1rem = 16px
+    const realImgIndex = ref(0)
+    const fakeImgIndex = ref(0)
+    const realFaceIndex = ref(0)
+    const fakeFaceIndex = ref(0)
+
+    // 计算最大索引
+    const getMaxIndex = (arr: any[]) => Math.max(0, arr.length - visibleCount)
+
+    // 按钮点击事件
+    const handleCarousel = (type: string, dir: number) => {
+      const map = {
+        realImg: { arr: realImages, idx: realImgIndex },
+        fakeImg: { arr: fakeImages, idx: fakeImgIndex },
+        realFace: { arr: realFaces, idx: realFaceIndex },
+        fakeFace: { arr: fakeFaces, idx: fakeFaceIndex }
+      }
+      const { arr, idx } = map[type]
+      const max = getMaxIndex(arr.value)
+      if (dir === 1) {
+        idx.value = idx.value >= max ? 0 : idx.value + 1
+      } else {
+        idx.value = idx.value <= 0 ? max : idx.value - 1
+      }
+    }
+
+    // 自动滚动
+    function setAutoScrollIndex(idxRef: any, arrRef: any) {
+      return setInterval(() => {
+        const max = getMaxIndex(arrRef.value)
+        idxRef.value = idxRef.value >= max ? 0 : idxRef.value + 1
+      }, 2000)
+    }
+
+    // 计算track的transform样式
+    const getTrackStyle = (type: string) => {
+      const map = {
+        realImg: realImgIndex,
+        fakeImg: fakeImgIndex,
+        realFace: realFaceIndex,
+        fakeFace: fakeFaceIndex
+      }
+      const idx = map[type].value
+      return {
+        transform: `translateX(-${idx * (cardWidth + cardGap)}px)`
+      }
+    }
+
     // 加载服务状态
     const loadServiceStatus = async () => {
       try {
@@ -684,24 +960,19 @@ export default defineComponent({
     // 生命周期
     onMounted(async () => {
       loadServiceStatus()
-      // 页面初始时fetch示例图片并转为File对象
-      try {
-        const response = await fetch(defaultImageUrl)
-        const blob = await response.blob()
-        // 构造File对象
-        const file = new File([blob], 'a_photo_of_a_bear_above_a_clock.png', { type: blob.type })
-        selectedFile.value = file
-        // 生成预览URL
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          imagePreviewUrl.value = e.target?.result as string
-        }
-        reader.readAsDataURL(file)
-      } catch (e) {
-        // 如果加载失败，回到上传提示
-        selectedFile.value = null
-        imagePreviewUrl.value = ''
-      }
+      // 调试：打印示例图片数据
+      console.log('真实图像:', realImages.value)
+      console.log('虚假图像:', fakeImages.value)
+      console.log('真实人脸:', realFaces.value)
+      console.log('虚假人脸:', fakeFaces.value)
+      // 自动滚动定时器（索引驱动）
+      scrollTimers.push(setAutoScrollIndex(realImgIndex, realImages))
+      scrollTimers.push(setAutoScrollIndex(fakeImgIndex, fakeImages))
+      scrollTimers.push(setAutoScrollIndex(realFaceIndex, realFaces))
+      scrollTimers.push(setAutoScrollIndex(fakeFaceIndex, fakeFaces))
+    })
+    onBeforeUnmount(() => {
+      scrollTimers.forEach(timer => clearInterval(timer))
     })
 
     return {
@@ -716,7 +987,22 @@ export default defineComponent({
       error,
       serviceStatus,
       showHeatmapModal,
-      defaultImageUrl,
+      
+      // 轮播 refs
+      realImgTrack,
+      fakeImgTrack,
+      realFaceTrack,
+      fakeFaceTrack,
+      realImgCarousel,
+      fakeImgCarousel,
+      realFaceCarousel,
+      fakeFaceCarousel,
+      
+      // 示例图片数据
+      realImages,
+      fakeImages,
+      realFaces,
+      fakeFaces,
       
       // 计算属性
       resultAlertClass,
@@ -739,13 +1025,87 @@ export default defineComponent({
       downloadHeatmap,
       formatFileSize,
       getDisplayPrediction,
-      onBatchJobCreated
+      onBatchJobCreated,
+      handleImageError,
+      scrollCarousel,
+      selectExampleImage,
+      realImgIndex, fakeImgIndex, realFaceIndex, fakeFaceIndex,
+      handleCarousel,
+      visibleCount,
+      getTrackStyle,
+      cardWidth, cardGap,
     }
   }
 })
 </script>
 
 <style scoped>
+/* 全局轮播样式 - 不使用 scoped */
+</style>
+
+<style>
+/* 轮播样式 - 全局作用域 */
+
+/* 示例图片轮播样式 */
+.example-carousel-section {
+  padding: 1rem 0 2rem 0;
+}
+
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 保持横向排列，不要overflow-x: auto; 只显示visibleCount个图片 */
+.image-carousel {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  flex: 1;
+  overflow: hidden;
+}
+.image-carousel::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.carousel-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  margin: 0 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+.carousel-btn:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+/* 轮播卡片头部颜色区分 */
+.card-header.bg-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+.card-header.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+}
+.card-header.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #6f42c1) !important;
+}
+.card-header.bg-danger {
+  background: linear-gradient(135deg, #dc3545, #e83e8c) !important;
+}
+
 /* 全局布局样式 */
 .container-fluid {
   padding: 0;
@@ -987,6 +1347,43 @@ export default defineComponent({
   padding: 0;
 }
 
+.image-carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  scroll-behavior: smooth;
+}
+.image-card {
+  flex: 0 0 200px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+}
+.image-card:hover {
+  transform: translateY(-4px);
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+.image-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+.image-name {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+  word-break: break-all;
+}
+
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .page-title {
@@ -1011,5 +1408,53 @@ export default defineComponent({
   .upload-method-card .card-body {
     padding: 1rem;
   }
+
+  /* 轮播响应式 */
+  .carousel-item {
+    flex: 0 0 150px;
+  }
+  
+  .example-img {
+    width: 130px;
+    height: 90px;
+  }
+  
+  .carousel-btn {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .carousel-btn-prev {
+    left: -15px;
+  }
+  
+  .carousel-btn-next {
+    right: -15px;
+  }
+  
+  .image-label {
+    font-size: 0.75rem;
+  }
+}
+</style> 
+
+<style>
+/* 丝滑轮播核心样式 */
+.image-carousel-outer {
+  width: calc(200px * 4 + 16px * 3); /* 4张卡片+3个gap */
+  overflow: hidden;
+  position: relative;
+}
+.image-carousel-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.image-card {
+  flex: 0 0 200px;
+  margin-right: 16px;
+}
+.image-card:last-child {
+  margin-right: 0;
 }
 </style> 

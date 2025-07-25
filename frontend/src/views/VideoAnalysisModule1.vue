@@ -2,20 +2,7 @@
   <div class="container-fluid">
     <div class="row d-flex flex-nowrap">
       <!-- 侧边栏 -->
-      <aside class="sidebar col-2">
-        <h3>功能模块</h3>
-        <ul>
-          <li><a href="/rumor_detection/">图文谣言检测</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle active" data-target="#video-analysis-submenu">视频分析</a>
-            <ul id="video-analysis-submenu" class="submenu show">
-              <li class="active"><a href="/video_analysis/module1/">子模块一</a></li>
-              <li><a href="/video_analysis/module2/">子模块二</a></li>
-            </ul>
-          </li>
-          <li><a href="/ai_image_detection/">AI生成图片检测</a></li>
-        </ul>
-      </aside>
+      <Sidebar />
       
       <!-- 主要内容区域 -->
       <main class="content col-10">
@@ -247,10 +234,13 @@
 
 <script>
 import { Modal } from 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from '../components/Sidebar.vue';
 
 export default {
   name: 'VideoAnalysisModule1',
+  components: {
+    Sidebar
+  },
   data() {
     return {
       API_BASE_URL: 'http://127.0.0.1:8003',
@@ -520,173 +510,6 @@ html, body {
   overflow: auto;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 240px;
-  background: rgb(227, 236, 250);
-  padding: 20px;
-  border-right: 1px solid #ddd;
-  height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar h3 {
-  font-size: 22px;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-
-.sidebar > ul > li {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-  text-align: left;
-}
-
-.sidebar .dropdown {
-  padding: 0 !important;
-  background: none !important;
-  position: relative;
-}
-
-.sidebar .dropdown > .dropdown-toggle {
-  padding: 12px;
-  display: block;
-  width: 100%;
-}
-
-.sidebar li.active {
-  background: #3b87d8;
-  color: white;
-  font-weight: bold;
-  width: 100%;
-  display: block;
-}
-
-.sidebar > ul > li:not(.dropdown):hover {
-  background: #3b87d8;
-  color: white;
-}
-
-.sidebar .dropdown:hover > .dropdown-toggle {
-  background-color: rgba(59, 135, 216, 0.1);
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar .dropdown:hover {
-  background: none !important;
-  color: inherit !important;
-}
-
-.sidebar a {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.sidebar .dropdown-toggle {
-  cursor: pointer;
-  position: relative;
-  width: 100%;
-  background: none !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.sidebar .dropdown-toggle::before {
-  display: none !important;
-}
-
-.sidebar .dropdown-toggle::after {
-  content: "";
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  background-image: url('../img/candropdown.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: transparent !important;
-  transition: all 0.3s ease;
-  display: block;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.sidebar .dropdown-toggle.active::after {
-  background-image: url('../img/dropdown.png');
-}
-
-.sidebar .submenu {
-  display: none;
-  padding-left: 20px;
-  margin-top: 5px;
-}
-
-.sidebar .submenu.show {
-  display: block;
-}
-
-.sidebar .submenu li {
-  margin: 5px 0;
-  padding: 8px 12px;
-  background: none !important;
-  font-size: 14px;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  color: inherit !important;
-  font-weight: normal !important;
-}
-
-.sidebar .submenu li:hover {
-  background-color: rgba(59, 135, 216, 0.15) !important;
-  transform: translateX(3px);
-  color: inherit !important;
-}
-
-.sidebar .submenu li.active {
-  background-color: rgba(59, 135, 216, 0.25) !important;
-  border-left: 3px solid #3b87d8;
-}
-
-.sidebar .submenu a {
-  padding: 0;
-  font-size: 14px;
-  color: #666;
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  transition: color 0.3s ease;
-}
-
-.sidebar .submenu li:hover a {
-  color: #3b87d8 !important;
-}
-
-.sidebar .submenu li.active a {
-  color: #3b87d8 !important;
-  font-weight: bold;
-}
 
 /* Main Content */
 .content {
