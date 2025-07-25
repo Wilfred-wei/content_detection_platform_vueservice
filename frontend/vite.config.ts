@@ -25,6 +25,11 @@ export default defineConfig({
         target: 'http://localhost:8010',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/rumor/, '')
+      },
+      '/video_analysis': {
+        target: 'http://localhost:8003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/video_analysis/, '')
       }
     },
     watch: {
