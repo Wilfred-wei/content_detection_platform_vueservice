@@ -16,15 +16,10 @@ SERVICES = {
         'url': f"http://localhost:{os.getenv('AI_IMAGE_SERVICE_PORT', 8002)}",
         'name': 'AI图像检测服务'
     },
-    'video_analysis_module1': {
-        'url': f"http://localhost:{os.getenv('VIDEO_MODULE1_PORT', 8003)}",
-        'name': '视频分析模块1'
-    },
-    'video_analysis_module2': {
-        'url': f"http://localhost:{os.getenv('VIDEO_MODULE2_PORT', 8004)}",
-        'name': '视频分析模块2'
+    'video_analysis': {
+        'url': f"http://localhost:{os.getenv('VIDEO_ANALYSIS_PORT', 8003)}",
+        'name': '视频分析服务'
     }
-
 }
 
 # CORS配置

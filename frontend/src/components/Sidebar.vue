@@ -33,7 +33,6 @@ const toggleDropdown = (e: Event) => {
 </script>
 
 <style scoped>
-/* 侧边栏样式完全复制自Django版本的home.css */
 .sidebar {
   width: 240px;
   background: rgb(227, 236, 250);

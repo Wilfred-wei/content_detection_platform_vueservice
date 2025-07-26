@@ -127,25 +127,34 @@ def ai_image_result(task_id):
         ).to_dict(), 503
 
 
-@api.route('/api/v1/video-analysis/module1/detect', methods=['POST'])
-def video_analysis_module1():
-    """视频分析模块1代理"""
+# === 视频分析API代理 ===
+
+@api.route('/api/v1/video-analysis/module1/upload', methods=['POST'])
+def video_analysis_module1_upload():
+    """视频谣言检测单文件上传代理"""
     try:
-        service_url = SERVICES['video_analysis_module1']['url']
+        service_url = SERVICES['video_analysis']['url']
         
         # 处理文件上传
         files = {}
         data = {}
         
-        if 'video' in request.files:
-            files['video'] = request.files['video']
+        if 'file' in request.files:
+            uploaded_file = request.files['file']
+            uploaded_file.seek(0)
+            files['file'] = (
+                uploaded_file.filename or 'video.mp4',
+                uploaded_file.stream,
+                uploaded_file.content_type or 'video/mp4'
+            )
         
+        # 获取其他表单数据
         for key, value in request.form.items():
             data[key] = value
         
         response = call_service_api(
             service_url=service_url,
-            endpoint='detect',
+            endpoint='module1/upload',
             method='POST',
             data=data,
             files=files
@@ -155,30 +164,34 @@ def video_analysis_module1():
         
     except Exception as e:
         return APIResponse.error(
-            message=f"视频分析模块1服务异常: {str(e)}",
+            message=f"视频谣言检测服务异常: {str(e)}",
             code=503
         ).to_dict(), 503
 
-
-@api.route('/api/v1/video-analysis/module2/detect', methods=['POST'])
-def video_analysis_module2():
-    """视频分析模块2代理"""
+@api.route('/api/v1/video-analysis/module1/uploads', methods=['POST'])
+def video_analysis_module1_uploads():
+    """视频谣言检测批量上传代理"""
     try:
-        service_url = SERVICES['video_analysis_module2']['url']
+        service_url = SERVICES['video_analysis']['url']
         
-        # 处理文件上传
         files = {}
         data = {}
         
-        if 'video' in request.files:
-            files['video'] = request.files['video']
+        if 'file' in request.files:
+            uploaded_file = request.files['file']
+            uploaded_file.seek(0)
+            files['file'] = (
+                uploaded_file.filename or 'video.mp4',
+                uploaded_file.stream,
+                uploaded_file.content_type or 'video/mp4'
+            )
         
         for key, value in request.form.items():
             data[key] = value
         
         response = call_service_api(
             service_url=service_url,
-            endpoint='detect',
+            endpoint='module1/uploads',
             method='POST',
             data=data,
             files=files
@@ -188,12 +201,267 @@ def video_analysis_module2():
         
     except Exception as e:
         return APIResponse.error(
-            message=f"视频分析模块2服务异常: {str(e)}",
+            message=f"视频谣言检测批量上传异常: {str(e)}",
             code=503
         ).to_dict(), 503
 
+@api.route('/api/v1/video-analysis/module1/history', methods=['GET'])
+def video_analysis_module1_history():
+    """获取视频谣言检测历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module1/history',
+            method='GET'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"获取历史记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
 
+@api.route('/api/v1/video-analysis/module1/history', methods=['DELETE'])
+def video_analysis_module1_delete_all_history():
+    """删除所有视频谣言检测历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module1/history',
+            method='DELETE'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"删除历史记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
 
+@api.route('/api/v1/video-analysis/module1/history/<string:record_id>', methods=['GET'])
+def video_analysis_module1_get_history(record_id):
+    """获取单个视频谣言检测历史记录详情"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint=f'module1/history/{record_id}',
+            method='GET'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"获取记录详情失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module1/history/<string:record_id>', methods=['DELETE'])
+def video_analysis_module1_delete_history(record_id):
+    """删除单个视频谣言检测历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint=f'module1/history/{record_id}',
+            method='DELETE'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"删除记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+# === 视频语义理解API代理 ===
+
+@api.route('/api/v1/video-analysis/module2/upload', methods=['POST'])
+def video_analysis_module2_upload():
+    """视频语义理解单文件上传代理"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        files = {}
+        data = {}
+        
+        if 'file' in request.files:
+            uploaded_file = request.files['file']
+            uploaded_file.seek(0)
+            files['file'] = (
+                uploaded_file.filename or 'video.mp4',
+                uploaded_file.stream,
+                uploaded_file.content_type or 'video/mp4'
+            )
+        
+        for key, value in request.form.items():
+            data[key] = value
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module2/upload',
+            method='POST',
+            data=data,
+            files=files
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"视频语义理解服务异常: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module2/uploads', methods=['POST'])
+def video_analysis_module2_uploads():
+    """视频语义理解批量上传代理"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        files = {}
+        data = {}
+        
+        if 'file' in request.files:
+            uploaded_file = request.files['file']
+            uploaded_file.seek(0)
+            files['file'] = (
+                uploaded_file.filename or 'video.mp4',
+                uploaded_file.stream,
+                uploaded_file.content_type or 'video/mp4'
+            )
+        
+        for key, value in request.form.items():
+            data[key] = value
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module2/uploads',
+            method='POST',
+            data=data,
+            files=files
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"视频语义理解批量上传异常: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module2/history', methods=['GET'])
+def video_analysis_module2_history():
+    """获取视频语义理解历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module2/history',
+            method='GET'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"获取历史记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module2/history', methods=['DELETE'])
+def video_analysis_module2_delete_all_history():
+    """删除所有视频语义理解历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint='module2/history',
+            method='DELETE'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"删除历史记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module2/history/<string:record_id>', methods=['GET'])
+def video_analysis_module2_get_history(record_id):
+    """获取单个视频语义理解历史记录详情"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint=f'module2/history/{record_id}',
+            method='GET'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"获取记录详情失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+@api.route('/api/v1/video-analysis/module2/history/<string:record_id>', methods=['DELETE'])
+def video_analysis_module2_delete_history(record_id):
+    """删除单个视频语义理解历史记录"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint=f'module2/history/{record_id}',
+            method='DELETE'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"删除记录失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
+
+# === 视频静态文件代理 ===
+
+@api.route('/api/v1/video-analysis/static/videos/<filename>')
+def video_analysis_static_videos(filename):
+    """视频静态文件代理"""
+    try:
+        service_url = SERVICES['video_analysis']['url']
+        
+        response = call_service_api(
+            service_url=service_url,
+            endpoint=f'static/videos/{filename}',
+            method='GET'
+        )
+        
+        return response
+        
+    except Exception as e:
+        return APIResponse.error(
+            message=f"获取静态视频文件失败: {str(e)}",
+            code=503
+        ).to_dict(), 503
 
 
 @api.errorhandler(RequestEntityTooLarge)

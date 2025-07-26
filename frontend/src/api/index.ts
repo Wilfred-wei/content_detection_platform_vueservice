@@ -103,7 +103,7 @@ export const aiImageAPI = {
       // 使用代理检查AI检测服务状态
       const aiResponse = await fetch('/ai-detect/health')
       const rumorResponse = await fetch('/rumor/health')  
-      const videoResponse = await fetch('/video/health')
+      const videoResponse = await fetch('/video_analysis/health')
       const aiStatus = await aiResponse.json()
       const rumorStatus = await rumorResponse.json()
       const videoStatus = await videoResponse.json()
@@ -120,15 +120,10 @@ export const aiImageAPI = {
             status: rumorStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
             url: 'http://localhost:8010'
           },
-          video_analysis_module1: {
-            name: '视频分析模块1',
+          video_analysis: {
+            name: '视频分析服务',
             status: videoStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
             url: 'http://localhost:8003'
-          },
-          video_analysis_module2: {
-            name: '视频分析模块2',
-            status: videoStatus.status === 'healthy' ? 'healthy' : 'unhealthy',
-            url: 'http://localhost:8004'
           }
         },
         success_rate: 98.0,
@@ -148,15 +143,10 @@ export const aiImageAPI = {
             status: 'unhealthy',
             url: 'http://localhost:8010'
           },
-          video_analysis_module1: {
-            name: '视频分析模块1',
+          video_analysis: {
+            name: '视频分析服务',
             status: 'unhealthy',
             url: 'http://localhost:8003'
-          },
-          video_analysis_module2: {
-            name: '视频分析模块2',
-            status: 'unhealthy',
-            url: 'http://localhost:8004'
           }
         },
         completed_detections_24h: 0,
@@ -196,22 +186,102 @@ export const rumorAPI = {
 
 export const videoAPI = {
   /**
-   * 视频分析
+   * 视频分析单文件上传
+   * @param moduleId 模块ID (1 或 2)
+   * @param file 视频文件
+   * @returns 分析结果
+   */
+  uploadSingle: async (moduleId: number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const response = await fetch(`/video-analysis/module${moduleId}/upload`, {
+      method: 'POST',
+      body: formData
+    })
+    return await response.json()
+  },
+
+  /**
+   * 视频分析批量上传
+   * @param moduleId 模块ID (1 或 2)  
+   * @param file 视频文件
+   * @returns 分析结果
+   */
+  uploadBatch: async (moduleId: number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const response = await fetch(`/video-analysis/module${moduleId}/uploads`, {
+      method: 'POST',
+      body: formData
+    })
+    return await response.json()
+  },
+
+  /**
+   * 获取历史记录
+   * @param moduleId 模块ID (1 或 2)
+   * @returns 历史记录列表
+   */
+  getHistory: async (moduleId: number) => {
+    const response = await fetch(`/video-analysis/module${moduleId}/history`)
+    return await response.json()
+  },
+
+  /**
+   * 获取单个历史记录详情
+   * @param moduleId 模块ID (1 或 2)
+   * @param recordId 记录ID
+   * @returns 记录详情
+   */
+  getHistoryDetail: async (moduleId: number, recordId: string) => {
+    const response = await fetch(`/video-analysis/module${moduleId}/history/${recordId}`)
+    return await response.json()
+  },
+
+  /**
+   * 删除单个历史记录
+   * @param moduleId 模块ID (1 或 2)
+   * @param recordId 记录ID
+   * @returns 删除结果
+   */
+  deleteHistory: async (moduleId: number, recordId: string) => {
+    const response = await fetch(`/video-analysis/module${moduleId}/history/${recordId}`, {
+      method: 'DELETE'
+    })
+    return await response.json()
+  },
+
+  /**
+   * 删除所有历史记录
+   * @param moduleId 模块ID (1 或 2)
+   * @returns 删除结果
+   */
+  deleteAllHistory: async (moduleId: number) => {
+    const response = await fetch(`/video-analysis/module${moduleId}/history`, {
+      method: 'DELETE'
+    })
+    return await response.json()
+  },
+
+  /**
+   * 获取示例视频URL
+   * @param filename 视频文件名
+   * @returns 视频URL
+   */
+  getExampleVideoUrl: (filename: string) => {
+    return `/video-analysis/static/videos/${filename}`
+  },
+
+  /**
+   * 视频分析 (保持向后兼容)
    * @param moduleId 模块ID (1 或 2)
    * @param data 分析数据
    * @returns 分析结果
    */
   analyzeVideo: async (moduleId: number, data: { video: File }) => {
-    const formData = new FormData()
-    formData.append('video', data.video)
-    
-    const response = await api.post(`/video-analysis/module${moduleId}/detect`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      timeout: 120000 // 视频分析需要更长时间
-    })
-    return response.data
+    return await videoAPI.uploadSingle(moduleId, data.video)
   }
 }
 
@@ -239,3 +309,26 @@ export const systemAPI = {
 }
 
 export default api 
+
+// === 便利的视频分析API实例 ===
+// 为了方便Vue组件使用，创建预配置的API实例
+
+export const module1API = {
+  uploadSingle: (file: File) => videoAPI.uploadSingle(1, file),
+  uploadBatch: (file: File) => videoAPI.uploadBatch(1, file),
+  getHistory: () => videoAPI.getHistory(1),
+  getHistoryDetail: (recordId: string) => videoAPI.getHistoryDetail(1, recordId),
+  deleteHistory: (recordId: string) => videoAPI.deleteHistory(1, recordId),
+  deleteAllHistory: () => videoAPI.deleteAllHistory(1),
+  getExampleVideoUrl: (filename: string) => videoAPI.getExampleVideoUrl(filename)
+}
+
+export const module2API = {
+  uploadSingle: (file: File) => videoAPI.uploadSingle(2, file),
+  uploadBatch: (file: File) => videoAPI.uploadBatch(2, file),
+  getHistory: () => videoAPI.getHistory(2),
+  getHistoryDetail: (recordId: string) => videoAPI.getHistoryDetail(2, recordId),
+  deleteHistory: (recordId: string) => videoAPI.deleteHistory(2, recordId),
+  deleteAllHistory: () => videoAPI.deleteAllHistory(2),
+  getExampleVideoUrl: (filename: string) => videoAPI.getExampleVideoUrl(filename)
+} 

@@ -235,6 +235,7 @@
 <script>
 import { Modal } from 'bootstrap';
 import Sidebar from '../components/Sidebar.vue';
+import { module1API } from '../api';
 
 export default {
   name: 'VideoAnalysisModule1',
@@ -243,7 +244,6 @@ export default {
   },
   data() {
     return {
-      API_BASE_URL: 'http://127.0.0.1:8003',
       historyData: [],
       searchQuery: '',
       currentScore: '--',
@@ -279,92 +279,76 @@ export default {
     this.loadHistory();
   },
   methods: {
-    loadHistory() {
-      fetch(`${this.API_BASE_URL}/video_analysis/module1/history`)
-        .then(response => response.json())
-        .then(data => {
-          this.historyData = data;
-        })
-        .catch(error => {
-          console.error('加载历史记录失败:', error);
-        });
+    async loadHistory() {
+      try {
+        const data = await module1API.getHistory();
+        this.historyData = data;
+      } catch (error) {
+        console.error('加载历史记录失败:', error);
+      }
     },
     showHistoryModal() {
       this.historyModal.show();
     },
-    showDetailModal(id) {
-      fetch(`${this.API_BASE_URL}/video_analysis/module1/history/${id}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('网络响应不正常');
-          }
-          return response.json();
-        })
-        .then(response => {
-          if (response.error) {
-            alert(response.error);
-            return;
-          }
+    async showDetailModal(id) {
+      try {
+        const response = await module1API.getHistoryDetail(id);
+        
+        if (response.error) {
+          alert(response.error);
+          return;
+        }
 
-          const record = response.result;
-          if (!record) {
-            alert('未获取到记录数据');
-            return;
-          }
-          
-          this.detailScore = record.score;
-          this.detailVideoName = record.filename;
-          
-          if(record.score > 70) this.detailResultText = '内容可信度较高';
-          else if(record.score > 30) this.detailResultText = '内容存在可疑之处';
-          else this.detailResultText = '内容可信度较低';
-          
-          this.detailTimestamp = record.date;
-          
-          this.detailModal.show();
-        })
-        .catch(error => {
-          console.error('获取详情失败:', error);
-          alert('获取详情失败: ' + error.message);
-        });
+        const record = response.result;
+        if (!record) {
+          alert('未获取到记录数据');
+          return;
+        }
+        
+        this.detailScore = record.score;
+        this.detailVideoName = record.filename;
+        
+        if(record.score > 70) this.detailResultText = '内容可信度较高';
+        else if(record.score > 30) this.detailResultText = '内容存在可疑之处';
+        else this.detailResultText = '内容可信度较低';
+        
+        this.detailTimestamp = record.date;
+        
+        this.detailModal.show();
+      } catch (error) {
+        console.error('获取详情失败:', error);
+        alert('获取详情失败: ' + error.message);
+      }
     },
-    deleteRecord(id) {
+    async deleteRecord(id) {
       if(confirm('确定删除这条记录吗？')) {
-        fetch(`${this.API_BASE_URL}/video_analysis/module1/history/${id}`, {
-          method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+          const data = await module1API.deleteHistory(id);
           if(data.status === "success") {
             this.loadHistory();
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('删除失败:', error);
           alert('删除失败，请稍后重试');
-        });
+        }
       }
     },
-    deleteAllRecords() {
+    async deleteAllRecords() {
       const confirmMessage = this.searchQuery 
         ? `确定要删除所有搜索结果吗？` 
         : "确定要删除所有历史记录吗？";
       
       if (confirm(confirmMessage)) {
-        fetch(`${this.API_BASE_URL}/video_analysis/module1/history`, {
-          method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+          const data = await module1API.deleteAllHistory();
           if(data.status === "success") {
             this.loadHistory();
             this.searchQuery = '';
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('删除失败:', error);
           alert('删除失败，请稍后重试');
-        });
+        }
       }
     },
     searchHistory() {
@@ -383,23 +367,12 @@ export default {
         this.handleBatchUpload(event.target.files);
       }
     },
-    handleFileUpload(file, isSingle) {
+    async handleFileUpload(file, isSingle) {
       this.resultMessage = isSingle ? `正在分析视频: ${file.name}...` : '';
       
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      fetch(`${this.API_BASE_URL}/video_analysis/module1/upload`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('上传失败');
-        }
-        return response.json();
-      })
-      .then(data => {
+      try {
+        const data = await module1API.uploadSingle(file);
+        
         if(data.status === "success") {
           this.currentScore = data.result.score;
           
@@ -414,56 +387,43 @@ export default {
         } else {
           throw new Error(data.error || '上传失败');
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('上传失败:', error);
         this.resultMessage = `上传失败: ${error.message}`;
-      });
+      }
     },
-    handleBatchUpload(files) {
+    async handleBatchUpload(files) {
       this.resultMessage = `开始批量上传 ${files.length} 个视频...`;
       
       let completed = 0;
       let hasError = false;
       
-      Array.from(files).forEach(file => {
-        if (!hasError) {
-          const formData = new FormData();
-          formData.append('file', file);
+      for (const file of files) {
+        if (hasError) break;
+        
+        try {
+          const data = await module1API.uploadBatch(file);
           
-          fetch(`${this.API_BASE_URL}/video_analysis/module1/uploads`, {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('上传失败');
+          if(data.status === "success") {
+            completed++;
+            this.resultMessage = `已完成 ${completed}/${files.length} 个视频分析...`;
+            
+            if (completed === files.length) {
+              this.resultMessage += `\n批量分析完成`;
+              this.loadHistory();
             }
-            return response.json();
-          })
-          .then(data => {
-            if(data.status === "success") {
-              completed++;
-              this.resultMessage = `已完成 ${completed}/${files.length} 个视频分析...`;
-              
-              if (completed === files.length) {
-                this.resultMessage += `\n批量分析完成`;
-                this.loadHistory();
-              }
-            } else {
-              throw new Error(data.error || '上传失败');
-            }
-          })
-          .catch(error => {
-            console.error('上传失败:', error);
-            hasError = true;
-            this.resultMessage = `上传失败: ${file.name} - ${error.message}`;
-          });
+          } else {
+            throw new Error(data.error || '上传失败');
+          }
+        } catch (error) {
+          console.error('上传失败:', error);
+          hasError = true;
+          this.resultMessage = `上传失败: ${file.name} - ${error.message}`;
         }
-      });
+      }
     },
     getVideoUrl(videoName) {
-      return `/static/videos/${videoName}`;
+      return module1API.getExampleVideoUrl(videoName);
     },
     analyzeExample(videoName) {
       this.handleExampleVideo(videoName);
@@ -472,7 +432,7 @@ export default {
       this.resultMessage = '正在准备示例视频分析...';
       
       try {
-        const videoPath = `/static/videos/${videoName}`;
+        const videoPath = module1API.getExampleVideoUrl(videoName);
         const response = await fetch(videoPath);
         if (!response.ok) throw new Error('无法加载示例视频');
         

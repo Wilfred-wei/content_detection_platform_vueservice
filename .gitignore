@@ -84,6 +84,9 @@ gateway/uploads/
 *.weights
 services/rumor_detection/C3N_models.pt
 services/ai_detection_service/*.pth
+services/video_analysis/videollama
+services/video_analysis/temp_uploads
+services/video_analysis/dir
 
 # Logs
 *.log

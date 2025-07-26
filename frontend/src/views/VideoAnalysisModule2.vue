@@ -217,6 +217,7 @@
 <script>
 import { Modal } from 'bootstrap';
 import Sidebar from '../components/Sidebar.vue';
+import { module2API } from '../api';
 
 export default {
   name: 'VideoAnalysisModule2',
@@ -225,7 +226,6 @@ export default {
   },
   data() {
     return {
-      API_BASE_URL: 'http://127.0.0.1:8003',
       historyData: [],
       searchQuery: '',
       currentDetail: {
@@ -255,16 +255,14 @@ export default {
     this.loadHistory();
   },
   methods: {
-    loadHistory() {
-      fetch(`${this.API_BASE_URL}/video_analysis/module2/history`)
-        .then(response => response.json())
-        .then(data => {
-          this.historyData = data;
-          this.updateLatestRecord();
-        })
-        .catch(error => {
-          console.error('加载历史记录失败:', error);
-        });
+    async loadHistory() {
+      try {
+        const data = await module2API.getHistory();
+        this.historyData = data;
+        this.updateLatestRecord();
+      } catch (error) {
+        console.error('加载历史记录失败:', error);
+      }
     },
     updateLatestRecord() {
       const latestRecord = document.getElementById('latestRecord');
@@ -281,76 +279,62 @@ export default {
     showHistoryModal() {
       this.historyModal.show();
     },
-    showDetailModal(id) {
-      fetch(`${this.API_BASE_URL}/video_analysis/module2/history/${id}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('网络响应不正常');
-          }
-          return response.json();
-        })
-        .then(response => {
-          if (response.error) {
-            alert(response.error);
-            return;
-          }
+    async showDetailModal(id) {
+      try {
+        const response = await module2API.getHistoryDetail(id);
+        
+        if (response.error) {
+          alert(response.error);
+          return;
+        }
 
-          const record = response.result;
-          if (!record) {
-            alert('未获取到记录数据');
-            return;
-          }
+        const record = response.result;
+        if (!record) {
+          alert('未获取到记录数据');
+          return;
+        }
 
-          this.currentDetail = {
-            filename: record.filename,
-            semantic_text: record.semantic_text,
-            date: record.date
-          };
-          
-          this.detailModal.show();
-        })
-        .catch(error => {
-          console.error('获取详情失败:', error);
-          alert('获取详情失败: ' + error.message);
-        });
+        this.currentDetail = {
+          filename: record.filename,
+          semantic_text: record.semantic_text,
+          date: record.date
+        };
+        
+        this.detailModal.show();
+      } catch (error) {
+        console.error('获取详情失败:', error);
+        alert('获取详情失败: ' + error.message);
+      }
     },
-    deleteRecord(id) {
+    async deleteRecord(id) {
       if(confirm('确定删除这条记录吗？')) {
-        fetch(`${this.API_BASE_URL}/video_analysis/module2/history/${id}`, {
-          method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+          const data = await module2API.deleteHistory(id);
           if(data.status === "success") {
             this.loadHistory();
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('删除失败:', error);
           alert('删除失败，请稍后重试');
-        });
+        }
       }
     },
-    deleteAllRecords() {
+    async deleteAllRecords() {
       const confirmMessage = this.searchQuery 
         ? `确定要删除所有搜索结果吗？` 
         : "确定要删除所有历史记录吗？";
       
       if (confirm(confirmMessage)) {
-        fetch(`${this.API_BASE_URL}/video_analysis/module2/history`, {
-          method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+          const data = await module2API.deleteAllHistory();
           if(data.status === "success") {
             this.loadHistory();
             this.searchQuery = '';
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('删除失败:', error);
           alert('删除失败，请稍后重试');
-        });
+        }
       }
     },
     searchHistory() {
@@ -369,26 +353,15 @@ export default {
         this.handleBatchUpload(event.target.files);
       }
     },
-    handleFileUpload(file, isSingle) {
+    async handleFileUpload(file, isSingle) {
       const resultArea = document.getElementById('semanticResult');
       const metaArea = document.getElementById('videoMeta');
       
       resultArea.innerHTML = `<p style="color: #666; text-align: center;">正在分析视频: ${file.name}...</p>`;
       
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      fetch(`${this.API_BASE_URL}/video_analysis/module2/upload`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('上传失败');
-        }
-        return response.json();
-      })
-      .then(data => {
+      try {
+        const data = await module2API.uploadSingle(file);
+        
         if(data.status === "success") {
           // Display semantic analysis results
           resultArea.innerHTML = `
@@ -409,57 +382,44 @@ export default {
         } else {
           throw new Error(data.error || '上传失败');
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('上传失败:', error);
         resultArea.innerHTML = `<p style="color:red">分析失败: ${error.message}</p>`;
-      });
+      }
     },
-    handleBatchUpload(files) {
+    async handleBatchUpload(files) {
       const resultArea = document.getElementById('semanticResult');
       resultArea.innerHTML = `<p style="color: #666; text-align: center;">开始批量上传 ${files.length} 个视频...</p>`;
       
       let completed = 0;
       let hasError = false;
       
-      Array.from(files).forEach(file => {
-        if (!hasError) {
-          const formData = new FormData();
-          formData.append('file', file);
+      for (const file of files) {
+        if (hasError) break;
+        
+        try {
+          const data = await module2API.uploadBatch(file);
           
-          fetch(`${this.API_BASE_URL}/video_analysis/module2/uploads`, {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('上传失败');
+          if(data.status === "success") {
+            completed++;
+            resultArea.innerHTML = `<p style="color: #666; text-align: center;">已完成 ${completed}/${files.length} 个视频分析...</p>`;
+            
+            if (completed === files.length) {
+              resultArea.innerHTML += `<p style="color: green; text-align: center;">批量分析完成</p>`;
+              this.loadHistory();
             }
-            return response.json();
-          })
-          .then(data => {
-            if(data.status === "success") {
-              completed++;
-              resultArea.innerHTML = `<p style="color: #666; text-align: center;">已完成 ${completed}/${files.length} 个视频分析...</p>`;
-              
-              if (completed === files.length) {
-                resultArea.innerHTML += `<p style="color: green; text-align: center;">批量分析完成</p>`;
-                this.loadHistory();
-              }
-            } else {
-              throw new Error(data.error || '上传失败');
-            }
-          })
-          .catch(error => {
-            console.error('上传失败:', error);
-            hasError = true;
-            resultArea.innerHTML = `<p style="color:red">分析失败: ${file.name} - ${error.message}</p>`;
-          });
+          } else {
+            throw new Error(data.error || '上传失败');
+          }
+        } catch (error) {
+          console.error('上传失败:', error);
+          hasError = true;
+          resultArea.innerHTML = `<p style="color:red">分析失败: ${file.name} - ${error.message}</p>`;
         }
-      });
+      }
     },
     getVideoUrl(videoName) {
-      return `/static/videos/${videoName}`;
+      return module2API.getExampleVideoUrl(videoName);
     },
     analyzeExample(videoName) {
       this.handleExampleVideo(videoName);
@@ -469,7 +429,7 @@ export default {
       resultArea.innerHTML = `<p style="color: #666; text-align: center;">正在准备示例视频分析...</p>`;
       
       try {
-        const videoPath = `/static/videos/${videoName}`;
+        const videoPath = module2API.getExampleVideoUrl(videoName);
         const response = await fetch(videoPath);
         if (!response.ok) throw new Error('无法加载示例视频');
         

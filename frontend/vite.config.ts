@@ -27,10 +27,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/rumor/, '')
       },
-      '/video_analysis': {
+      // 添加视频分析服务代理
+      '/video-analysis': {
         target: 'http://localhost:8003',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/video_analysis/, '')
+        rewrite: (path) => path.replace(/^\/video-analysis/, '')
       }
     },
     watch: {
