@@ -104,7 +104,7 @@
                   </h5>
                 </div>
                 <div class="card-body">
-                  <!-- 检测中状态 - 新增的进度模拟 -->
+                  <!-- 检测中状态 -->
                   <div v-if="isLoading" class="result-loading text-center py-5">
                     <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;">
                       <span class="visually-hidden">检测中...</span>
@@ -205,7 +205,7 @@
                     <div class="example-content">
                       <p>
                         【#台风韦帕登陆范围再次西移#：将在广东珠海到海南文昌一带沿海登陆】#台风韦帕6级风圈直径超900公里#中央气象台7月19日18时发布台风橙色预警...</p>
-                      <img src="/examples/example1.jpg" alt="example1" style="max-width:50px; max-height:50px">
+                      <img src="/examples/rumor/example1.jpg" alt="example1" style="max-width:50px; max-height:50px">
                     </div>
                   </div>
 
@@ -220,7 +220,7 @@
                     <div class="example-content">
                       <p>
                         韩国非遗翻车大快人心！泡菜祖宗在中国，证据甩脸上还嘴硬？申遗变"申遗"（遗臭万年），干脆再申个"碰瓷非遗"算了！联合国干得漂亮...</p>
-                      <img src="/examples/example2.jpg" alt="example2" style="max-width:50px; max-height:50px">
+                      <img src="/examples/rumor/example2.jpg" alt="example2" style="max-width:50px; max-height:50px">
                     </div>
                   </div>
 
@@ -235,7 +235,52 @@
                     <div class="example-content">
                       <p>
                         #武汉女孩远嫁非洲后生活艰难#说句实在的，每个人选的路，哭着也得走完，这话糙理不糙。就像那位远嫁非洲的武汉女孩，不管当初是被爱情冲昏头...</p>
-                      <img src="/examples/example3.jpg" alt="example3" style="max-width:50px; max-height:50px">
+                      <img src="/examples/rumor/example3.jpg" alt="example3" style="max-width:50px; max-height:50px">
+                    </div>
+                  </div>
+
+                  <!-- 样例4 -->
+                  <div class="example-item">
+                    <div class="example-header">
+                      <h6>MH370飞机残骸被发现</h6>
+                      <button class="btn btn-sm btn-outline-primary" @click="useExample(3)">
+                        点击使用此示例
+                      </button>
+                    </div>
+                    <div class="example-content">
+                      <p>
+                        #真相大白？MH370的飞机残骸“在印度洋海底的这个位置”# MH370航班正在印度洋海底一个未被探测到的地点——一部关于失踪飞机的新纪录片声称。2014年3月8日...</p>
+                      <img src="/examples/rumor/example4.jpg" alt="example4" style="max-width:50px; max-height:50px">
+                    </div>
+                  </div>
+
+                  <!-- 样例5 -->
+                  <div class="example-item">
+                    <div class="example-header">
+                      <h6>奥迪公司3D打印经典赛车模型</h6>
+                      <button class="btn btn-sm btn-outline-primary" @click="useExample(4)">
+                        点击使用此示例
+                      </button>
+                    </div>
+                    <div class="example-content">
+                      <p>
+                        【奥迪公司3D打印1936年C版经典赛车模型】近日，奥迪模具利用3D打印技术按照1:2的比例仿制了Auto Union在1936年推出的C版赛车...</p>
+                      <img src="/examples/rumor/example5.jpg" alt="example5" style="max-width:50px; max-height:50px">
+                    </div>
+                  </div>
+
+                  <!-- 样例6 -->
+                  <div class="example-item">
+                    <div class="example-header">
+                      <h6>育儿补贴免征个人所得税</h6>
+                      <button class="btn btn-sm btn-outline-primary" @click="useExample(5)">
+                        点击使用此示例
+                      </button>
+                    </div>
+                    <div class="example-content">
+                      <p>
+                        #育儿补贴免征个人所得税#【转发了解！#育儿补贴标准#】今天，#育儿补贴制度实施方案发布#。《实施方案》明确，建立实施育儿补贴制度...</p>
+                      <img src="/examples/rumor/example6.jpg" alt="example6" style="max-width:50px; max-height:50px">
                     </div>
                   </div>
                 </div>
@@ -309,10 +354,7 @@ const riskLevelClass = computed(() => {
 
 const statusClass = computed(() => {
   if (!detectionResult.value) return ''
-  const confidence = detectionResult.value.confidence * 100
-  if (confidence < 30) return 'rumor'
-  if (confidence > 70) return 'truth'
-  return 'uncertain'
+  return detectionResult.value.is_rumor ? 'rumor' : 'truth'
 })
 
 const statusIcon = computed(() => {
@@ -445,17 +487,32 @@ const examples: ExampleData[] = [
   {
     title: "台风韦帕登陆范围再次西移",
     text: "【#台风韦帕登陆范围再次西移#：将在广东珠海到海南文昌一带沿海登陆】#台风韦帕6级风圈直径超900公里#中央气象台7月19日18时发布台风橙色预警：预计，\"韦帕\"将以每小时30公里左右的速度向西偏北方向快速移动，强度继续加强，向广东珠海到海南文昌一带沿海靠近，并将于20日下午至夜间在上述沿海登陆（13～14级，38～45米/秒，台风级或强台风级），以后穿过广东雷州半岛，21日白天移入北部湾海面，随后趋向越南北部沿海。与今天稍早前中央气象台台风预警提到的\"向广东深圳到海南文昌一带沿海靠近\"相比，登陆预测范围西移。#广东人台风天非必要不出门#",
-    imageUrl: "/examples/example1.jpg"
+    imageUrl: "/examples/rumor/example1.jpg"
   },
   {
     title: "韩国申遗全面溃败",
     text: "韩国申遗全面溃败\n\n韩国非遗翻车大快人心！泡菜祖宗在中国，证据甩脸上还嘴硬？申遗变\"申遗\"（遗臭万年），干脆再申个\"碰瓷非遗\"算了！联合国干得漂亮，建议下次把韩剧\"抄袭中国古装\"也查查。笑死，泡菜菌群检测直接认祖归宗，韩国网友破防现场。要不再申个\"宇宙起源\"吧，反正按他们的逻辑，全宇宙都是韩国的！\n\n韩国5项非遗项目因证据不足面临撤销，泡菜文化、燃灯会、端午祭被列入审查名单。中国提交137项实证，揭露其文化溯源问题。韩国可能需支付2.3亿美元补偿金，并被列入\"文化诚信观察名单\"。网友和学者批评韩国文化断层及申遗材料造假。此前榫卯、儒学书院等申遗也曾引发争议。真正的文化遗产无需\"碰瓷\"，历史自会证明。#韩国申遗全面溃败##热点观点#",
-    imageUrl: "/examples/example2.jpg"
+    imageUrl: "/examples/rumor/example2.jpg"
   },
   {
     title: "武汉女孩远嫁非洲后生活艰难",
     text: "#武汉女孩远嫁非洲后生活艰难#说句实在的，每个人选的路，哭着也得走完，这话糙理不糙。就像那位远嫁非洲的武汉女孩，不管当初是被爱情冲昏头，还是对远方有不切实际的幻想，既然做了选择，就得扛住随之而来的难。\n\n生活从不会因为\"我没想到\"就手下留情。远嫁前，哪怕花点时间查查当地的生活习惯、经济水平，问问去过的人，也不至于把日子过得太狼狈。可要是闭着眼往前冲，把婚姻当赌局，那输了就得认。文化差异不是小事，语言不通、饮食不惯、没朋友没依靠，这些难题不会凭空消失，都是当初拍板时没掂量清楚的代价。\n\n有人可能会说\"太狠心\"，但现实就是这么回事。就像有人明知道熬夜伤身体还天天熬，生病了能怪谁？有人借钱炒股想暴富，亏了能赖市场吗？选择和代价从来都是绑在一起的，你选了它的甜，就得接得住它的苦。\n\n当然，说这些不是看笑话，而是想让人明白：做选择时别偷懒，多想想最坏的结果能不能扛。真选错了也别死扛，及时止损也是种本事。但不管怎么说，自己选的路，代价总得自己付------这不是惩罚，是生活教我们长大的学费。",
-    imageUrl: "/examples/example3.jpg"
+    imageUrl: "/examples/rumor/example3.jpg"
+  },
+  {
+    title: "MH370飞机残骸被发现",
+    text: "#真相大白？MH370的飞机残骸“在印度洋海底的这个位置”# MH370航班正在印度洋海底一个未被探测到的地点——一部关于失踪飞机的新纪录片声称。2014年3月8日，马来西亚航空公司(Malaysia Airlines) MH370航班在从吉隆坡飞往北京的例行飞行途中偏离航线，向南飞越印度洋，直到燃油耗尽。机上共有227名乘客和12名机组人员。马来西亚调查人员7月份对失踪事件的最终报告得出结论:\"小组无法确定MH370失踪的真正原因。\"他们还表示:\"没有足够的信息来确定飞机是在空中解体，还是在与海洋相撞的过程中解体。\"\n\n不过，国家地理频道(National Geographic)将于周四播放的一部新纪录片称，这架飞机正等待在仍未被探测到的第七弧搜索区域的38.6万平米区域被发现。MH370专家说他们知道失踪的飞机在哪里。根据数百名调查人员收集的数据，这部纪录片揭示了MH370残骸在弧线上被发现后的样子。\"残骸将会伸展到数千码之外，发动机将是一体的，机身将是数千个，\"制片人说。\"附近的黑匣子会显示驾驶舱里是否有人在最后，紧急氧气瓶可能会显示飞机在飞行中是否减压，不管是有意的还是意外的结果，个人电子设备可能会显示乘客和机组人员的经历和命运。\"调查人员早就知道，这架飞机在澳大利亚西部的第七弧线附近坠毁。一个CGI图像显示海洋排水和失踪的MH370碎片。调查人员相信残骸会被发现在很近的地方。残骸将为失踪飞机的下落提供重要线索。他们通过观察这架飞机在2014年3月8日的最后一次飞行，然后研究印度洋上的一个大搜索区域得出了这个结论，该区域部分是根据飞机滑行的距离来确定的。这个位置在南纬39度到36度之间，沿着第七弧线，但在搜寻中没有发现任何东西。去年12月，他们认为在南纬32至36度南纬2.5万公里的区域是合适的观测地点。在去年12月划定的新区域内，他们已经将范围大大缩小到向南35度附近的一个相对较小的区域。CSIRO最近的一项研究加强了科学家们的信心，他们相信这就是飞机可能被发现的地方。调查人员相信黑匣子是完好的。总部位于美国的Ocean Infinity一直在使用一艘深海船只来勘测南印度洋的大片海域。\n\n最初的搜索集中在南中国海，然后分析显示飞机出人意料地向西然后向南转弯。澳大利亚协调代表马来西亚的官方搜索搜遍了46000平方英里，耗资2亿澳元，于2017年结束。今年5月，澳大利亚表示，尽管最后一次由私人出资进行的海底搜索即将结束，但仍有希望找到MH370航班。澳大利亚、马来西亚和中国在2016年同意，只有在这三个国家有可靠证据表明具体的残骸位置时，官方才会恢复搜索。\n\n这架失踪的飞机是航空史上最大的谜团之一，自失踪以来，调查人员一直目瞪口呆。该纪录片还声称，这架波音(Boeing) 777客机在坠入致命漩涡时仍完好无损。但搜寻MH370真相的人认为，这架飞机可能仍然完好无损。今年8月，在从柬埔寨丛林拍摄的谷歌地图图像中发现了一架大小类似的飞机后，对失踪飞机展开了新的搜索。地图:MH370于2014年失踪。失踪:为那些失去亲人的人祈祷。上周，每日星报在线独家披露了这架飞机从雷达上消失前发送给飞行员的最后一条信息。在那之后，飞行员的姐姐声称她的哥哥说话含糊不清。\n\n从僵尸飞行假说到对恐怖袭击的恐惧，再到弗拉基米尔•普京(Vladimir Putin)绑架甚至外星人参与等更离奇的说法，有很多理论可以解释这架注定要坠毁的航班可能发生的情况。",
+    imageUrl: "/examples/rumor/example4.jpg"
+  },
+  {
+    title: "奥迪公司3D打印经典赛车模型",
+    text: "【奥迪公司3D打印1936年C版经典赛车模型】近日，奥迪模具利用3D打印技术按照1:2的比例仿制了Auto Union在1936年推出的C版赛车，奥迪模具3D打印的这个模具的原型是Silver Arrow，虽然是1：2的比例，看起来比原车型小了一倍，但仍然能够坐下一名司机。其中的所有金属部件都是3D打印而成的。",
+    imageUrl: "/examples/rumor/example5.jpg"
+  },
+  {
+    title: "某明星被曝代孕弃养",
+    text: "#育儿补贴免征个人所得税#【转发了解！#育儿补贴标准#】今天，#育儿补贴制度实施方案发布#。《实施方案》明确，建立实施育儿补贴制度：①从2025年1月1日起，对符合法律法规规定生育的3周岁以下婴幼儿发放补贴，至其年满3周岁。②育儿补贴按年发放，现阶段国家基础标准为每孩每年3600元。其中，对2025年1月1日之前出生、不满3周岁的婴幼儿，按应补贴月数折算计发补贴。③对按照育儿补贴制度规定发放的育儿补贴免征个人所得税。在最低生活保障对象、特困人员等救助对象认定时，育儿补贴不计入家庭或个人收入。（总台央视记者杨阳 史迎春）",
+    imageUrl: "/examples/rumor/example6.jpg"
   }
 ];
 
@@ -685,7 +742,7 @@ textarea:focus {
 
 .ms-3 {
   text-align: center;
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 
 .mb-1 {
