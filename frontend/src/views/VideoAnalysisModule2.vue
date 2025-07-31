@@ -25,7 +25,7 @@
                       display: flex; flex-direction: column; justify-content: center; 
                       align-items: center; cursor: pointer; box-sizing: border-box;"
                     for="singleVideoInput">
-                    <p>点击或拖放视频文件，,支持mp4，avi格式，最大500MB</p>
+                    <p>点击或拖放视频文件，支持mp4，avi格式，最大500MB</p>
                     <input type="file" id="singleVideoInput" style="display: none;" accept="video/*" @change="handleSingleUpload">
                   </label>
                 </div>
@@ -38,7 +38,7 @@
                       display: flex; flex-direction: column; justify-content: center; 
                       align-items: center; cursor: pointer; box-sizing: border-box;"
                     for="multiVideoInput">
-                    <p>点击或拖放多个视频，,支持mp4，avi格式，最大500MB</p>
+                    <p>点击或拖放多个视频，支持mp4，avi格式，最大500MB</p>
                     <input type="file" id="multiVideoInput" style="display: none;" accept="video/*" multiple @change="handleMultiUpload">
                   </label>
                 </div>
@@ -51,10 +51,23 @@
                   <h4>语义分析结果</h4>
                   <div style="flex: 1; padding: 15px; display: flex; flex-direction: column;">
                     <div id="semanticResult" style="flex: 1; border: 1px solid #eee; border-radius: 5px; padding: 15px; overflow-y: auto; background: #f9f9f9;">
-                      <p style="color: #999; text-align: center;">请上传视频获取语义分析结果</p>
+                      <div v-if="isAnalyzing" style="text-align: center;">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p style="margin-top: 10px;">正在分析中，请稍候...</p>
+                      </div>
+                      <p v-else-if="!currentResult.semanticText" style="color: #999; text-align: center;">请上传视频获取语义分析结果</p>
+                      <div v-else>
+                        <div style="margin-bottom: 10px;">
+                          <strong style="color: #0056b3;">分析结果：</strong>
+                          <p style="white-space: pre-wrap;">{{ currentResult.semanticText }}</p>
+                        </div>
+                      </div>
                     </div>
                     <div id="videoMeta" style="margin-top: 15px; color: #666; font-size: 0.9em;">
-                      <!-- Video metadata will be displayed here dynamically -->
+                      <p v-if="currentResult.videoName">视频名称: {{ currentResult.videoName }}</p>
+                      <p v-if="currentResult.analysisDate">分析时间: {{ currentResult.analysisDate }}</p>
                     </div>
                   </div>
                 </div>
@@ -67,7 +80,11 @@
                   </div>
                   <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <div id="latestRecord" style="text-align: center; color: #666;">
-                      <p>暂无分析记录</p>
+                      <p v-if="historyData.length === 0">暂无分析记录</p>
+                      <div v-else>
+                        <p><strong>{{ latestRecord.filename }}</strong></p>
+                        <p>{{ latestRecord.date }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -228,11 +245,17 @@ export default {
     return {
       historyData: [],
       searchQuery: '',
+      currentResult: {
+        semanticText: '',
+        videoName: '',
+        analysisDate: ''
+      },
       currentDetail: {
         filename: '',
         semantic_text: '',
         date: ''
       },
+      isAnalyzing: false, // 新增分析状态
       historyModal: null,
       detailModal: null
     };
@@ -247,6 +270,9 @@ export default {
         item.filename.toLowerCase().includes(query) ||
         item.date.includes(query)
       );
+    },
+    latestRecord() {
+      return this.historyData.length > 0 ? this.historyData[this.historyData.length - 1] : {};
     }
   },
   mounted() {
@@ -255,25 +281,20 @@ export default {
     this.loadHistory();
   },
   methods: {
+    resetResults() {
+      this.currentResult = {
+        semanticText: '',
+        videoName: '',
+        analysisDate: ''
+      };
+    },
+
     async loadHistory() {
       try {
         const data = await module2API.getHistory();
         this.historyData = data;
-        this.updateLatestRecord();
       } catch (error) {
         console.error('加载历史记录失败:', error);
-      }
-    },
-    updateLatestRecord() {
-      const latestRecord = document.getElementById('latestRecord');
-      if (this.historyData.length > 0) {
-        const latest = this.historyData[this.historyData.length - 1];
-        latestRecord.innerHTML = `
-          <p><strong>${latest.filename}</strong></p>
-          <p>${latest.date}</p>
-        `;
-      } else {
-        latestRecord.innerHTML = '<p>暂无分析记录</p>';
       }
     },
     showHistoryModal() {
@@ -354,42 +375,31 @@ export default {
       }
     },
     async handleFileUpload(file, isSingle) {
-      const resultArea = document.getElementById('semanticResult');
-      const metaArea = document.getElementById('videoMeta');
-      
-      resultArea.innerHTML = `<p style="color: #666; text-align: center;">正在分析视频: ${file.name}...</p>`;
+      this.isAnalyzing = true;
+      this.resetResults();
+      this.currentResult.videoName = file.name;
       
       try {
         const data = await module2API.uploadSingle(file);
         
         if(data.status === "success") {
-          // Display semantic analysis results
-          resultArea.innerHTML = `
-            <div style="margin-bottom: 10px;">
-              <strong style="color: #0056b3;">分析结果：</strong>
-              <p style="white-space: pre-wrap;">${data.result.semantic_text}</p>
-            </div>
-          `;
+          this.currentResult.semanticText = data.result.semantic_text;
+          this.currentResult.analysisDate = new Date().toLocaleString();
           
-          // Display metadata
-          metaArea.innerHTML = `
-            <p>视频名称: ${file.name}</p>
-            <p>分析时间: ${new Date().toLocaleString()}</p>
-          `;
-          
-          // Reload history
           this.loadHistory();
         } else {
           throw new Error(data.error || '上传失败');
         }
       } catch (error) {
         console.error('上传失败:', error);
-        resultArea.innerHTML = `<p style="color:red">分析失败: ${error.message}</p>`;
+        this.currentResult.semanticText = `分析失败: ${error.message}`;
+      } finally {
+        this.isAnalyzing = false;
       }
     },
     async handleBatchUpload(files) {
-      const resultArea = document.getElementById('semanticResult');
-      resultArea.innerHTML = `<p style="color: #666; text-align: center;">开始批量上传 ${files.length} 个视频...</p>`;
+      this.resetResults();
+      this.currentResult.semanticText = `开始批量上传 ${files.length} 个视频...`;
       
       let completed = 0;
       let hasError = false;
@@ -402,10 +412,10 @@ export default {
           
           if(data.status === "success") {
             completed++;
-            resultArea.innerHTML = `<p style="color: #666; text-align: center;">已完成 ${completed}/${files.length} 个视频分析...</p>`;
+            this.currentResult.semanticText = `已完成 ${completed}/${files.length} 个视频分析...`;
             
             if (completed === files.length) {
-              resultArea.innerHTML += `<p style="color: green; text-align: center;">批量分析完成</p>`;
+              this.currentResult.semanticText += `\n批量分析完成`;
               this.loadHistory();
             }
           } else {
@@ -414,7 +424,7 @@ export default {
         } catch (error) {
           console.error('上传失败:', error);
           hasError = true;
-          resultArea.innerHTML = `<p style="color:red">分析失败: ${file.name} - ${error.message}</p>`;
+          this.currentResult.semanticText = `分析失败: ${file.name} - ${error.message}`;
         }
       }
     },
@@ -425,8 +435,9 @@ export default {
       this.handleExampleVideo(videoName);
     },
     async handleExampleVideo(videoName) {
-      const resultArea = document.getElementById('semanticResult');
-      resultArea.innerHTML = `<p style="color: #666; text-align: center;">正在准备示例视频分析...</p>`;
+      this.isAnalyzing = true;
+      this.resetResults();
+      this.currentResult.semanticText = '正在准备示例视频分析...';
       
       try {
         const videoPath = module2API.getExampleVideoUrl(videoName);
@@ -436,12 +447,15 @@ export default {
         const blob = await response.blob();
         const file = new File([blob], videoName, { type: blob.type });
         
-        resultArea.innerHTML = `<p style="color: #666; text-align: center;">正在分析示例视频: ${videoName}...</p>`;
+        this.currentResult.videoName = videoName;
+        this.currentResult.semanticText = `正在分析示例视频: ${videoName}...`;
         await this.handleFileUpload(file, true);
         
       } catch (error) {
         console.error('示例视频处理失败:', error);
-        resultArea.innerHTML = `<p style="color:red">示例视频分析失败: ${error.message}</p>`;
+        this.currentResult.semanticText = `示例视频分析失败: ${error.message}`;
+      } finally {
+        this.isAnalyzing = false;
       }
     }
   }
@@ -466,8 +480,6 @@ html, body {
   height: 100%;
   overflow: auto;
 }
-
-
 
 /* Main Content */
 .content {
@@ -620,5 +632,33 @@ th, td {
 
 .btn-delete:hover {
   background: #b86470;
+}
+
+/* Spinner Animation */
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
