@@ -7,9 +7,9 @@
       <!-- 主要内容区域 -->
       <main class="content col-10">
         <div class="content-area">
-            <h2>视频谣言检测</h2>
+            <h2>视频可信度及危害类型检测</h2>
           <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
-          基于先进AI技术的视频内容可信度检测系统，对上传视频进行可信度分析并给出其可信度，越接近100表示越可能为真实视频。
+          基于先进AI技术的视频可信度及危害类型检测系统，对上传视频进行可信度分析并给出其可信度与可能危害类型，可信度越接近100表示可信度越高。
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -57,6 +57,10 @@
                       <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
                         <div id="progressBar" :style="{ width: currentScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
                       </div>
+                      <!-- 新增的视频类别显示行 -->
+                      <div style="font-size: 18px; margin: 10px 0; color: #0056b3;">
+                        潜在危害类别: <span>{{ currentCategory || '--' }}</span>
+                      </div>
                     </div>
                     <div id="resultDetails" style="text-align: center; color: #666;">
                       <p>{{ resultMessage }}</p>
@@ -78,6 +82,7 @@
                       <div v-else>
                         <p><strong>{{ latestRecord.filename }}</strong></p>
                         <p>可信度: {{ latestRecord.score }}%</p>
+                        <p>潜在危害类别: {{ latestRecord.category || '--' }}</p>
                         <p>{{ latestRecord.date }}</p>
                       </div>
                     </div>
@@ -88,7 +93,10 @@
 
             <!-- 示例视频分析区域 -->
             <div class="content-area">
-              <h2>示例视频分析</h2>
+              <h2>示例视频分析
+                <button class="btn btn-primary" style="margin-left: 10px; padding: 5px 10px;" 
+                        @click="showExampleModal">更多示例</button>
+              </h2>
               
               <div class="feature-overview" style="grid-template-columns: repeat(3, 1fr);">
                 <div class="feature-item">
@@ -105,8 +113,8 @@
                       <source :src="getVideoUrl('example3_2_1_T.mp4')" type="video/mp4">
                     </video>
                   </div>
-                  <h4>真实视频示例</h4>
-                  <p>真实视频,上传后可信度分数应高于70%。</p>
+                  <h4>真实无害视频</h4>
+                  <p>真实且无有害信息的视频，可信度应高于70%并未被认定包含有害内容。</p>
                   <button class="btn-primary" @click="analyzeExample('example3_2_1_T.mp4')">分析此示例</button>
                 </div>
                 
@@ -121,12 +129,12 @@
                       style="max-width: 100%; 
                               max-height: 100%;
                               object-fit: contain;">
-                      <source :src="getVideoUrl('example3_2_1_U.mp4')" type="video/mp4">
+                      <source :src="getVideoUrl('example3_2_1_EYYL.mp4')" type="video/mp4">
                     </video>
                   </div>
-                  <h4>可疑视频示例</h4>
-                  <p>无法明确确认真假的视频，上传后可信度分数应介于30%到70%之间。</p>
-                  <button class="btn-primary" @click="analyzeExample('example3_2_1_U.mp4')">分析此示例</button>
+                  <h4>恶意引流视频</h4>
+                  <p>引诱用户点击相关链接或视频以攫取流量的有害视频。</p>
+                  <button class="btn-primary" @click="analyzeExample('example3_2_1_EYYL.mp4')">分析此示例</button>
                 </div>
                 
                 <div class="feature-item">
@@ -140,12 +148,12 @@
                       style="max-width: 100%; 
                               max-height: 100%;
                               object-fit: contain;">
-                      <source :src="getVideoUrl('example3_2_1_F.mp4')" type="video/mp4">
+                      <source :src="getVideoUrl('example3_2_1_WFFZ.mp4')" type="video/mp4">
                     </video>
                   </div>
-                  <h4>虚假视频示例</h4>
-                  <p>虚假视频，上传后可信度分数应低于30%。</p>
-                  <button class="btn-primary" @click="analyzeExample('example3_2_1_F.mp4')">分析此示例</button>
+                  <h4>违法犯罪视频</h4>
+                  <p>涉及违法犯罪手段或思想的有害视频。</p>
+                  <button class="btn-primary" @click="analyzeExample('example3_2_1_WFFZ.mp4')">分析此示例</button>
                 </div>
               </div>
             </div>
@@ -179,6 +187,7 @@
                   <th>提交时间</th>
                   <th>视频名称</th>
                   <th>可信度</th>
+                  <th>类别</th>
                   <th>操作</th>
                 </tr>
               </thead>
@@ -188,6 +197,7 @@
                   <td>{{ item.date }}</td>
                   <td>{{ item.filename }}</td>
                   <td>{{ item.score }}%</td>
+                  <td>{{ item.category || '--' }}</td>
                   <td class="task-actions">
                     <button class="btn-view" @click="showDetailModal(item.id)">查看</button>
                     <button class="btn-delete" @click="deleteRecord(item.id)">删除</button>
@@ -220,9 +230,52 @@
           <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
             <div id="detailProgressBar" :style="{ width: detailScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
           </div>
+          <!-- 新增的类别显示 -->
+          <div style="font-size: 18px; margin: 10px 0; color: #0056b3;">
+            潜在危害类别: <span>{{ detailCategory || '--' }}</span>
+          </div>
           <div id="detailVideoName" style="font-weight: bold; margin-bottom: 10px;">视频: {{ detailVideoName }}</div>
           <div id="detailResultText" style="color: #666;">{{ detailResultText }}</div>
           <div id="detailTimestamp" style="color: #888; margin-top: 15px;">检测时间: {{ detailTimestamp }}</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 示例视频模态框 -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">更多示例视频</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <!-- 示例视频卡片 - 统一灰色样式 -->
+            <div class="col-md-4 mb-4" v-for="(example, index) in exampleVideos" :key="index">
+              <div class="card h-100">
+                <div style="height: 200px; overflow: hidden; background: #000;">
+                  <video controls style="width: 100%; height: 100%; object-fit: contain;">
+                    <source :src="getVideoUrl(example.filename)" type="video/mp4">
+                  </video>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">{{ example.title }}</h5>
+                  <p class="card-text">{{ example.description }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">
+                      {{ example.type === 'true' ? '真实' : example.type === 'unverified' ? '可疑' : '虚假' }}
+                    </span>
+                    <button class="btn btn-sm btn-primary" @click="analyzeExample(example.filename)">分析</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
@@ -247,15 +300,56 @@ export default {
       historyData: [],
       searchQuery: '',
       currentScore: '--',
+      currentCategory: '',
       currentVideoName: '',
       currentDate: '',
       resultMessage: '请上传视频进行检测',
       detailScore: '--',
+      detailCategory: '',
       detailVideoName: '',
       detailResultText: '',
       detailTimestamp: '',
       historyModal: null,
-      detailModal: null
+      detailModal: null,
+      exampleModal: null,
+      exampleVideos: [
+        {
+          filename: 'example3_2_1_WCNBL.mp4',
+          title: '未成年不良视频',
+          description: '包含未成年人不良行为或易对未成年人造成负面影响的有害视频',
+          type: 'true'
+        },
+        {
+          filename: 'example3_2_1_PHSHWD.mp4',
+          title: '破坏社会稳定视频',
+          description: '捏造，鼓动，宣传反党反社会言论思想与行为的有害视频',
+          type: 'true'
+        },
+        {
+          filename: 'example3_2_1_SQDS.mp4',
+          title: '色情低俗视频',
+          description: '包含擦边色情性暗示等信息的有害视频',
+          type: 'unverified'
+        },
+        {
+          filename: 'example3_2_1_XXBL.mp4',
+          title: '血腥暴力视频',
+          description: '包含血腥，暴力，猎奇等引起用户观感不适的有害视频',
+          type: 'fake'
+        },
+        {
+          filename: 'example3_2_1_DBZP.mp4',
+          title: '赌博诈骗视频',
+          description: '宣传赌博诈骗相关信息或引诱用户参与赌博诈骗行为的有害视频',
+          type: 'fake'
+        },
+        {
+          filename: 'example3_2_1_WGYX.mp4',
+          title: '违规营销视频',
+          description: '通过虚假宣传等手段欺骗误导消费者购买使用其产品的有害视频',
+          type: 'fake'
+        }
+      ]
     };
   },
   computed: {
@@ -266,7 +360,8 @@ export default {
       const query = this.searchQuery.toLowerCase();
       return this.historyData.filter(item => 
         item.filename.toLowerCase().includes(query) ||
-        item.date.includes(query)
+        item.date.includes(query) ||
+        (item.category && item.category.toLowerCase().includes(query))
       );
     },
     latestRecord() {
@@ -276,9 +371,19 @@ export default {
   mounted() {
     this.historyModal = new Modal(document.getElementById('historyModal'));
     this.detailModal = new Modal(document.getElementById('historyDetailModal'));
+    this.exampleModal = new Modal(document.getElementById('exampleModal'));
     this.loadHistory();
   },
   methods: {
+    // 新增方法：重置结果显示区域
+    resetResults() {
+      this.currentScore = '--';
+      this.currentCategory = '';
+      this.currentVideoName = '';
+      this.currentDate = '';
+      this.resultMessage = '请上传视频进行检测';
+    },
+
     async loadHistory() {
       try {
         const data = await module1API.getHistory();
@@ -289,6 +394,9 @@ export default {
     },
     showHistoryModal() {
       this.historyModal.show();
+    },
+    showExampleModal() {
+      this.exampleModal.show();
     },
     async showDetailModal(id) {
       try {
@@ -306,6 +414,7 @@ export default {
         }
         
         this.detailScore = record.score;
+        this.detailCategory = record.category || '';
         this.detailVideoName = record.filename;
         
         if(record.score > 70) this.detailResultText = '内容可信度较高';
@@ -368,6 +477,8 @@ export default {
       }
     },
     async handleFileUpload(file, isSingle) {
+      // 重置结果区域
+      this.resetResults();
       this.resultMessage = isSingle ? `正在分析视频: ${file.name}...` : '';
       
       try {
@@ -375,6 +486,7 @@ export default {
         
         if(data.status === "success") {
           this.currentScore = data.result.score;
+          this.currentCategory = data.result.category || '';
           
           if(data.result.score > 70) this.resultMessage = '内容可信度较高';
           else if(data.result.score > 30) this.resultMessage = '内容存在可疑之处';
@@ -393,6 +505,8 @@ export default {
       }
     },
     async handleBatchUpload(files) {
+      // 重置结果区域
+      this.resetResults();
       this.resultMessage = `开始批量上传 ${files.length} 个视频...`;
       
       let completed = 0;
@@ -427,8 +541,11 @@ export default {
     },
     analyzeExample(videoName) {
       this.handleExampleVideo(videoName);
+      this.exampleModal.hide();
     },
     async handleExampleVideo(videoName) {
+      // 重置结果区域
+      this.resetResults();
       this.resultMessage = '正在准备示例视频分析...';
       
       try {
@@ -470,7 +587,6 @@ html, body {
   overflow: auto;
 }
 
-
 /* Main Content */
 .content {
   flex: 1;
@@ -484,9 +600,9 @@ html, body {
   width: 100%;
   height: 100%;
   background: white;
-  border-radius: 12px;  /* 改为12px圆角 */
+  border-radius: 12px;
   margin: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);  /* 保持原有阴影 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   overflow-y: auto;
 }
 
@@ -496,25 +612,14 @@ html, body {
   font-size: 2em;
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .content-area p {
   color: #666;
   font-size: 1.1em;
   line-height: 1.6;
-}
-
-.task-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.task-header .d-flex {
-  width: 100%;
-  justify-content: space-between;
 }
 
 /* Feature Items */
@@ -557,70 +662,210 @@ html, body {
   padding: 10px 16px;
   border-radius: 5px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .btn-primary:hover {
-  background: #4875b0;
+  background: #2a6fc9;
 }
 
-/* Task Table */
-.task-table-wrapper {
-  max-height: 600px;
-  overflow-y: auto;
+/* Example Video Cards */
+.card {
   border: 1px solid #ddd;
-  max-height: calc(100vh - 300px);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-table {
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card-body {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  color: #0056b3;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.card-text {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+  flex: 1;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+/* 历史记录表格样式 - 新增 */
+.task-table-wrapper {
+  width: 100%;
+  overflow-x: hidden; /* 移除横向滚动 */
+}
+
+.history-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* 固定表格布局 */
 }
 
-thead {
-  position: sticky;
-  top: 0;
-  background: #f1f1f1;
-  z-index: 10;
+.history-table th, 
+.history-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  word-wrap: break-word; /* 允许长单词换行 */
 }
 
-th, td {
-  padding: 16px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 18px;
+.history-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
 }
 
+.history-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* 操作按钮样式 */
 .task-actions {
   display: flex;
   gap: 8px;
-  justify-content: center;
-}
-
-.task-actions button {
-  font-size: 16px;
-  padding: 10px 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 5px;
-  transition: 0.3s;
 }
 
 .btn-view {
-  background: #5e9dc8;
+  background: #28a745;
   color: white;
-}
-
-.btn-view:hover {
-  background: #4c87b0;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .btn-delete {
-  background: #d27b85;
+  background: #dc3545;
   color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.btn-delete:hover {
-  background: #b86470;
+/* 列宽设置 */
+.history-table th:nth-child(1),
+.history-table td:nth-child(1) {
+  width: 8%;
+}
+
+.history-table th:nth-child(2),
+.history-table td:nth-child(2) {
+  width: 20%;
+}
+
+.history-table th:nth-child(3),
+.history-table td:nth-child(3) {
+  width: 25%;
+}
+
+.history-table th:nth-child(4),
+.history-table td:nth-child(4) {
+  width: 12%;
+}
+
+.history-table th:nth-child(5),
+.history-table td:nth-child(5) {
+  width: 15%;
+}
+
+.history-table th:nth-child(6),
+.history-table td:nth-child(6) {
+  width: 20%;
+}
+
+/* Responsive Grid */
+@media (max-width: 992px) {
+  .feature-overview {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  /* 在小屏幕下调整表格列宽 */
+  .history-table th:nth-child(1),
+  .history-table td:nth-child(1) {
+    width: 10%;
+  }
+  
+  .history-table th:nth-child(2),
+  .history-table td:nth-child(2) {
+    width: 25%;
+  }
+  
+  .history-table th:nth-child(3),
+  .history-table td:nth-child(3) {
+    width: 30%;
+  }
+  
+  .history-table th:nth-child(4),
+  .history-table td:nth-child(4),
+  .history-table th:nth-child(5),
+  .history-table td:nth-child(5) {
+    width: 15%;
+  }
+  
+  .history-table th:nth-child(6),
+  .history-table td:nth-child(6) {
+    width: 25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-overview {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .content-area {
+    padding: 20px;
+  }
+  
+  /* 在更小的屏幕下隐藏某些列 */
+  .history-table th:nth-child(2),
+  .history-table td:nth-child(2),
+  .history-table th:nth-child(5),
+  .history-table td:nth-child(5) {
+    display: none;
+  }
+  
+  /* 调整剩余列的宽度 */
+  .history-table th:nth-child(1),
+  .history-table td:nth-child(1) {
+    width: 15%;
+  }
+  
+  .history-table th:nth-child(3),
+  .history-table td:nth-child(3) {
+    width: 40%;
+  }
+  
+  .history-table th:nth-child(4),
+  .history-table td:nth-child(4) {
+    width: 20%;
+  }
+  
+  .history-table th:nth-child(6),
+  .history-table td:nth-child(6) {
+    width: 25%;
+  }
 }
 </style>
