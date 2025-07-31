@@ -1,11 +1,12 @@
 <template>
-  <div class="container-fluid">
-    <div class="row d-flex flex-nowrap">
-      <!-- 侧边栏 -->
+  <div class="ai-detection-layout">
+    <!-- 侧边栏 -->
+    <aside class="layout-sidebar">
       <Sidebar />
-      
-      <!-- 主要内容区域 -->
-      <main class="content col-10">
+    </aside>
+    
+    <!-- 主要内容区域 -->
+    <main class="layout-main">
         <div class="content-area">
           <h2>AI图像检测</h2>
           <p class="description">上传图像文件，使用先进的AI技术检测图像是否为人工智能生成</p>
@@ -463,8 +464,7 @@
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -1040,7 +1040,52 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* 全局轮播样式 - 不使用 scoped */
+/* 新的统一布局系统 */
+.ai-detection-layout {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 70px); /* 减去导航栏高度 */
+}
+
+.layout-sidebar {
+  flex: 0 0 240px; /* 固定宽度 */
+  background: rgb(227, 236, 250);
+}
+
+.layout-main {
+  flex: 1;
+  padding: 20px;
+  background: #f5f7fa;
+  /* 不设置任何 overflow 属性，让页面自然滚动 */
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .layout-sidebar {
+    flex: 0 0 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-detection-layout {
+    flex-direction: column;
+  }
+  
+  .layout-sidebar {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  
+  .layout-main {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .layout-main {
+    padding: 10px;
+  }
+}
 </style>
 
 <style>
@@ -1111,11 +1156,11 @@ export default defineComponent({
   padding: 0;
 }
 
-.content {
+.content-legacy {
   flex: 1;
   padding: 30px;
   background: #f5f7fa;
-  overflow-y: auto;
+  /* 移除 overflow-y: auto，使用页面级滚动 */
 }
 
 .ai-image-detection {
@@ -1350,7 +1395,7 @@ export default defineComponent({
 .image-carousel {
   display: flex;
   gap: 1rem;
-  overflow-x: auto;
+  overflow-x: hidden;
   padding: 1rem 0;
   scroll-behavior: smooth;
 }

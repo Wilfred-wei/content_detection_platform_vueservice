@@ -4,8 +4,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="/">
-          <img src="/static/images/logo_temp.png" alt="Logo" style="max-width: 50px; max-height: 50px;" />
-          <div class="nav-title">多模态数据分类平台</div>
+          <div class="nav-title">多模态数据分类系统</div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
@@ -27,7 +26,6 @@
 </template>
 
 <script setup lang="ts">
-// 无需额外逻辑
 </script>
 
 <style>
@@ -38,22 +36,18 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 html, body {
   width: 100%;
   height: 100%;
-  overflow: auto;
 }
 
 .app {
   min-height: 100vh;
 }
 
-/* 导航栏样式复制自Django版本 */
+/* 导航栏，复制自Django版本 */
 .navbar {
   background: white;
   display: flex;

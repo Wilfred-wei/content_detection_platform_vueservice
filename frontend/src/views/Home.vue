@@ -1,11 +1,12 @@
 <template>
-  <div class="container-fluid">
-    <div class="row d-flex flex-nowrap">
-      <!-- 侧边栏 -->
+  <div class="page-layout">
+    <!-- 侧边栏 -->
+    <aside class="layout-sidebar">
       <Sidebar />
-      
-      <!-- 主要内容区域 -->
-      <main class="content col-10">
+    </aside>
+    
+    <!-- 主要内容区域 -->
+    <main class="layout-main">
         <div class="welcome-content">
           <h1>多模态数据分类平台</h1>
           <p class="lead">欢迎使用多模态数据分类平台，请从左侧菜单选择功能模块</p>
@@ -28,8 +29,7 @@
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -38,6 +38,52 @@ import Sidebar from '../components/Sidebar.vue'
 </script>
 
 <style scoped>
+/* 统一布局系统 */
+.page-layout {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 70px);
+}
+
+.layout-sidebar {
+  flex: 0 0 240px;
+  background: rgb(227, 236, 250);
+}
+
+.layout-main {
+  flex: 1;
+  padding: 20px;
+  background: #f5f7fa;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .layout-sidebar {
+    flex: 0 0 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+  }
+  
+  .layout-sidebar {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  
+  .layout-main {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .layout-main {
+    padding: 10px;
+  }
+}
+
 /* 主页样式完全复制自Django版本 */
 .container-fluid {
   padding: 0;
@@ -51,11 +97,11 @@ import Sidebar from '../components/Sidebar.vue'
 }
 
 /* 主要内容区域 */
-.content {
+.content-legacy {
   flex: 1;
   padding: 30px;
   background: #f5f7fa;
-  overflow-y: auto;
+  /* 移除 overflow-y: auto */
 }
 
 .welcome-content {

@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar col-2">
+  <aside class="sidebar">
     <h3>功能模块</h3>
     <ul>
       <li>
@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const showDropdown = ref(true) // 默认展开，与Django版本一致
+const showDropdown = ref(true)
 
 const toggleDropdown = (e: Event) => {
   e.preventDefault()
@@ -34,13 +34,34 @@ const toggleDropdown = (e: Event) => {
 
 <style scoped>
 .sidebar {
-  width: 240px;
-  background: rgb(227, 236, 250);
+  width: 100%;
+  height: 100%;
   padding: 20px;
   border-right: 1px solid #ddd;
-  height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
+  /* 移除所有定位和高度设置，让父容器控制 */
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+  .sidebar {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    padding: 10px;
+  }
 }
 
 .sidebar ul {
