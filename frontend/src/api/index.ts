@@ -199,6 +199,12 @@ export const videoAPI = {
       method: 'POST',
       body: formData
     })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '上传失败')
+    }
+    
     return await response.json()
   },
 
@@ -216,6 +222,12 @@ export const videoAPI = {
       method: 'POST',
       body: formData
     })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '批量上传失败')
+    }
+    
     return await response.json()
   },
 
@@ -226,6 +238,12 @@ export const videoAPI = {
    */
   getHistory: async (moduleId: number) => {
     const response = await fetch(`/video-analysis/module${moduleId}/history`)
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '获取历史记录失败')
+    }
+    
     return await response.json()
   },
 
@@ -237,6 +255,12 @@ export const videoAPI = {
    */
   getHistoryDetail: async (moduleId: number, recordId: string) => {
     const response = await fetch(`/video-analysis/module${moduleId}/history/${recordId}`)
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '获取记录详情失败')
+    }
+    
     return await response.json()
   },
 
@@ -250,6 +274,12 @@ export const videoAPI = {
     const response = await fetch(`/video-analysis/module${moduleId}/history/${recordId}`, {
       method: 'DELETE'
     })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '删除记录失败')
+    }
+    
     return await response.json()
   },
 
@@ -262,6 +292,12 @@ export const videoAPI = {
     const response = await fetch(`/video-analysis/module${moduleId}/history`, {
       method: 'DELETE'
     })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '删除所有记录失败')
+    }
+    
     return await response.json()
   },
 
@@ -271,47 +307,10 @@ export const videoAPI = {
    * @returns 视频URL
    */
   getExampleVideoUrl: (filename: string) => {
-    return `/video-analysis/static/videos/${filename}`
-  },
-
-  /**
-   * 视频分析 (保持向后兼容)
-   * @param moduleId 模块ID (1 或 2)
-   * @param data 分析数据
-   * @returns 分析结果
-   */
-  analyzeVideo: async (moduleId: number, data: { video: File }) => {
-    return await videoAPI.uploadSingle(moduleId, data.video)
+    // 使用绝对路径（Vite会直接映射public下的文件）
+    return `/static/videos/${filename}`; 
   }
 }
-
-// === 系统状态API ===
-
-export const systemAPI = {
-  /**
-   * 获取所有模块状态
-   * @returns 模块状态列表
-   */
-  getModulesStatus: async () => {
-    const response = await api.get('/modules/status/')
-    return response.data
-  },
-
-  /**
-   * 获取检测结果 (通用)
-   * @param detectionId 检测ID
-   * @returns 检测结果
-   */
-  getDetectionResult: async (detectionId: string) => {
-    const response = await api.get(`/result/${detectionId}/`)
-    return response.data
-  }
-}
-
-export default api 
-
-// === 便利的视频分析API实例 ===
-// 为了方便Vue组件使用，创建预配置的API实例
 
 export const module1API = {
   uploadSingle: (file: File) => videoAPI.uploadSingle(1, file),
@@ -331,4 +330,4 @@ export const module2API = {
   deleteHistory: (recordId: string) => videoAPI.deleteHistory(2, recordId),
   deleteAllHistory: () => videoAPI.deleteAllHistory(2),
   getExampleVideoUrl: (filename: string) => videoAPI.getExampleVideoUrl(filename)
-} 
+}

@@ -28,10 +28,15 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/rumor/, '')
       },
       // 添加视频分析服务代理
-      '/video-analysis': {
-        target: 'http://localhost:8003',
+      '/video-analysis/module1': {
+        target: 'http://localhost:28003',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/video-analysis/, '')
+        rewrite: (path) => path.replace(/^\/video-analysis/, '/video_analysis')
+      },
+      '/video-analysis/module2': {
+        target: 'http://localhost:28003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/video-analysis/, '/video_analysis')
       }
     },
     watch: {
