@@ -22,16 +22,16 @@ SERVICES = [
         'name': 'API网关',
         'path': 'gateway',
         'script': 'app.py',
-        'port': 8000,
-        'env': {'GATEWAY_PORT': '8000'},
+        'port': 28000,
+        'env': {'GATEWAY_PORT': '28000'},
         'health_endpoint': '/health'
     },
     {
         'name': '图文谣言检测服务',
         'path': 'services/rumor_detection',
         'script': 'app.py',
-        'port': 8001,
-        'env': {'RUMOR_SERVICE_PORT': '8001'},
+        'port': 8010,
+        'env': {'RUMOR_SERVICE_PORT': '8010'},
         'health_endpoint': '/health'
     },
     {

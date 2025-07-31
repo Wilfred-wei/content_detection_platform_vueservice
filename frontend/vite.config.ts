@@ -5,14 +5,14 @@ export default defineConfig({
   plugins: [vue()],
   publicDir: 'public',
   server: {
-    port: 5173,
+    port: 25173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:28000',
         changeOrigin: true
       },
       '/services': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:28000',
         changeOrigin: true
       },
       // 添加AI检测服务代理

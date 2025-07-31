@@ -12,7 +12,7 @@
 
 ```
 content_detection_platform/
-├── 🌐 gateway/                     # API网关 (8000端口)
+├── 🌐 gateway/                     # API网关 (28000端口)
 ├── 🔧 services/                    # 微服务集合
 │   ├── 📰 rumor_detection/         # 图文谣言检测 (8010端口)
 │   ├── 🤖 ai_image_detection/      # AI图像检测 (8002端口)  
@@ -20,7 +20,7 @@ content_detection_platform/
 │   └── 🎯 video_analysis_module2/  # 视频安全检测 (8004端口)
 ├── 📦 shared/                      # 共享组件
 ├── 🚀 scripts/                     # 启动脚本
-├── 🖥️ frontend/                    # Vue前端
+├── 🖥️ frontend/                    # Vue前端 (25173端口)
 └── 📚 docs/                        # 文档
 ```
 
@@ -47,10 +47,10 @@ python app.py
 ### 验证服务
 ```bash
 # 检查所有服务状态
-curl http://localhost:8000/services/status
+curl http://localhost:28000/services/status
 
 # 测试谣言检测
-curl -X POST http://localhost:8000/api/v1/rumor/detect \
+curl -X POST http://localhost:28000/api/v1/rumor/detect \
   -H "Content-Type: application/json" \
   -d '{"content": "这是测试内容"}'
 ```
@@ -59,7 +59,8 @@ curl -X POST http://localhost:8000/api/v1/rumor/detect \
 
 | 服务 | 端口 | 状态 | 功能 |
 |------|------|------|------|
-| **API网关** | 8000 | ✅ 完成 | 统一入口，请求路由 |
+| **API网关** | 28000 | ✅ 完成 | 统一入口，请求路由 |
+| **前端开发服务器** | 25173 | ✅ 完成 | Vue用户界面 |
 | **图文谣言检测** | 8010 | ✅ 完成 | 图文谣言检测算法 |
 | **AI图像检测** | 8002 | ✅ 完成 | AI生成图像检测 |
 | **视频分析模块1** | 8003 | 🚧 框架 | XXXXXXXXXX |

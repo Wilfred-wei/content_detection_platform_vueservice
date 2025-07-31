@@ -4,7 +4,7 @@ API网关配置
 import os
 
 # 服务端口配置
-GATEWAY_PORT = int(os.getenv('GATEWAY_PORT', 8000))
+GATEWAY_PORT = int(os.getenv('GATEWAY_PORT', 28000))
 
 # 微服务地址配置
 SERVICES = {
