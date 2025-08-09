@@ -1,11 +1,11 @@
 <template>
-  <div class="container-fluid">
-    <div class="row d-flex flex-nowrap">
-      <!-- 侧边栏 -->
+  <div class="page-layout">
+    <!-- Sidebar -->
+    <aside class="layout-sidebar">
       <Sidebar />
-      
-      <!-- 主要内容区域 -->
-      <main class="content col-10">
+    </aside>
+    <!-- Main Content Area -->
+    <main class="layout-main">
         <div class="content-area">
             <h2>视频可信度及危害类型检测</h2>
           <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
@@ -177,7 +177,6 @@
           </div>
         </div>
       </main>
-    </div>
   </div>
 
   <!-- 历史记录列表模态框 -->
@@ -756,6 +755,51 @@ export default {
 </script>
 
 <style>
+.page-layout {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 70px);
+}
+
+.layout-sidebar {
+  flex: 0 0 240px;
+  background: rgb(227, 236, 250);
+}
+
+.layout-main {
+  flex: 1;
+  padding: 20px;
+  background: #f5f7fa;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .layout-sidebar {
+    flex: 0 0 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+  }
+  
+  .layout-sidebar {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  
+  .layout-main {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .layout-main {
+    padding: 10px;
+  }
+}
+
 /* Global Styles */
 body {
   font-family: 'Arial', sans-serif;
@@ -763,23 +807,11 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 html, body {
   width: 100%;
   height: 100%;
-  overflow: auto;
-}
-
-/* Main Content */
-.content {
-  flex: 1;
-  padding: 30px;
-  background: #f5f7fa;
-  overflow-y: auto;
 }
 
 .content-area {
@@ -790,7 +822,6 @@ html, body {
   border-radius: 12px;
   margin: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  overflow-y: auto;
 }
 
 .content-area h2 {
