@@ -1,12 +1,11 @@
 <template>
-  <div class="page-layout">
-    <!-- 侧边栏 -->
-    <aside class="layout-sidebar">
+  <div class="container-fluid">
+    <div class="row d-flex flex-nowrap">
+      <!-- 侧边栏 -->
       <Sidebar />
-    </aside>
-    
-    <!-- 主要内容区域 -->
-    <main class="layout-main">
+      
+      <!-- 主要内容区域 -->
+      <main class="content col-10">
         <div class="content-area">
             <h2>视频可信度及危害类型检测</h2>
           <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
@@ -71,20 +70,37 @@
                   </div>
                 </div>
                 
-                <!-- 最新记录展示区 -->
+                <!-- 最新记录展示区 - 紧凑样式 -->
                 <div class="feature-item" style="flex: 1;">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h4 style="margin: 0;">最新记录</h4>
-                    <button class="btn-primary" style="padding: 5px 10px;" @click="showHistoryModal">更多</button>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">最近3次检测记录</h4>
+                    <button class="btn-primary" style="padding: 3px 8px; font-size: 0.85em;" @click="showHistoryModal">更多</button>
                   </div>
-                  <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <div id="latestRecord" style="text-align: center; color: #666;">
-                      <p v-if="historyData.length === 0">暂无检测记录</p>
-                      <div v-else>
-                        <p><strong>{{ latestRecord.filename }}</strong></p>
-                        <p>可信度: {{ latestRecord.score }}%</p>
-                        <p>潜在危害类别: {{ latestRecord.category || '--' }}</p>
-                        <p>{{ latestRecord.date }}</p>
+                  <div style="height: calc(100% - 40px); overflow-y: auto;">
+                    <div v-if="historyData.length === 0" style="text-align: center; color: #666; height: 100%; display: flex; justify-content: center; align-items: center;">
+                      <p>暂无检测记录</p>
+                    </div>
+                    <div v-else class="compact-records">
+                      <div v-for="(record, index) in recentRecords" :key="index" 
+                           class="compact-record-item"
+                           :class="{ 'last-record': index === recentRecords.length - 1 }">
+                        <div class="compact-record-header">
+                          <span class="compact-filename">{{ record.filename }}</span>
+                          <span class="compact-date">{{ formatCompactDate(record.date) }}</span>
+                        </div>
+                        <div class="compact-record-body">
+                          <div class="compact-score">
+                            <span>可信度: </span>
+                            <span class="score-value">{{ record.score }}%</span>
+                            <div class="compact-progress">
+                              <div :style="{ width: record.score + '%' }"></div>
+                            </div>
+                          </div>
+                          <div class="compact-category">
+                            <span>类别: </span>
+                            <span>{{ record.category || '--' }}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -160,23 +176,43 @@
             </div>
           </div>
         </div>
-    </main>
+      </main>
+    </div>
   </div>
 
   <!-- 历史记录列表模态框 -->
   <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">历史检测记录</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- 搜索功能区 -->
-          <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
-            <input type="text" id="searchInput" class="form-control" placeholder="输入搜索内容" v-model="searchQuery">
-            <button class="btn-primary" @click="searchHistory">搜索</button>
-            <button class="btn btn-secondary" @click="resetSearch">重置</button>
+          <!-- 搜索和排序功能区 -->
+          <div style="display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" id="searchInput" class="form-control" placeholder="输入搜索内容" v-model="searchQuery" style="min-width: 200px;">
+              <button class="btn-primary" @click="searchHistory">搜索</button>
+              <button class="btn btn-secondary" @click="resetSearch">重置</button>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span>排序方式：</span>
+              <select class="form-select" v-model="sortBy" style="width: 120px;">
+                <option value="date">按时间</option>
+                <option value="name">按名称</option>
+              </select>
+              <select class="form-select" v-model="sortOrder" style="width: 100px;">
+                <option value="desc">降序</option>
+                <option value="asc">升序</option>
+              </select>
+              <!-- 新增的分类筛选下拉框 -->
+              <select class="form-select" v-model="categoryFilter" style="width: 150px;">
+                <option value="">所有类别</option>
+                <option v-for="category in availableCategories" :value="category" :key="category">{{ category }}</option>
+              </select>
+            </div>
           </div>
           
           <div class="task-table-wrapper">
@@ -192,8 +228,8 @@
                 </tr>
               </thead>
               <tbody id="historyTableBody">
-                <tr v-for="(item, index) in filteredHistory" :key="item.id">
-                  <td>{{ index + 1 }}</td>
+                <tr v-for="(item, index) in paginatedHistory" :key="item.id">
+                  <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
                   <td>{{ item.date }}</td>
                   <td>{{ item.filename }}</td>
                   <td>{{ item.score }}%</td>
@@ -205,6 +241,31 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- 分页控件 -->
+          <div class="pagination-container" v-if="totalPages > 1">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                  <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(currentPage - 1)">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item" v-for="page in visiblePages" :key="page" 
+                    :class="{ active: page === currentPage }">
+                  <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                  <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(currentPage + 1)">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div class="page-info">
+              显示 {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, sortedHistory.length) }} 条，共 {{ sortedHistory.length }} 条记录
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -317,19 +378,19 @@ export default {
           filename: 'example3_2_1_WCNBL.mp4',
           title: '未成年不良视频',
           description: '包含未成年人不良行为或易对未成年人造成负面影响的有害视频',
-          type: 'true'
+          type: 'fake'
         },
         {
           filename: 'example3_2_1_PHSHWD.mp4',
           title: '破坏社会稳定视频',
           description: '捏造，鼓动，宣传反党反社会言论思想与行为的有害视频',
-          type: 'true'
+          type: 'fake'
         },
         {
           filename: 'example3_2_1_SQDS.mp4',
           title: '色情低俗视频',
           description: '包含擦边色情性暗示等信息的有害视频',
-          type: 'unverified'
+          type: 'fake'
         },
         {
           filename: 'example3_2_1_XXBL.mp4',
@@ -349,23 +410,116 @@ export default {
           description: '通过虚假宣传等手段欺骗误导消费者购买使用其产品的有害视频',
           type: 'fake'
         }
+      ],
+      // 新增的分页和排序相关数据
+      currentPage: 1,
+      pageSize: 10,
+      sortBy: 'date', // date or name
+      sortOrder: 'desc', // asc or desc
+      maxVisiblePages: 5, // 最多显示的分页按钮数
+      // 新增的分类筛选
+      categoryFilter: '',
+      availableCategories: [
+        '真实无害',
+        '恶意引流',
+        '违法犯罪',
+        '未成年不良',
+        '破坏社会稳定',
+        '色情低俗',
+        '血腥暴力',
+        '赌博诈骗',
+        '违规营销'
       ]
     };
   },
   computed: {
-    filteredHistory() {
-      if (!this.searchQuery) {
-        return this.historyData;
+    // 排序后的历史记录
+    sortedHistory() {
+      let data = [...this.historyData];
+      
+      // 应用分类筛选
+      if (this.categoryFilter) {
+        data = data.filter(item => item.category === this.categoryFilter);
       }
-      const query = this.searchQuery.toLowerCase();
-      return this.historyData.filter(item => 
-        item.filename.toLowerCase().includes(query) ||
-        item.date.includes(query) ||
-        (item.category && item.category.toLowerCase().includes(query))
-      );
+      
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        data = data.filter(item => 
+          item.filename.toLowerCase().includes(query) ||
+          item.date.includes(query) ||
+          (item.category && item.category.toLowerCase().includes(query))
+        );
+      }
+      
+      // 排序逻辑
+      return data.sort((a, b) => {
+        let compareA, compareB;
+        
+        if (this.sortBy === 'date') {
+          compareA = new Date(a.date);
+          compareB = new Date(b.date);
+        } else {
+          compareA = a.filename.toLowerCase();
+          compareB = b.filename.toLowerCase();
+        }
+        
+        if (this.sortOrder === 'asc') {
+          return compareA > compareB ? 1 : -1;
+        } else {
+          return compareA < compareB ? 1 : -1;
+        }
+      });
     },
-    latestRecord() {
-      return this.historyData.length > 0 ? this.historyData[this.historyData.length - 1] : {};
+    
+    // 分页后的历史记录
+    paginatedHistory() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.sortedHistory.slice(start, end);
+    },
+    
+    // 总页数
+    totalPages() {
+      return Math.ceil(this.sortedHistory.length / this.pageSize);
+    },
+    
+    // 可见的分页按钮
+    visiblePages() {
+      const pages = [];
+      let startPage = Math.max(1, this.currentPage - Math.floor(this.maxVisiblePages / 2));
+      let endPage = Math.min(this.totalPages, startPage + this.maxVisiblePages - 1);
+      
+      // 调整起始页，确保显示maxVisiblePages个按钮
+      if (endPage - startPage + 1 < this.maxVisiblePages) {
+        startPage = Math.max(1, endPage - this.maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      return pages;
+    },
+    
+    // 获取最近的3条记录
+    recentRecords() {
+      return this.historyData.slice().reverse().slice(0, 3);
+    }
+  },
+  watch: {
+    // 当排序方式或搜索条件变化时，重置到第一页
+    sortBy() {
+      this.currentPage = 1;
+    },
+    sortOrder() {
+      this.currentPage = 1;
+    },
+    searchQuery() {
+      this.currentPage = 1;
+    },
+    // 新增：分类筛选变化时重置页码
+    categoryFilter() {
+      this.currentPage = 1;
     }
   },
   mounted() {
@@ -375,7 +529,21 @@ export default {
     this.loadHistory();
   },
   methods: {
-    // 新增方法：重置结果显示区域
+    // 切换页码
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+    
+    // 格式化日期为紧凑格式
+    formatCompactDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+    },
+    
+    // 重置结果显示区域
     resetResults() {
       this.currentScore = '--';
       this.currentCategory = '';
@@ -388,10 +556,24 @@ export default {
       try {
         const data = await module1API.getHistory();
         this.historyData = data;
+        // 更新可用的分类选项
+        this.updateAvailableCategories();
       } catch (error) {
         console.error('加载历史记录失败:', error);
       }
     },
+    
+    // 更新可用的分类选项
+    updateAvailableCategories() {
+      const categories = new Set();
+      this.historyData.forEach(item => {
+        if (item.category) {
+          categories.add(item.category);
+        }
+      });
+      this.availableCategories = Array.from(categories);
+    },
+
     showHistoryModal() {
       this.historyModal.show();
     },
@@ -443,16 +625,20 @@ export default {
       }
     },
     async deleteAllRecords() {
-      const confirmMessage = this.searchQuery 
-        ? `确定要删除所有搜索结果吗？` 
+      const confirmMessage = this.searchQuery || this.categoryFilter
+        ? `确定要删除所有筛选结果吗？` 
         : "确定要删除所有历史记录吗？";
       
       if (confirm(confirmMessage)) {
         try {
-          const data = await module1API.deleteAllHistory();
+          const data = await module1API.deleteAllHistory({
+            search: this.searchQuery,
+            category: this.categoryFilter
+          });
           if(data.status === "success") {
             this.loadHistory();
             this.searchQuery = '';
+            this.categoryFilter = '';
           }
         } catch (error) {
           console.error('删除失败:', error);
@@ -465,6 +651,7 @@ export default {
     },
     resetSearch() {
       this.searchQuery = '';
+      this.categoryFilter = '';
     },
     handleSingleUpload(event) {
       if (event.target.files.length > 0) {
@@ -569,52 +756,6 @@ export default {
 </script>
 
 <style>
-/* 统一布局系统 */
-.page-layout {
-  display: flex;
-  width: 100%;
-  min-height: calc(100vh - 70px);
-}
-
-.layout-sidebar {
-  flex: 0 0 240px;
-  background: rgb(227, 236, 250);
-}
-
-.layout-main {
-  flex: 1;
-  padding: 20px;
-  background: #f5f7fa;
-}
-
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .layout-sidebar {
-    flex: 0 0 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-layout {
-    flex-direction: column;
-  }
-  
-  .layout-sidebar {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-  
-  .layout-main {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 576px) {
-  .layout-main {
-    padding: 10px;
-  }
-}
-
 /* Global Styles */
 body {
   font-family: 'Arial', sans-serif;
@@ -622,6 +763,7 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -629,14 +771,15 @@ body {
 html, body {
   width: 100%;
   height: 100%;
+  overflow: auto;
 }
 
 /* Main Content */
-.content-legacy {
+.content {
   flex: 1;
   padding: 30px;
   background: #f5f7fa;
-  /* 移除 overflow-y: auto */
+  overflow-y: auto;
 }
 
 .content-area {
@@ -647,7 +790,7 @@ html, body {
   border-radius: 12px;
   margin: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  /* 移除 overflow-y: auto，使用页面级滚动 */
+  overflow-y: auto;
 }
 
 .content-area h2 {
@@ -711,6 +854,85 @@ html, body {
 
 .btn-primary:hover {
   background: #2a6fc9;
+}
+
+/* 紧凑记录样式 */
+.compact-records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compact-record-item {
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+}
+
+.compact-record-item:last-child {
+  margin-bottom: 0;
+}
+
+.compact-record-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.compact-filename {
+  font-weight: bold;
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.compact-date {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.compact-record-body {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.compact-score {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: 0.85em;
+}
+
+.score-value {
+  font-weight: bold;
+  color: #3b87d8;
+  margin: 0 5px;
+  min-width: 30px;
+  display: inline-block;
+  text-align: right;
+}
+
+.compact-progress {
+  flex: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.compact-progress div {
+  height: 100%;
+  background: #3b87d8;
+  border-radius: 3px;
+}
+
+.compact-category {
+  font-size: 0.85em;
+  color: #666;
+  min-width: 100px;
 }
 
 /* Example Video Cards */
@@ -839,6 +1061,33 @@ html, body {
   width: 20%;
 }
 
+/* 分页样式 */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.pagination {
+  margin: 0;
+}
+
+.page-item.active .page-link {
+  background-color: #3b87d8;
+  border-color: #3b87d8;
+}
+
+.page-link {
+  color: #3b87d8;
+}
+
+.page-info {
+  color: #666;
+  font-size: 0.9em;
+}
+
 /* Responsive Grid */
 @media (max-width: 992px) {
   .feature-overview {
@@ -871,6 +1120,23 @@ html, body {
   .history-table th:nth-child(6),
   .history-table td:nth-child(6) {
     width: 25%;
+  }
+
+  /* 紧凑记录在小屏幕下的调整 */
+  .compact-record-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .compact-category {
+    min-width: auto;
+  }
+
+  /* 分页在小屏幕下的调整 */
+  .pagination-container {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
