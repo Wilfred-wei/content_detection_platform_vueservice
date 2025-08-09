@@ -331,3 +331,8 @@ export const module2API = {
   deleteAllHistory: () => videoAPI.deleteAllHistory(2),
   getExampleVideoUrl: (filename: string) => videoAPI.getExampleVideoUrl(filename)
 }
+
+export const module3API = {
+  uploadSingle: (file: File) => videoAPI.uploadSingle(3, file),
+  uploadBatch: (file: File) => videoAPI.uploadBatch(3, file),
+}

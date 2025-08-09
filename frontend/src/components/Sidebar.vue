@@ -12,6 +12,7 @@
         <ul class="submenu" :class="{ show: showDropdown }">
           <li><router-link to="/video_analysis/module1/">视频谣言检测</router-link></li>
           <li><router-link to="/video_analysis/module2/">视频语义理解</router-link></li>
+          <li><router-link to="/video_analysis/module3/">视频板块三</router-link></li>
         </ul>
       </li>
       <li>
@@ -97,13 +98,22 @@ const toggleDropdown = (e: Event) => {
   width: 100%;
 }
 
-.sidebar li.active {
-  background: #3b87d8;
-  color: white;
+.sidebar > ul > li:not(.dropdown):has(.router-link-active),
+.sidebar > ul > li:not(.dropdown):has(.router-link-exact-active) {
+  background: #3b87d8 !important;
+  color: white !important;
   font-weight: bold;
-  width: 100%;
-  display: block;
 }
+
+/* 为非下拉菜单的直接链接添加选中状态 */
+.sidebar > ul > li:not(.dropdown) .router-link-active,
+.sidebar > ul > li:not(.dropdown) .router-link-exact-active {
+  background: transparent !important;
+  color: inherit !important;
+  font-weight: bold;
+}
+
+
 
 .sidebar > ul > li:not(.dropdown):hover {
   background: #3b87d8;
@@ -181,9 +191,28 @@ const toggleDropdown = (e: Event) => {
   border-left-color: #3b87d8;
 }
 
-.sidebar .submenu li.active {
-  background: #3b87d8;
-  color: white;
+/* 子菜单项选中状态 */
+.sidebar .submenu li:has(.router-link-active),
+.sidebar .submenu li:has(.router-link-exact-active) {
+  background: #3b87d8 !important;
+  color: white !important;
+  border-left-color: #3b87d8 !important;
+}
+
+.sidebar .submenu .router-link-active,
+.sidebar .submenu .router-link-exact-active {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* 确保下拉菜单容器不会因为子项选中而变色 */
+.sidebar .dropdown {
+  background: none !important;
+}
+
+.sidebar .dropdown .dropdown-toggle {
+  background: none !important;
+  color: inherit !important;
 }
 
 .sidebar .submenu a {
@@ -198,7 +227,5 @@ const toggleDropdown = (e: Event) => {
   color: inherit;
 }
 
-.sidebar .submenu li.active a {
-  color: white;
-}
+
 </style> 

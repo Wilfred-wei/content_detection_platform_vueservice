@@ -63,13 +63,13 @@ class C3N(nn.Module):
         super(C3N, self).__init__()
         self.is_weibo = False
         if args.dataset == 'weibo':
-            clip_model, _ = load_from_name('ViT-B-16', device=args.device, download_root='./pretrained_models/cn-clip/')
+            clip_model, _ = load_from_name('ViT-B-16', device=args.device, download_root='/sda/home/temp/anwenxin/c3n_origin/code/pretrained_models/cn-clip/')
             self.is_weibo = True
             self.fc_768 = nn.Linear(768, 512)
             self.clip_model = clip_model.float()
 
         else:
-            clip_model, _ = clip.load('ViT-B/16', args.device, download_root="./pretrained_models/clip/")
+            clip_model, _ = clip.load('ViT-B/16', args.device, download_root="/sda/home/temp/anwenxin/c3n_origin/code/pretrained_models/clip/")
 
         self.finetune = args.finetune
         if args.dataset == "twitter":

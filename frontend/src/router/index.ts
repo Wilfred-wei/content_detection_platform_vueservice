@@ -4,6 +4,7 @@ import RumorDetection from '../views/RumorDetection.vue'
 import AIImageDetection from '../views/AIImageDetection.vue'
 import VideoAnalysisModule1 from '../views/VideoAnalysisModule1.vue'
 import VideoAnalysisModule2 from '../views/VideoAnalysisModule2.vue'
+import VideoAnalysisModule3 from '../views/VideoAnalysisModule3.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/video_analysis/module2/',
       name: 'video_analysis_module2',
       component: VideoAnalysisModule2
+    },
+    {
+      path: '/video_analysis/module3/',
+      name: 'video_analysis_module3',
+      component: VideoAnalysisModule3
     }
   ]
 })
