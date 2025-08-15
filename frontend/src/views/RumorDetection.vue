@@ -143,7 +143,7 @@
                         <div class="ms-3">
                           <h5 class="mb-1">{{ detectionResultText }}</h5>
                           <p class="mb-0">
-                            可信度: <strong>{{ confidencePercent }}%</strong>
+                            置信度: <strong>{{ confidencePercent }}%</strong>
                           </p>
                         </div>
                       </div>

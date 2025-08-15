@@ -9,14 +9,13 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav me-3">
-            <li class="nav-item"><a class="nav-link text-muted-blue home-back-btn" href="http://10.69.50.194:25001/M3/">回到首页</a></li>
-          </ul>
-        </div>
+      </div>
+      <div class="user-actions">
+                      <a href="http://10.69.50.194:25001/M3/">
+              <el-button class="register-btn" style="padding: 25px;font-size: 25px;background-color: rgb(0, 86, 179);border-color: rgb(0, 86, 179);color: white;">回到首页</el-button>
+            </a >
       </div>
     </nav>
-
     <!-- 页面主体 -->
     <router-view />
   </div>
@@ -90,13 +89,10 @@ html, body {
   color: inherit !important;
 }
 
-.home-back-btn {
-  padding: 25px !important;
-  font-size: 25px !important;
-  display: flex !important;
-  align-items: center !important;
-  height: 100% !important;
-  line-height: 1 !important;
+.user-actions {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
 }
 
 .navbar-nav .nav-item {
