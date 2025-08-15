@@ -11,15 +11,8 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav me-3">
-            <li class="nav-item"><router-link class="nav-link text-muted-blue" to="/">首页</router-link></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">产品</a></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">解决方案</a></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">关于我们</a></li>
             <li class="nav-item"><a class="nav-link text-muted-blue home-back-btn" href="http://10.69.50.194:25001/M3/">回到首页</a></li>
           </ul>
-        </div>
-        <div class="user-actions">
-          <!-- <el-button type="primary" class="login-btn">登录</el-button> -->
         </div>
       </div>
     </nav>
@@ -51,7 +44,6 @@ html, body {
   min-height: 100vh;
 }
 
-/* 导航栏，复制自Django版本 */
 .navbar {
   background: white;
   display: flex;
@@ -93,13 +85,11 @@ html, body {
   padding-bottom: 5px;
 }
 
-/* 取消推荐视频获取的默认选中状态 */
 .nav-item .active {
   background: none !important;
   color: inherit !important;
 }
 
-/* 回到首页按钮样式 */
 .home-back-btn {
   padding: 25px !important;
   font-size: 25px !important;
@@ -109,7 +99,6 @@ html, body {
   line-height: 1 !important;
 }
 
-/* 确保导航项垂直对齐 */
 .navbar-nav .nav-item {
   display: flex;
   align-items: center;
