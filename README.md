@@ -26,13 +26,7 @@ content_detection_platform/
 
 ## 🚀 快速开始
 
-### 启动所有服务（建议各模块启动单个服务即可）
-```bash
-# 一键启动所有微服务
-python scripts/start_all.py
-```
-
-### 启动单个服务（推荐）
+### 启动单个服务
 ```bash
 
 # 启动谣言检测服务
@@ -114,8 +108,3 @@ services/video_analysis_module2/requirements.txt
 3. **更新API网关**: 在`gateway/routes.py`中添加新的路由
 4. **更新代理**： 在\frontend\vite.config.ts添加代理机制
 5. **确认前端API**： 在\frontend\src\api\index.ts确认
-
-
-
-## 📚 文档
-- [API文档](docs/API.md) - 完整的API接口文档
