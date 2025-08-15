@@ -11,10 +11,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav me-3">
-            <li class="nav-item"><router-link class="nav-link text-muted-blue" to="/">首页</router-link></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">产品</a></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">解决方案</a></li>
-            <li class="nav-item"><a class="nav-link text-muted-blue" href="#">关于我们</a></li>
+            <li class="nav-item"><a class="nav-link text-muted-blue home-back-btn" href="http://10.69.50.194:25001/M3/">回到首页</a></li>
           </ul>
         </div>
       </div>
@@ -47,7 +44,6 @@ html, body {
   min-height: 100vh;
 }
 
-/* 导航栏，复制自Django版本 */
 .navbar {
   background: white;
   display: flex;
@@ -89,9 +85,22 @@ html, body {
   padding-bottom: 5px;
 }
 
-/* 取消推荐视频获取的默认选中状态 */
 .nav-item .active {
   background: none !important;
   color: inherit !important;
+}
+
+.home-back-btn {
+  padding: 25px !important;
+  font-size: 25px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  line-height: 1 !important;
+}
+
+.navbar-nav .nav-item {
+  display: flex;
+  align-items: center;
 }
 </style> 

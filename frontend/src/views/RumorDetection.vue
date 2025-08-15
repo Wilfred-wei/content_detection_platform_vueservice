@@ -137,7 +137,8 @@
                     <div class="alert" :class="statusClass">
                       <div class="align-items-center">
                         <div class="result-icon" :class="statusClass">
-                          {{ statusIcon }}
+                          <img v-if="detectionResult.is_rumor" src="/static/images/warning.svg" alt="警告" class="warning-icon" />
+                          <span v-else>✅</span>
                         </div>
                         <div class="ms-3">
                           <h5 class="mb-1">{{ detectionResultText }}</h5>
@@ -357,12 +358,7 @@ const statusClass = computed(() => {
   return detectionResult.value.is_rumor ? 'rumor' : 'truth'
 })
 
-const statusIcon = computed(() => {
-  const confidence = detectionResult.value?.confidence ? detectionResult.value.confidence * 100 : 0
-  if (confidence < 30) return '⚠️'
-  if (confidence > 70) return '✅'
-  return '❓'
-})
+// 图标改为模板中使用图片+字符的形式，保留状态类
 
 // 文件处理方法
 const handleDragOver = (event: DragEvent) => {
@@ -784,6 +780,32 @@ textarea:focus {
 .result-icon {
   font-size: 50px;
   text-align: center;
+}
+
+/* 根据谣言/非谣言状态设置颜色 */
+.result-icon.rumor {
+  color: #dc3545; /* 红色，强调风险 */
+}
+.result-icon.truth {
+  color: #28a745; /* 绿色，对勾 */
+}
+
+.warning-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+}
+
+/* 提示框背景和边框颜色 */
+.alert.rumor {
+  background-color: #ffe6e9;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+}
+.alert.truth {
+  background-color: #e9f7ef;
+  border: 1px solid #badbcc;
+  color: #0f5132;
 }
 
 .ms-3 {
