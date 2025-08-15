@@ -37,7 +37,30 @@ export default defineConfig({
         target: 'http://localhost:28003',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/video-analysis/, '/video_analysis')
+      },
+      '/video-proxy/module3': {
+        target: 'http://localhost:28003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/video-proxy/module3', '/video_analysis/module3/videos/')  // 关键修改点
+      },
+      '/video-proxy/module2': {
+        target: 'http://localhost:28003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/video-proxy/module2', '/video_analysis/module2/videos')  // 关键修改点
+      },
+      '/video-proxy/module1': {
+        target: 'http://localhost:28003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/video-proxy/module1', '/video_analysis/module1/videos')  // 关键修改点
+      },
+
+      // 统一模块3路由代理
+      '/video-analysis/module3': {
+        target: 'http://localhost:28003',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/video-analysis/, '/video_analysis')
       }
+      
     },
     watch: {
       ignored: [

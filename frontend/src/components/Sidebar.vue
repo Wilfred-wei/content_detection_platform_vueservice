@@ -10,9 +10,9 @@
           视频分析
         </a>
         <ul class="submenu" :class="{ show: showDropdown }">
-          <li><router-link to="/video_analysis/module1/">视频谣言检测</router-link></li>
+          <li><router-link to="/video_analysis/module1/">有害视频检测</router-link></li>
           <li><router-link to="/video_analysis/module2/">视频语义理解</router-link></li>
-          <li><router-link to="/video_analysis/module3/">视频板块三</router-link></li>
+          <li><router-link to="/video_analysis/module3/">有害视频检测数据集</router-link></li>
         </ul>
       </li>
       <li>

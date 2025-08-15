@@ -249,7 +249,7 @@ export const videoAPI = {
 
   /**
    * 获取单个历史记录详情
-   * @param moduleId 模块ID (1 或 2)
+   * @param moduleId 模块ID (123)
    * @param recordId 记录ID
    * @returns 记录详情
    */
@@ -312,6 +312,7 @@ export const videoAPI = {
   }
 }
 
+
 export const module1API = {
   uploadSingle: (file: File) => videoAPI.uploadSingle(1, file),
   uploadBatch: (file: File) => videoAPI.uploadBatch(1, file),
@@ -333,6 +334,22 @@ export const module2API = {
 }
 
 export const module3API = {
-  uploadSingle: (file: File) => videoAPI.uploadSingle(3, file),
-  uploadBatch: (file: File) => videoAPI.uploadBatch(3, file),
+  getHistory: async () => {
+    const response = await fetch('/video-analysis/module3/history');
+    const data = await response.json();
+    // 前端处理路径：将绝对路径转换为纯文件名
+    return data.map(item => ({
+      ...item,
+      file_path: item.file_path ? item.file_path.split('/').pop() : '' // 提取文件名
+    }));
+  },
+  
+  getHistoryDetail: async (id: string) => {
+    const response = await fetch(`/video-analysis/module3/history/${id}`);
+    return response.json(); // 详情页不需要处理路径
+  },
+  deleteHistory: (recordId: string) => videoAPI.deleteHistory(3, recordId),
+  deleteAllHistory: () => videoAPI.deleteAllHistory(3),
+  getExampleVideoUrl: (filename: string) => videoAPI.getExampleVideoUrl(filename)
+  
 }

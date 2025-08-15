@@ -19,8 +19,9 @@
               <h4>🎥 视频分析</h4>
               <p>提供专业的视频分析服务</p>
               <ul class="sub-features">
-                <li>子模块一 - 视频谣言检测</li>
+                <li>子模块一 - 有害视频检测</li>
                 <li>子模块二 - 视频语义理解</li>
+                <li>子模块三 - 有害视频分类数据集</li>
               </ul>
             </div>
             <div class="feature-item">

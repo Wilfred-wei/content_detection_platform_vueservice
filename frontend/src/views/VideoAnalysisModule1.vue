@@ -7,9 +7,9 @@
     <!-- Main Content Area -->
     <main class="layout-main">
         <div class="content-area">
-            <h2>视频可信度及危害类型检测</h2>
+            <h2>有害视频检测</h2>
           <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
-          基于先进AI技术的视频可信度及危害类型检测系统，对上传视频进行可信度分析并给出其可信度与可能危害类型，可信度越接近100表示可信度越高。
+          基于先进AI技术的有害视频检测系统，对上传视频分析并给出其潜在危害类型，置信度越接近100表示越可能具有此类危害。
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -50,22 +50,54 @@
                 <div class="feature-item" style="flex: 1;">
                   <h4>检测结果</h4>
                   <div style="padding: 15px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="text-align: center;">
-                      <div style="font-size: 24px; font-weight: bold; color: #0056b3;">
-                        可信度: <span id="scoreValue">{{ currentScore }}%</span>
-                      </div>
-                      <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
-                        <div id="progressBar" :style="{ width: currentScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
-                      </div>
-                      <!-- 新增的视频类别显示行 -->
-                      <div style="font-size: 18px; margin: 10px 0; color: #0056b3;">
-                        潜在危害类别: <span>{{ currentCategory || '--' }}</span>
-                      </div>
+                    <!-- 分析中动画 -->
+                    <div v-if="isAnalyzing" class="analyzing-container">
+                      <div class="spinner"></div>
+                      <div class="analyzing-text">分析中...</div>
                     </div>
-                    <div id="resultDetails" style="text-align: center; color: #666;">
-                      <p>{{ resultMessage }}</p>
-                      <p v-if="currentVideoName">视频: {{ currentVideoName }}</p>
-                      <p v-if="currentDate">检测时间: {{ currentDate }}</p>
+                    
+                    <!-- 结果展示 -->
+                    <div v-else style="text-align: center; height: 100%; display: flex; flex-direction: column;">
+                      <div style="flex: 1; overflow-y: auto; padding: 0 10px;">
+                        <div v-if="currentScore !== '--'" style="text-align: center;">
+                          <div style="font-size: 24px; font-weight: bold; color: #0056b3;">
+                            置信度: <span id="scoreValue">{{ currentScore }}%</span>
+                          </div>
+                          <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
+                            <div id="progressBar" :style="{ width: currentScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
+                          </div>
+                          <div style="font-size: 18px; margin: 10px 0; color: #0056b3;">
+                            潜在危害类别: <span>{{ currentCategory || '--' }}</span>
+                          </div>
+                        </div>
+                        
+                        <!-- 批量分析进度 -->
+                        <div v-else-if="batchProgress.total > 0" class="batch-progress-container">
+                          <div class="batch-progress-header">
+                            <span>批量分析进度</span>
+                            <span>{{ batchProgress.completed }}/{{ batchProgress.total }}</span>
+                          </div>
+                          <div class="batch-progress-bar">
+                            <div :style="{ width: batchProgress.percent + '%' }"></div>
+                          </div>
+                          <div class="batch-results">
+                            <div v-for="(result, index) in batchResults" :key="index" class="batch-result-item">
+                              <div class="batch-filename">{{ result.filename }}</div>
+                              <div class="batch-status" :class="{ 'success': result.status === 'success', 'error': result.status === 'error' }">
+                                <span>置信度: {{ result.score || '--' }}%</span>
+                                <span v-if="result.category"> | 类别: {{ result.category }}</span>
+                                <span v-else-if="result.message"> | {{ result.message }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <p v-else style="color: #999;">请上传视频进行检测</p>
+                      </div>
+                      <div id="videoMeta" style="margin-top: auto; padding: 10px; background: #f5f7fa; border-radius: 5px;">
+                        <p v-if="currentVideoName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 5px 0;">视频: {{ currentVideoName }}</p>
+                        <p v-if="currentDate" style="color: #888; margin: 5px 0;">检测时间: {{ currentDate }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -131,7 +163,7 @@
                     </video>
                   </div>
                   <h4>真实无害视频</h4>
-                  <p>真实且无有害信息的视频，可信度应高于70%并未被认定包含有害内容。</p>
+                  <p>真实且无有害信息的视频。</p>
                   <button class="btn-primary" @click="analyzeExample('example3_2_1_T.mp4')">分析此示例</button>
                 </div>
                 
@@ -179,45 +211,55 @@
       </main>
   </div>
 
-  <!-- 历史记录列表模态框 -->
+  <!-- 历史记录列表模态框 - 修改后的版本 -->
   <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">历史检测记录</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" :disabled="isDeleting"></button>
         </div>
         <div class="modal-body">
           <!-- 搜索和排序功能区 -->
-          <div style="display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <input type="text" id="searchInput" class="form-control" placeholder="输入搜索内容" v-model="searchQuery" style="min-width: 200px;">
-              <button class="btn-primary" @click="searchHistory">搜索</button>
-              <button class="btn btn-secondary" @click="resetSearch">重置</button>
+          <div class="filter-controls">
+            <div class="search-group">
+              <input type="text" id="searchInput" class="form-control search-input" 
+                     placeholder="输入搜索内容" v-model="searchQuery" :disabled="isDeleting">
+              <button class="btn btn-primary btn-sm action-btn" @click="searchHistory" :disabled="isDeleting">搜索</button>
+              <button class="btn btn-secondary btn-sm action-btn" @click="resetSearch" :disabled="isDeleting">重置</button>
             </div>
             
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <span>排序方式：</span>
-              <select class="form-select" v-model="sortBy" style="width: 120px;">
+            <div class="sort-filter-group">
+              <span class="sort-label">排序方式：</span>
+              <select class="form-select form-select-sm" v-model="sortBy" :disabled="isDeleting">
                 <option value="date">按时间</option>
                 <option value="name">按名称</option>
               </select>
-              <select class="form-select" v-model="sortOrder" style="width: 100px;">
+              
+              <select class="form-select form-select-sm" v-model="sortOrder" :disabled="isDeleting">
                 <option value="desc">降序</option>
                 <option value="asc">升序</option>
               </select>
-              <!-- 新增的分类筛选下拉框 -->
-              <select class="form-select" v-model="categoryFilter" style="width: 150px;">
+              
+              <select class="form-select form-select-sm" v-model="categoryFilter" :disabled="isDeleting">
                 <option value="">所有类别</option>
-                <option v-for="category in availableCategories" :value="category" :key="category">{{ category }}</option>
+                <option v-for="category in availableCategories" 
+                        :value="category" 
+                        :key="category">
+                  {{ category }}
+                </option>
               </select>
             </div>
           </div>
           
-          <div class="task-table-wrapper">
+          <!-- 表格容器 -->
+          <div class="table-container">
             <table class="history-table">
               <thead>
                 <tr>
+                  <th>
+                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" :disabled="isDeleting || paginatedHistory.length === 0">
+                  </th>
                   <th>序号</th>
                   <th>提交时间</th>
                   <th>视频名称</th>
@@ -226,16 +268,20 @@
                   <th>操作</th>
                 </tr>
               </thead>
-              <tbody id="historyTableBody">
+              <tbody>
                 <tr v-for="(item, index) in paginatedHistory" :key="item.id">
+                  <td>
+                    <input type="checkbox" v-model="selectedItems" :value="item.id" :disabled="isDeleting">
+                  </td>
                   <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
                   <td>{{ item.date }}</td>
-                  <td>{{ item.filename }}</td>
+                  <td class="filename-cell">{{ item.filename }}</td>
                   <td>{{ item.score }}%</td>
                   <td>{{ item.category || '--' }}</td>
-                  <td class="task-actions">
-                    <button class="btn-view" @click="showDetailModal(item.id)">查看</button>
-                    <button class="btn-delete" @click="deleteRecord(item.id)">删除</button>
+                  <td class="actions-cell">
+                    <button class="btn-view" @click="showDetailModal(item.id)" :disabled="isDeleting">查看</button>
+                    <button class="btn-play" @click="playVideo(item.file_path)" :disabled="isDeleting">播放</button>
+                    <button class="btn-delete" @click="deleteRecord(item.id)" :disabled="isDeleting">删除</button>
                   </td>
                 </tr>
               </tbody>
@@ -247,16 +293,16 @@
             <nav aria-label="Page navigation">
               <ul class="pagination">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(currentPage - 1)">
+                  <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(currentPage - 1)" :disabled="isDeleting">
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
                 <li class="page-item" v-for="page in visiblePages" :key="page" 
                     :class="{ active: page === currentPage }">
-                  <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                  <a class="page-link" href="#" @click.prevent="changePage(page)" :disabled="isDeleting">{{ page }}</a>
                 </li>
                 <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                  <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(currentPage + 1)">
+                  <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(currentPage + 1)" :disabled="isDeleting">
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>
@@ -265,11 +311,31 @@
             <div class="page-info">
               显示 {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, sortedHistory.length) }} 条，共 {{ sortedHistory.length }} 条记录
             </div>
+            <div class="page-jump">
+              <span>跳转到:</span>
+              <input type="number" 
+                     min="1" 
+                     :max="totalPages" 
+                     v-model.number="jumpPage" 
+                     @keyup.enter="jumpToPage"
+                     class="page-jump-input"
+                     :disabled="isDeleting">
+              <button @click="jumpToPage" class="btn btn-primary btn-sm page-jump-btn" :disabled="isDeleting">确定</button>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" @click="deleteAllRecords">一键删除</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-danger" @click="deleteSelectedRecords" 
+                  :disabled="selectedItems.length === 0 || isDeleting">
+            <span v-if="isDeleting">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              删除中...
+            </span>
+            <span v-else>
+              删除选中项 ({{ selectedItems.length }})
+            </span>
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isDeleting">关闭</button>
         </div>
       </div>
     </div>
@@ -285,7 +351,7 @@
         </div>
         <div class="modal-body" style="text-align: center;">
           <div style="font-size: 24px; font-weight: bold; color: #0056b3;">
-            可信度: <span id="detailScoreValue">{{ detailScore }}%</span>
+            置信度: <span id="detailScoreValue">{{ detailScore }}%</span>
           </div>
           <div style="height: 10px; background: #eee; border-radius: 5px; margin: 15px 0;">
             <div id="detailProgressBar" :style="{ width: detailScore + '%' }" style="height: 100%; background: #3b87d8; border-radius: 5px;"></div>
@@ -343,6 +409,29 @@
       </div>
     </div>
   </div>
+
+  <!-- 视频播放模态框 -->
+  <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">视频播放</h5>
+          <button type="button" class="btn-close" @click="closeVideoPlayer" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="video-container">
+            <video controls autoplay class="video-player" ref="videoPlayer">
+              <source :src="getVideoSource(currentVideoUrl)" type="video/mp4">
+              您的浏览器不支持视频播放
+            </video>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeVideoPlayer">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -372,6 +461,8 @@ export default {
       historyModal: null,
       detailModal: null,
       exampleModal: null,
+      videoPlayerModal: null,
+      currentVideoUrl: '',
       exampleVideos: [
         {
           filename: 'example3_2_1_WCNBL.mp4',
@@ -410,16 +501,14 @@ export default {
           type: 'fake'
         }
       ],
-      // 新增的分页和排序相关数据
       currentPage: 1,
       pageSize: 10,
-      sortBy: 'date', // date or name
-      sortOrder: 'desc', // asc or desc
-      maxVisiblePages: 5, // 最多显示的分页按钮数
-      // 新增的分类筛选
+      sortBy: 'date',
+      sortOrder: 'desc',
+      maxVisiblePages: 5,
       categoryFilter: '',
       availableCategories: [
-        '真实无害',
+        '无',
         '恶意引流',
         '违法犯罪',
         '未成年不良',
@@ -428,15 +517,25 @@ export default {
         '血腥暴力',
         '赌博诈骗',
         '违规营销'
-      ]
+      ],
+      isAnalyzing: false,
+      batchProgress: {
+        total: 0,
+        completed: 0,
+        percent: 0
+      },
+      batchResults: [],
+      jumpPage: 1,
+      // 新增的状态
+      selectedItems: [], // 存储选中的记录ID
+      selectAll: false,  // 全选状态
+      isDeleting: false, // 删除中状态
     };
   },
   computed: {
-    // 排序后的历史记录
     sortedHistory() {
       let data = [...this.historyData];
       
-      // 应用分类筛选
       if (this.categoryFilter) {
         data = data.filter(item => item.category === this.categoryFilter);
       }
@@ -446,11 +545,9 @@ export default {
         data = data.filter(item => 
           item.filename.toLowerCase().includes(query) ||
           item.date.includes(query) ||
-          (item.category && item.category.toLowerCase().includes(query))
-        );
+          (item.category && item.category.toLowerCase().includes(query)))
       }
       
-      // 排序逻辑
       return data.sort((a, b) => {
         let compareA, compareB;
         
@@ -470,25 +567,21 @@ export default {
       });
     },
     
-    // 分页后的历史记录
     paginatedHistory() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
       return this.sortedHistory.slice(start, end);
     },
     
-    // 总页数
     totalPages() {
       return Math.ceil(this.sortedHistory.length / this.pageSize);
     },
     
-    // 可见的分页按钮
     visiblePages() {
       const pages = [];
       let startPage = Math.max(1, this.currentPage - Math.floor(this.maxVisiblePages / 2));
       let endPage = Math.min(this.totalPages, startPage + this.maxVisiblePages - 1);
       
-      // 调整起始页，确保显示maxVisiblePages个按钮
       if (endPage - startPage + 1 < this.maxVisiblePages) {
         startPage = Math.max(1, endPage - this.maxVisiblePages + 1);
       }
@@ -500,13 +593,11 @@ export default {
       return pages;
     },
     
-    // 获取最近的3条记录
     recentRecords() {
       return this.historyData.slice().reverse().slice(0, 3);
     }
   },
   watch: {
-    // 当排序方式或搜索条件变化时，重置到第一页
     sortBy() {
       this.currentPage = 1;
     },
@@ -516,53 +607,71 @@ export default {
     searchQuery() {
       this.currentPage = 1;
     },
-    // 新增：分类筛选变化时重置页码
     categoryFilter() {
       this.currentPage = 1;
+    },
+    // 新增：监听选中项变化，更新全选状态
+    selectedItems(newVal) {
+      this.selectAll = newVal.length === this.paginatedHistory.length && this.paginatedHistory.length > 0;
+    },
+    // 新增：监听分页变化，重置选中状态
+    currentPage() {
+      this.selectedItems = [];
+      this.selectAll = false;
     }
   },
   mounted() {
     this.historyModal = new Modal(document.getElementById('historyModal'));
     this.detailModal = new Modal(document.getElementById('historyDetailModal'));
     this.exampleModal = new Modal(document.getElementById('exampleModal'));
+    this.videoPlayerModal = new Modal(document.getElementById('videoPlayerModal'));
     this.loadHistory();
   },
   methods: {
-    // 切换页码
     changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
       }
     },
     
-    // 格式化日期为紧凑格式
+    jumpToPage() {
+      if (this.jumpPage >= 1 && this.jumpPage <= this.totalPages) {
+        this.currentPage = this.jumpPage;
+      } else {
+        this.jumpPage = this.currentPage;
+      }
+    },
+    
     formatCompactDate(dateString) {
       if (!dateString) return '';
       const date = new Date(dateString);
       return `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
     },
     
-    // 重置结果显示区域
     resetResults() {
       this.currentScore = '--';
       this.currentCategory = '';
       this.currentVideoName = '';
       this.currentDate = '';
       this.resultMessage = '请上传视频进行检测';
+      this.batchProgress = {
+        total: 0,
+        completed: 0,
+        percent: 0
+      };
+      this.batchResults = [];
     },
 
     async loadHistory() {
       try {
         const data = await module1API.getHistory();
         this.historyData = data;
-        // 更新可用的分类选项
         this.updateAvailableCategories();
       } catch (error) {
         console.error('加载历史记录失败:', error);
       }
     },
     
-    // 更新可用的分类选项
     updateAvailableCategories() {
       const categories = new Set();
       this.historyData.forEach(item => {
@@ -576,9 +685,11 @@ export default {
     showHistoryModal() {
       this.historyModal.show();
     },
+    
     showExampleModal() {
       this.exampleModal.show();
     },
+    
     async showDetailModal(id) {
       try {
         const response = await module1API.getHistoryDetail(id);
@@ -597,11 +708,6 @@ export default {
         this.detailScore = record.score;
         this.detailCategory = record.category || '';
         this.detailVideoName = record.filename;
-        
-        if(record.score > 70) this.detailResultText = '内容可信度较高';
-        else if(record.score > 30) this.detailResultText = '内容存在可疑之处';
-        else this.detailResultText = '内容可信度较低';
-        
         this.detailTimestamp = record.date;
         
         this.detailModal.show();
@@ -610,19 +716,157 @@ export default {
         alert('获取详情失败: ' + error.message);
       }
     },
-    async deleteRecord(id) {
-      if(confirm('确定删除这条记录吗？')) {
-        try {
-          const data = await module1API.deleteHistory(id);
-          if(data.status === "success") {
-            this.loadHistory();
-          }
-        } catch (error) {
-          console.error('删除失败:', error);
-          alert('删除失败，请稍后重试');
-        }
+
+    playVideo(rawPath) {
+      if (!rawPath) {
+        alert('无法获取视频路径');
+        return;
+      }
+      
+      this.currentVideoUrl = rawPath;
+      
+      this.$nextTick(() => {
+        this.videoPlayerModal.show();
+        const player = this.$refs.videoPlayer;
+        player.load();
+        player.play().catch(e => {
+          console.error('视频播放失败:', e);
+          alert('视频播放失败，请检查视频路径');
+        });
+      });
+    },
+    
+    extractFilename(filePath) {
+      return filePath ? filePath.replace(/^.*[\\\/]/, '') : '--';
+    },
+    
+    getVideoSource(rawPath) {
+      if (!rawPath) return '';
+      if (rawPath.startsWith('http') || rawPath.startsWith('/static')) {
+        return rawPath;
+      }
+      const filename = encodeURIComponent(this.extractFilename(rawPath));
+      return `/video-proxy/module1/${filename}`;
+    },
+  
+    closeVideoPlayer() {
+      this.pauseVideo();
+      this.videoPlayerModal.hide();
+    },
+  
+    pauseVideo() {
+      const player = this.$refs.videoPlayer;
+      if (player) {
+        player.pause();
       }
     },
+
+    async deleteRecord(id, silent = true) {
+      const confirmMessage = `确定要删除选中的记录吗？`;
+      if (!confirm(confirmMessage)) return;
+      try {
+        const data = await module1API.deleteHistory(id);
+        if(data.status === "success") {
+          if (!silent) {
+            this.$notify({
+              title: '删除成功',
+              message: '记录已删除',
+              type: 'success'
+            });
+          }
+          // 从选中项中移除
+          this.selectedItems = this.selectedItems.filter(item => item !== id);
+          // 刷新列表
+          await this.loadHistory();
+        } else {
+          throw new Error(data.error || '删除失败');
+        }
+      } catch (error) {
+        console.error('删除失败:', error);
+        if (!silent) {
+          this.$notify({
+            title: '删除失败',
+            message: error.message || '删除失败，请稍后重试',
+            type: 'error'
+          });
+        }
+        throw error;
+      }
+    },
+    
+    async ds(id, silent = true) {
+      try {
+        const data = await module1API.deleteHistory(id);
+        if(data.status === "success") {
+          if (!silent) {
+            this.$notify({
+              title: '删除成功',
+              message: '记录已删除',
+              type: 'success'
+            });
+          }
+          // 从选中项中移除
+          this.selectedItems = this.selectedItems.filter(item => item !== id);
+          // 刷新列表
+          await this.loadHistory();
+        } else {
+          throw new Error(data.error || '删除失败');
+        }
+      } catch (error) {
+        console.error('删除失败:', error);
+        if (!silent) {
+          this.$notify({
+            title: '删除失败',
+            message: error.message || '删除失败，请稍后重试',
+            type: 'error'
+          });
+        }
+        throw error;
+      }
+    },
+    
+    // 新增：删除选中项
+    async deleteSelectedRecords() {
+      if (this.selectedItems.length === 0) return;
+      
+      const confirmMessage = `确定要删除选中的 ${this.selectedItems.length} 条记录吗？`;
+      if (!confirm(confirmMessage)) return;
+      
+      this.isDeleting = true;
+      
+      try {
+        // 使用Promise.all并行删除，提高效率
+        const deletePromises = this.selectedItems.map(id => this.ds(id, false));
+        await Promise.all(deletePromises);
+        
+        // 显示成功消息
+        this.$notify({
+          title: '删除成功',
+          message: `已成功删除 ${this.selectedItems.length} 条记录`,
+          type: 'success'
+        });
+        
+        // 清空选择
+        this.selectedItems = [];
+        this.selectAll = false;
+        
+        // 刷新列表
+        await this.loadHistory();
+        
+      } catch (error) {
+        console.error('删除选中项失败:', error);
+        this.$notify({
+          title: '删除失败',
+          message: '部分记录删除失败，请重试',
+          type: 'error'
+        });
+      } finally {
+        this.isDeleting = false;
+        await this.loadHistory(); // 确保删除成功后重新加载
+        this.selectedItems.length=0
+      }
+    },
+    
     async deleteAllRecords() {
       const confirmMessage = this.searchQuery || this.categoryFilter
         ? `确定要删除所有筛选结果吗？` 
@@ -645,26 +889,40 @@ export default {
         }
       }
     },
+    
+    // 新增：全选/取消全选
+    toggleSelectAll() {
+      if (this.selectAll) {
+        this.selectedItems = this.paginatedHistory.map(item => item.id);
+      } else {
+        this.selectedItems = [];
+      }
+    },
+    
     searchHistory() {
       // Computed property handles the filtering
     },
+    
     resetSearch() {
       this.searchQuery = '';
       this.categoryFilter = '';
     },
+    
     handleSingleUpload(event) {
       if (event.target.files.length > 0) {
         this.handleFileUpload(event.target.files[0], true);
       }
     },
+    
     handleMultiUpload(event) {
       if (event.target.files.length > 0) {
         this.handleBatchUpload(event.target.files);
       }
     },
+    
     async handleFileUpload(file, isSingle) {
-      // 重置结果区域
       this.resetResults();
+      this.isAnalyzing = true;
       this.resultMessage = isSingle ? `正在分析视频: ${file.name}...` : '';
       
       try {
@@ -673,11 +931,6 @@ export default {
         if(data.status === "success") {
           this.currentScore = data.result.score;
           this.currentCategory = data.result.category || '';
-          
-          if(data.result.score > 70) this.resultMessage = '内容可信度较高';
-          else if(data.result.score > 30) this.resultMessage = '内容存在可疑之处';
-          else this.resultMessage = '内容可信度较低';
-          
           this.currentVideoName = file.name;
           this.currentDate = data.result.date;
           
@@ -688,50 +941,68 @@ export default {
       } catch (error) {
         console.error('上传失败:', error);
         this.resultMessage = `上传失败: ${error.message}`;
+      } finally {
+        this.isAnalyzing = false;
       }
     },
+    
     async handleBatchUpload(files) {
-      // 重置结果区域
       this.resetResults();
-      this.resultMessage = `开始批量上传 ${files.length} 个视频...`;
-      
-      let completed = 0;
-      let hasError = false;
+      this.isAnalyzing = true;
+      this.batchProgress = {
+        total: files.length,
+        completed: 0,
+        percent: 0
+      };
       
       for (const file of files) {
-        if (hasError) break;
-        
         try {
           const data = await module1API.uploadBatch(file);
           
           if(data.status === "success") {
-            completed++;
-            this.resultMessage = `已完成 ${completed}/${files.length} 个视频分析...`;
-            
-            if (completed === files.length) {
-              this.resultMessage += `\n批量分析完成`;
-              this.loadHistory();
-            }
+            this.batchResults.push({
+              filename: file.name,
+              status: 'success',
+              score: data.result.score,
+              category: data.result.category || '',
+              message: '分析成功'
+            });
           } else {
-            throw new Error(data.error || '上传失败');
+            this.batchResults.push({
+              filename: file.name,
+              status: 'error',
+              message: data.error || '分析失败'
+            });
           }
         } catch (error) {
           console.error('上传失败:', error);
-          hasError = true;
-          this.resultMessage = `上传失败: ${file.name} - ${error.message}`;
+          this.batchResults.push({
+            filename: file.name,
+            status: 'error',
+            message: error.message
+          });
+        } finally {
+          this.batchProgress.completed++;
+          this.batchProgress.percent = Math.round((this.batchProgress.completed / this.batchProgress.total) * 100);
         }
       }
+      
+      this.isAnalyzing = false;
+      this.loadHistory();
     },
+    
     getVideoUrl(videoName) {
       return module1API.getExampleVideoUrl(videoName);
     },
+    
     analyzeExample(videoName) {
       this.handleExampleVideo(videoName);
       this.exampleModal.hide();
     },
+    
     async handleExampleVideo(videoName) {
-      // 重置结果区域
       this.resetResults();
+      this.isAnalyzing = true;
       this.resultMessage = '正在准备示例视频分析...';
       
       try {
@@ -748,6 +1019,8 @@ export default {
       } catch (error) {
         console.error('示例视频处理失败:', error);
         this.resultMessage = `示例视频分析失败: ${error.message}`;
+      } finally {
+        this.isAnalyzing = false;
       }
     }
   }
@@ -772,48 +1045,6 @@ export default {
   background: #f5f7fa;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .layout-sidebar {
-    flex: 0 0 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-layout {
-    flex-direction: column;
-  }
-  
-  .layout-sidebar {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-  
-  .layout-main {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 576px) {
-  .layout-main {
-    padding: 10px;
-  }
-}
-
-/* Global Styles */
-body {
-  font-family: 'Arial', sans-serif;
-  background: #f5f7fa;
-  margin: 0;
-  padding: 0;
-  color: #333;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-}
-
 .content-area {
   padding: 40px;
   width: 100%;
@@ -824,23 +1055,6 @@ html, body {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.content-area h2 {
-  color: #0056b3;
-  margin-bottom: 20px;
-  font-size: 2em;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.content-area p {
-  color: #666;
-  font-size: 1.1em;
-  line-height: 1.6;
-}
-
-/* Feature Items */
 .feature-overview {
   display: grid;
   gap: 30px;
@@ -855,24 +1069,6 @@ html, body {
   transition: transform 0.3s ease;
 }
 
-.feature-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.feature-item h4 {
-  color: #0056b3;
-  margin-bottom: 15px;
-  font-size: 1.3em;
-}
-
-.feature-item p {
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-/* Buttons */
 .btn-primary {
   background: #3b87d8;
   color: white;
@@ -883,11 +1079,6 @@ html, body {
   transition: background 0.3s;
 }
 
-.btn-primary:hover {
-  background: #2a6fc9;
-}
-
-/* 紧凑记录样式 */
 .compact-records {
   display: flex;
   flex-direction: column;
@@ -898,10 +1089,6 @@ html, body {
   padding: 8px;
   border-radius: 6px;
   background-color: #f9f9f9;
-}
-
-.compact-record-item:last-child {
-  margin-bottom: 0;
 }
 
 .compact-record-header {
@@ -919,11 +1106,6 @@ html, body {
   max-width: 70%;
 }
 
-.compact-date {
-  font-size: 0.8em;
-  color: #888;
-}
-
 .compact-record-body {
   display: flex;
   gap: 10px;
@@ -935,15 +1117,6 @@ html, body {
   display: flex;
   align-items: center;
   font-size: 0.85em;
-}
-
-.score-value {
-  font-weight: bold;
-  color: #3b87d8;
-  margin: 0 5px;
-  min-width: 30px;
-  display: inline-block;
-  text-align: right;
 }
 
 .compact-progress {
@@ -960,13 +1133,6 @@ html, body {
   border-radius: 3px;
 }
 
-.compact-category {
-  font-size: 0.85em;
-  color: #666;
-  min-width: 100px;
-}
-
-/* Example Video Cards */
 .card {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -978,131 +1144,135 @@ html, body {
   flex-direction: column;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.card-body {
-  padding: 15px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-title {
-  color: #0056b3;
-  margin-bottom: 10px;
-  font-size: 1.1em;
-}
-
-.card-text {
-  color: #666;
-  font-size: 0.9em;
-  margin-bottom: 15px;
-  flex: 1;
-}
-
-.text-muted {
-  color: #6c757d;
-}
-
-/* 历史记录表格样式 - 新增 */
-.task-table-wrapper {
+/* 历史记录表格样式 */
+.table-container {
   width: 100%;
-  overflow-x: hidden; /* 移除横向滚动 */
+  overflow-x: auto;
+  margin-bottom: 20px;
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* 固定表格布局 */
+  min-width: 900px;
 }
 
 .history-table th, 
 .history-table td {
-  padding: 12px 15px;
+  padding: 12px 10px;
   text-align: left;
   border-bottom: 1px solid #eee;
-  word-wrap: break-word; /* 允许长单词换行 */
 }
 
-.history-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
+/* 调整各列宽度 */
+.history-table th:nth-child(1), 
+.history-table td:nth-child(1) {
+  width: 40px;
+  text-align: center;
 }
 
-.history-table tr:hover {
-  background-color: #f8f9fa;
+.history-table th:nth-child(2), 
+.history-table td:nth-child(2) {
+  width: 50px;
 }
 
-/* 操作按钮样式 */
-.task-actions {
-  display: flex;
-  gap: 8px;
+.history-table th:nth-child(3), 
+.history-table td:nth-child(3) {
+  min-width: 200px;
+}
+
+.history-table th:nth-child(4), 
+.history-table td:nth-child(4) {
+  width: 100px;
+}
+
+.history-table th:nth-child(5), 
+.history-table td:nth-child(5) {
+  width: 120px;
+}
+
+.history-table th:nth-child(6), 
+.history-table td:nth-child(6) {
+  width: 180px;
+}
+
+/* 文件名单元格 */
+.filename-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* 操作单元格 */
+.actions-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 按钮样式调整 */
+.btn-view, .btn-play, .btn-delete {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  margin: 0 3px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
 }
 
 .btn-view {
   background: #28a745;
   color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
+}
+
+.btn-play {
+  background: #3b87d8;
+  color: white;
 }
 
 .btn-delete {
   background: #dc3545;
   color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* 列宽设置 */
-.history-table th:nth-child(1),
-.history-table td:nth-child(1) {
-  width: 8%;
-}
-
-.history-table th:nth-child(2),
-.history-table td:nth-child(2) {
-  width: 20%;
-}
-
-.history-table th:nth-child(3),
-.history-table td:nth-child(3) {
-  width: 25%;
-}
-
-.history-table th:nth-child(4),
-.history-table td:nth-child(4) {
-  width: 12%;
-}
-
-.history-table th:nth-child(5),
-.history-table td:nth-child(5) {
-  width: 15%;
-}
-
-.history-table th:nth-child(6),
-.history-table td:nth-child(6) {
-  width: 20%;
 }
 
 /* 分页样式 */
 .pagination-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-top: 20px;
   padding: 10px 0;
 }
 
-.pagination {
-  margin: 0;
+.page-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 页码跳转样式 */
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-jump span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.page-jump-input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.page-jump-btn {
+  padding: 5px 10px;
 }
 
 .page-item.active .page-link {
@@ -1110,64 +1280,169 @@ html, body {
   border-color: #3b87d8;
 }
 
-.page-link {
+/* 分析动画样式 */
+.analyzing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(59, 135, 216, 0.2);
+  border-top: 4px solid #3b87d8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.analyzing-text {
+  font-size: 18px;
   color: #3b87d8;
+  font-weight: bold;
 }
 
-.page-info {
-  color: #666;
+/* 视频播放器样式 */
+.video-container {
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 宽高比 */
+  position: relative;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+/* 批量分析进度样式 */
+.batch-progress-container {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.batch-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.batch-progress-bar {
+  height: 10px;
+  background: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.batch-progress-bar div {
+  height: 100%;
+  background: #3b87d8;
+  transition: width 0.3s ease;
+}
+
+.batch-results {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.batch-result-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.batch-result-item:last-child {
+  border-bottom: none;
+}
+
+.batch-filename {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.batch-status {
   font-size: 0.9em;
+  margin-top: 4px;
 }
 
-/* Responsive Grid */
+.batch-status.success {
+  color: #28a745;
+}
+
+.batch-status.error {
+  color: #dc3545;
+}
+
+/* 视频元信息样式 */
+#videoMeta {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f5f7fa;
+  border-radius: 5px;
+}
+
+#videoMeta p {
+  margin: 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 禁用状态样式 */
+.btn-danger:disabled,
+.btn-secondary:disabled,
+input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* 删除按钮加载状态 */
+.btn-danger .spinner-border {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* 响应式调整 */
 @media (max-width: 992px) {
   .feature-overview {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   
-  /* 在小屏幕下调整表格列宽 */
-  .history-table th:nth-child(1),
-  .history-table td:nth-child(1) {
-    width: 10%;
+  .history-table {
+    min-width: 800px;
   }
   
   .history-table th:nth-child(2),
   .history-table td:nth-child(2) {
-    width: 25%;
+    width: 120px;
   }
   
-  .history-table th:nth-child(3),
-  .history-table td:nth-child(3) {
-    width: 30%;
-  }
-  
-  .history-table th:nth-child(4),
-  .history-table td:nth-child(4),
-  .history-table th:nth-child(5),
-  .history-table td:nth-child(5) {
-    width: 15%;
-  }
-  
-  .history-table th:nth-child(6),
-  .history-table td:nth-child(6) {
-    width: 25%;
-  }
-
-  /* 紧凑记录在小屏幕下的调整 */
-  .compact-record-body {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .compact-category {
-    min-width: auto;
-  }
-
-  /* 分页在小屏幕下的调整 */
-  .pagination-container {
-    flex-direction: column;
-    gap: 10px;
+  .actions-cell {
+    width: 160px;
   }
 }
 
@@ -1180,33 +1455,34 @@ html, body {
     padding: 20px;
   }
   
-  /* 在更小的屏幕下隐藏某些列 */
-  .history-table th:nth-child(2),
-  .history-table td:nth-child(2),
-  .history-table th:nth-child(5),
-  .history-table td:nth-child(5) {
-    display: none;
+  .history-table {
+    min-width: 700px;
   }
   
-  /* 调整剩余列的宽度 */
-  .history-table th:nth-child(1),
-  .history-table td:nth-child(1) {
-    width: 15%;
+  .history-table th, 
+  .history-table td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
   }
   
-  .history-table th:nth-child(3),
-  .history-table td:nth-child(3) {
-    width: 40%;
+  .btn-view, .btn-play, .btn-delete {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    margin: 0 2px;
   }
   
-  .history-table th:nth-child(4),
-  .history-table td:nth-child(4) {
-    width: 20%;
+  .actions-cell {
+    width: 140px;
   }
   
-  .history-table th:nth-child(6),
-  .history-table td:nth-child(6) {
-    width: 25%;
+  /* 移动端调整分页布局 */
+  .pagination-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .page-jump {
+    justify-content: center;
   }
 }
 </style>

@@ -6,246 +6,241 @@
     </aside>
     <!-- Main Content Area -->
     <main class="layout-main">
-        <div class="content-area">
-          <!-- 页面标题和描述 - 完全保留 -->
-          <h2>视频语义理解</h2>
-          <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
-            基于先进AI技术的视频内容语义理解系统，对上传视频进行分析并给出其简要概括。
-          </div>
-          
-          <!-- 上传和结果区域 - 完全保留 -->
-          <div style="display: flex; flex-direction: column; gap: 20px;">
-            <!-- 上传区域 - 完全保留 -->
-            <div style="display: flex; gap: 20px;">
-              <!-- 左侧上传区域 - 完全保留 -->
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 10px; box-sizing: border-box;">
-                <!-- 单视频上传 - 完全保留 -->
-                <div class="feature-item" style="height: 300px; box-sizing: border-box;">
-                  <h4>单视频检测</h4>
-                  <label 
-                    style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
-                      display: flex; flex-direction: column; justify-content: center; 
-                      align-items: center; cursor: pointer; box-sizing: border-box;"
-                    for="singleVideoInput">
-                    <p>点击或拖放视频文件，支持mp4，avi格式，最大500MB</p>
-                    <input type="file" id="singleVideoInput" style="display: none;" accept="video/*" @change="handleSingleUpload">
-                  </label>
-                </div>
-                
-                <!-- 多视频上传 - 完全保留 -->
-                <div class="feature-item" style="height: 300px; box-sizing: border-box;">
-                  <h4>批量视频检测</h4>
-                  <label 
-                    style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
-                      display: flex; flex-direction: column; justify-content: center; 
-                      align-items: center; cursor: pointer; box-sizing: border-box;"
-                    for="multiVideoInput">
-                    <p>点击或拖放多个视频，支持mp4，avi格式，最大500MB</p>
-                    <input type="file" id="multiVideoInput" style="display: none;" accept="video/*" multiple @change="handleMultiUpload">
-                  </label>
+      <div class="content-area">
+        <h2>视频语义理解</h2>
+        <div style="margin-bottom: 20px; color: #666; font-size: 1.1em; line-height: 1.6;">
+          基于先进AI技术的视频内容语义理解系统，对上传视频进行分析并给出其简要概括。
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- 上传和结果区域 -->
+          <div style="display: flex; gap: 20px;">
+            <!-- 左侧上传区域 -->
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 10px; box-sizing: border-box;">
+              <!-- 单视频上传 -->
+              <div class="feature-item" style="height: 300px; box-sizing: border-box;">
+                <h4>单视频检测</h4>
+                <label 
+                  style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
+                    display: flex; flex-direction: column; justify-content: center; 
+                    align-items: center; cursor: pointer; box-sizing: border-box;"
+                  for="singleVideoInput">
+                  <p>点击或拖放视频文件，支持mp4，avi格式，最大500MB</p>
+                  <input type="file" id="singleVideoInput" style="display: none;" accept="video/*" @change="handleSingleUpload">
+                </label>
+              </div>
+              
+              <!-- 多视频上传 -->
+              <div class="feature-item" style="height: 300px; box-sizing: border-box;">
+                <h4>批量视频检测</h4>
+                <label 
+                  style="border: 2px dashed #ddd; border-radius: 8px; height: calc(100% - 30px);
+                    display: flex; flex-direction: column; justify-content: center; 
+                    align-items: center; cursor: pointer; box-sizing: border-box;"
+                  for="multiVideoInput">
+                  <p>点击或拖放多个视频，支持mp4，avi格式，最大500MB</p>
+                  <input type="file" id="multiVideoInput" style="display: none;" accept="video/*" multiple @change="handleMultiUpload">
+                </label>
+              </div>
+            </div>
+            
+            <!-- 右侧结果区域 -->
+            <div style="flex: 1.5; display: flex; flex-direction: column; gap: 20px;">
+              <!-- 检测结果 -->
+              <div class="feature-item" style="flex: 1;">
+                <h4>语义分析结果</h4>
+                <div style="padding: 15px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                  <div v-if="isAnalyzing" class="analyzing-container">
+                    <div class="spinner"></div>
+                    <div class="analyzing-text">分析中...</div>
+                  </div>
+                  
+                  <div v-else style="text-align: center; height: 100%; display: flex; flex-direction: column;">
+                    <div style="flex: 1; overflow-y: auto; padding: 0 10px;">
+                      <div v-if="currentResult.semanticText" style="text-align: left;">
+                        <strong style="color: #0056b3;">分析结果：</strong>
+                        <p style="white-space: pre-wrap; word-break: break-word; margin-bottom: 10px;">{{ currentResult.semanticText }}</p>
+                      </div>
+                      <div v-else-if="batchProgress.total > 0" class="batch-progress-container">
+                        <div class="batch-progress-header">
+                          <span>批量分析进度</span>
+                          <span>{{ batchProgress.completed }}/{{ batchProgress.total }}</span>
+                        </div>
+                        <div class="batch-progress-bar">
+                          <div :style="{ width: batchProgress.percent + '%' }"></div>
+                        </div>
+                        <div class="batch-results">
+                          <div v-for="(result, index) in batchResults" :key="index" class="batch-result-item">
+                            <div class="batch-filename">{{ result.filename }}</div>
+                            <div class="batch-status" :class="{ 'success': result.status === 'success', 'error': result.status === 'error' }">
+                              {{ result.message }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p v-else style="color: #999;">请上传视频获取语义分析结果</p>
+                    </div>
+                    <div id="videoMeta" style="margin-top: auto; padding: 10px; background: #f5f7fa; border-radius: 5px;">
+                      <p v-if="currentResult.videoName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 5px 0;">视频: {{ currentResult.videoName }}</p>
+                      <p v-if="currentResult.analysisDate" style="color: #888; margin: 5px 0;">分析时间: {{ currentResult.analysisDate }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            
-              <!-- 右侧结果区域 - 完全保留 -->
-              <div style="flex: 1.5; display: flex; flex-direction: column; gap: 20px;">
-                <!-- 语义分析结果展示 - 完全保留 -->
-                <div class="feature-item" style="margin: 0; flex: 1; display: flex; flex-direction: column;">
-                  <h4>语义分析结果</h4>
-                  <div style="flex: 1; padding: 15px; display: flex; flex-direction: column;">
-                    <div id="semanticResult" style="flex: 1; border: 1px solid #eee; border-radius: 5px; padding: 15px; overflow-y: auto; background: #f9f9f9;">
-                      <div v-if="isAnalyzing" style="text-align: center;">
-                        <div class="spinner-border text-primary" role="status">
-                          <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p style="margin-top: 10px;">正在分析中，请稍候...</p>
-                      </div>
-                      <p v-else-if="!currentResult.semanticText" style="color: #999; text-align: center;">请上传视频获取语义分析结果</p>
-                      <div v-else>
-                        <div style="margin-bottom: 10px;">
-                          <strong style="color: #0056b3;">分析结果：</strong>
-                          <p style="white-space: pre-wrap;">{{ currentResult.semanticText }}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div id="videoMeta" style="margin-top: 15px; color: #666; font-size: 0.9em;">
-                      <p v-if="currentResult.videoName">视频名称: {{ currentResult.videoName }}</p>
-                      <p v-if="currentResult.analysisDate">分析时间: {{ currentResult.analysisDate }}</p>
-                    </div>
-                  </div>
+              
+              <!-- 最新记录展示区 -->
+              <div class="feature-item" style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="margin: 0;">最近3次分析记录</h4>
+                  <button class="btn-primary" style="padding: 3px 8px; font-size: 0.85em;" @click="showHistoryModal">更多</button>
                 </div>
-                
-                <!-- 最近记录展示 - 完全保留 -->
-                <div class="feature-item" style="margin: 0; flex: 1; display: flex; flex-direction: column;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h4 style="margin: 0;">最近3次分析记录</h4>
-                    <button class="btn-primary" style="padding: 3px 8px; font-size: 0.85em;" @click="showHistoryModal">更多</button>
+                <div style="height: calc(100% - 40px); overflow-y: auto;">
+                  <div v-if="historyData.length === 0" style="text-align: center; color: #666; height: 100%; display: flex; justify-content: center; align-items: center;">
+                    <p>暂无检测记录</p>
                   </div>
-                  <div style="height: calc(100% - 40px); overflow-y: auto;">
-                    <div v-if="historyData.length === 0" style="text-align: center; color: #666; height: 100%; display: flex; justify-content: center; align-items: center;">
-                      <p>暂无分析记录</p>
-                    </div>
-                    <div v-else class="compact-records">
-                      <div v-for="(record, index) in recentRecords" :key="index" 
-                           class="compact-record-item"
-                           :class="{ 'last-record': index === recentRecords.length - 1 }"
-                           @click="showDetailModal(record.id)">
-                        <div class="compact-record-header">
-                          <span class="compact-filename" :title="record.filename">{{ record.filename }}</span>
-                          <span class="compact-date">{{ formatCompactDate(record.date) }}</span>
-                        </div>
-                        <div class="compact-semantic-preview" :title="record.semantic_text">
-                          {{ truncateText(record.semantic_text, 60) }}
-                        </div>
+                  <div v-else class="compact-records">
+                    <div v-for="(record, index) in recentRecords" :key="index" 
+                         class="compact-record-item"
+                         :class="{ 'last-record': index === recentRecords.length - 1 }">
+                      <div class="compact-record-header">
+                        <span class="compact-filename">{{ record.filename }}</span>
+                        <span class="compact-date">{{ formatCompactDate(record.date) }}</span>
+                      </div>
+                      <div class="compact-semantic-preview">
+                        {{ truncateText(record.semantic_text, 60) }}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- 示例视频分析区域 - 完全保留 -->
-            <div class="content-area">
-              <h2>示例视频分析</h2>
+          <!-- 示例视频分析区域 -->
+          <div class="content-area">
+            <h2>示例视频分析</h2>
+            
+            <div class="feature-overview" style="grid-template-columns: repeat(3, 1fr);">
+              <div class="feature-item">
+                <div style="width: 100%; height: 200px; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000;">
+                  <video controls style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <source :src="getVideoUrl('example3_2_2_News.mp4')" type="video/mp4">
+                  </video>
+                </div>
+                <h4>新闻视频示例</h4>
+                <p>新闻报道视频示例，输出对新闻内容的简要概括。</p>
+                <button class="btn-primary" @click="analyzeExample('example3_2_2_News.mp4')">分析此示例</button>
+              </div>
               
-              <div class="feature-overview" style="grid-template-columns: repeat(3, 1fr);">
-                <!-- 示例视频1 - 完全保留 -->
-                <div class="feature-item">
-                  <div style="width: 100%; height: 200px;
-                    overflow: hidden;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: #000;">
-                    <video controls 
-                      style="max-width: 100%; 
-                              max-height: 100%;
-                              object-fit: contain;">
-                      <source :src="getVideoUrl('example3_2_2_News.mp4')" type="video/mp4">
-                    </video>
-                  </div>
-                  <h4>新闻视频示例</h4>
-                  <p>新闻报道视频示例，输出对新闻内容的简要概括。</p>
-                  <button class="btn-primary" @click="analyzeExample('example3_2_2_News.mp4')">分析此示例</button>
+              <div class="feature-item">
+                <div style="width: 100%; height: 200px; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000;">
+                  <video controls style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <source :src="getVideoUrl('example3_2_2_Life.mp4')" type="video/mp4">
+                  </video>
                 </div>
-                
-                <!-- 示例视频2 - 完全保留 -->
-                <div class="feature-item">
-                  <div style="width: 100%; height: 200px;
-                    overflow: hidden;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: #000;">
-                    <video controls 
-                      style="max-width: 100%; 
-                              max-height: 100%;
-                              object-fit: contain;">
-                      <source :src="getVideoUrl('example3_2_2_Life.mp4')" type="video/mp4">
-                    </video>
-                  </div>
-                  <h4>生活视频示例</h4>
-                  <p>生活类型视频示例，输出对视频内容的简要概括。</p>
-                  <button class="btn-primary" @click="analyzeExample('example3_2_2_Life.mp4')">分析此示例</button>
+                <h4>生活视频示例</h4>
+                <p>生活类型视频示例，输出对视频内容的简要概括。</p>
+                <button class="btn-primary" @click="analyzeExample('example3_2_2_Life.mp4')">分析此示例</button>
+              </div>
+              
+              <div class="feature-item">
+                <div style="width: 100%; height: 200px; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000;">
+                  <video controls style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <source :src="getVideoUrl('example3_2_2_Mil.mp4')" type="video/mp4">
+                  </video>
                 </div>
-                
-                <!-- 示例视频3 - 完全保留 -->
-                <div class="feature-item">
-                  <div style="width: 100%; height: 200px;
-                    overflow: hidden;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: #000;">
-                    <video controls 
-                      style="max-width: 100%; 
-                              max-height: 100%;
-                              object-fit: contain;">
-                      <source :src="getVideoUrl('example3_2_2_Mil.mp4')" type="video/mp4">
-                    </video>
-                  </div>
-                  <h4>军事视频示例</h4>
-                  <p>军事类型视频示例，输出对军事视频内容的简要概括。</p>
-                  <button class="btn-primary" @click="analyzeExample('example3_2_2_Mil.mp4')">分析此示例</button>
-                </div>
+                <h4>军事视频示例</h4>
+                <p>军事类型视频示例，输出对军事视频内容的简要概括。</p>
+                <button class="btn-primary" @click="analyzeExample('example3_2_2_Mil.mp4')">分析此示例</button>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
   </div>
 
-  <!-- 历史记录模态框 - 完整保留 -->
+  <!-- 历史记录模态框 - 修改后的版本 -->
   <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">历史分析记录</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" :disabled="isDeleting"></button>
         </div>
         <div class="modal-body">
-          <!-- 搜索和排序功能 - 完全保留 -->
-          <div style="display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <input type="text" id="searchInput" class="form-control" placeholder="输入搜索内容" v-model="searchQuery" style="min-width: 200px;">
-              <button class="btn-primary" @click="searchHistory">搜索</button>
-              <button class="btn btn-secondary" @click="resetSearch">重置</button>
+          <!-- 搜索和排序功能区 -->
+          <div class="filter-controls">
+            <div class="search-group">
+              <input type="text" id="searchInput" class="form-control search-input" 
+                     placeholder="输入搜索内容" v-model="searchQuery" :disabled="isDeleting">
+              <button class="btn btn-primary btn-sm action-btn" @click="searchHistory" :disabled="isDeleting">搜索</button>
+              <button class="btn btn-secondary btn-sm action-btn" @click="resetSearch" :disabled="isDeleting">重置</button>
             </div>
             
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <span>排序方式：</span>
-              <select class="form-select" v-model="sortBy" style="width: 120px;">
+            <div class="sort-filter-group">
+              <span class="sort-label">排序方式：</span>
+              <select class="form-select form-select-sm" v-model="sortBy" :disabled="isDeleting">
                 <option value="date">按时间</option>
                 <option value="name">按名称</option>
               </select>
-              <select class="form-select" v-model="sortOrder" style="width: 100px;">
+              
+              <select class="form-select form-select-sm" v-model="sortOrder" :disabled="isDeleting">
                 <option value="desc">降序</option>
                 <option value="asc">升序</option>
               </select>
             </div>
           </div>
           
-          <!-- 表格区域 - 完全保留 -->
-          <div class="task-table-wrapper">
+          <!-- 表格区域 -->
+          <div class="table-container">
             <table class="history-table">
               <thead>
                 <tr>
-                  <th>序号</th>
-                  <th>提交时间</th>
+                  <th>
+                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" :disabled="isDeleting || paginatedHistory.length === 0">
+                  </th>
+                  <th style="width: 60px;">序号</th>
+                  <th style="width: 150px;">提交时间</th>
                   <th>视频名称</th>
-                  <th>语义内容预览</th>
-                  <th>操作</th>
+                  <th style="width: 300px;">语义内容</th>
+                  <th style="width: 180px;">操作</th>
                 </tr>
               </thead>
-              <tbody id="historyTableBody">
+              <tbody>
                 <tr v-for="(item, index) in paginatedHistory" :key="item.id">
+                  <td>
+                    <input type="checkbox" v-model="selectedItems" :value="item.id" :disabled="isDeleting">
+                  </td>
                   <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
                   <td>{{ item.date }}</td>
-                  <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ item.filename }}</td>
-                  <td style="max-width: 300px;" :title="item.semantic_text">{{ truncateText(item.semantic_text, 50) }}</td>
-                  <td class="task-actions">
-                    <button class="btn-view" @click="showDetailModal(item.id)">查看</button>
-                    <button class="btn-delete" @click="deleteRecord(item.id)">删除</button>
+                  <td class="filename-cell">{{ item.filename }}</td>
+                  <td>{{ truncateText(item.semantic_text, 50) }}</td>
+                  <td class="actions-cell">
+                    <button class="btn-view" @click="showDetailModal(item.id)" :disabled="isDeleting">查看</button>
+                    <button class="btn-play" @click="playVideo(item.file_path)" :disabled="isDeleting">播放</button>
+                    <button class="btn-delete" @click="deleteRecord(item.id)" :disabled="isDeleting">删除</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- 分页控件 - 仅修改此处 -->
+          <!-- 分页控件 -->
           <div class="pagination-container" v-if="totalPages > 1">
             <nav aria-label="Page navigation">
               <ul class="pagination">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <a class="page-link" href="#" aria-label="Previous" @click.prevent="goToPage(currentPage - 1)">
+                  <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(currentPage - 1)" :disabled="isDeleting">
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
                 <li class="page-item" v-for="page in visiblePages" :key="page" 
                     :class="{ active: page === currentPage }">
-                  <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
+                  <a class="page-link" href="#" @click.prevent="changePage(page)" :disabled="isDeleting">{{ page }}</a>
                 </li>
                 <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                  <a class="page-link" href="#" aria-label="Next" @click.prevent="goToPage(currentPage + 1)">
+                  <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(currentPage + 1)" :disabled="isDeleting">
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>
@@ -254,33 +249,77 @@
             <div class="page-info">
               显示 {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, sortedHistory.length) }} 条，共 {{ sortedHistory.length }} 条记录
             </div>
+            <!-- 新增的页码跳转功能 -->
+            <div class="page-jump">
+              <span>跳转到:</span>
+              <input type="number" 
+                     min="1" 
+                     :max="totalPages" 
+                     v-model.number="jumpPage" 
+                     @keyup.enter="jumpToPage"
+                     class="page-jump-input"
+                     :disabled="isDeleting">
+              <button @click="jumpToPage" class="btn btn-primary btn-sm page-jump-btn" :disabled="isDeleting">确定</button>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" @click="deleteAllRecords">一键删除</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-danger" @click="deleteSelectedRecords" 
+                  :disabled="selectedItems.length === 0 || isDeleting">
+            <span v-if="isDeleting">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              删除中...
+            </span>
+            <span v-else>
+              删除选中项 ({{ selectedItems.length }})
+            </span>
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isDeleting">关闭</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 历史详情模态框 - 完全保留 -->
+  <!-- 历史详情模态框 -->
   <div class="modal fade" id="historyDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">语义分析详情</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" style="text-align: left;">
-          <div id="detailVideoName" style="font-weight: bold; margin-bottom: 15px; font-size: 18px;">视频: {{ currentDetail.filename }}</div>
+          <div style="font-weight: bold; margin-bottom: 15px; font-size: 18px;">视频: {{ currentDetail.filename }}</div>
           <div style="max-height: 400px; overflow-y: auto; padding: 15px; background: #f9f9f9; border-radius: 5px;">
-            <pre id="detailSemanticText" style="white-space: pre-wrap; margin: 0; font-family: inherit; line-height: 1.5;">{{ currentDetail.semantic_text }}</pre>
+            <pre style="white-space: pre-wrap; margin: 0; font-family: inherit; line-height: 1.5;">{{ currentDetail.semantic_text }}</pre>
           </div>
-          <div id="detailTimestamp" style="color: #888; margin-top: 15px;">分析时间: {{ currentDetail.date }}</div>
+          <div style="color: #888; margin-top: 15px;">分析时间: {{ currentDetail.date }}</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 视频播放模态框 -->
+  <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">视频播放</h5>
+          <button type="button" class="btn-close" @click="closeVideoPlayer" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="video-container">
+            <video controls autoplay class="video-player" ref="videoPlayer">
+              <source :src="getVideoSource(currentVideoUrl)" type="video/mp4">
+              您的浏览器不支持视频播放
+            </video>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeVideoPlayer">关闭</button>
         </div>
       </div>
     </div>
@@ -311,19 +350,30 @@ export default {
         semantic_text: '',
         date: ''
       },
+      currentVideoUrl: '',
       isAnalyzing: false,
       historyModal: null,
       detailModal: null,
-      // 分页相关数据 - 仅修改此处
+      videoPlayerModal: null,
       currentPage: 1,
       pageSize: 10,
       sortBy: 'date',
       sortOrder: 'desc',
-      maxVisiblePages: 5
+      maxVisiblePages: 5,
+      batchProgress: {
+        total: 0,
+        completed: 0,
+        percent: 0
+      },
+      batchResults: [],
+      jumpPage: 1,
+      // 新增的状态
+      selectedItems: [], // 存储选中的记录ID
+      selectAll: false,  // 全选状态
+      isDeleting: false, // 删除中状态
     };
   },
   computed: {
-    // 排序后的历史记录 - 完全保留
     sortedHistory() {
       let data = [...this.historyData];
       if (this.searchQuery) {
@@ -354,31 +404,22 @@ export default {
       });
     },
     
-    // 分页后的历史记录 - 仅修改此处
     paginatedHistory() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
-      // 添加边界检查
-      if (start >= this.sortedHistory.length) {
-        this.currentPage = Math.max(1, Math.ceil(this.sortedHistory.length / this.pageSize));
-        return [];
-      }
       return this.sortedHistory.slice(start, end);
     },
     
-    // 总页数 - 仅修改此处
     totalPages() {
-      return Math.max(1, Math.ceil(this.sortedHistory.length / this.pageSize));
+      return Math.ceil(this.sortedHistory.length / this.pageSize);
     },
     
-    // 可见的分页按钮 - 仅修改此处
     visiblePages() {
       const pages = [];
       const half = Math.floor(this.maxVisiblePages / 2);
       let startPage = Math.max(1, this.currentPage - half);
       let endPage = Math.min(this.totalPages, startPage + this.maxVisiblePages - 1);
       
-      // 调整起始页确保显示足够页码
       if (endPage - startPage + 1 < this.maxVisiblePages) {
         startPage = Math.max(1, endPage - this.maxVisiblePages + 1);
       }
@@ -390,13 +431,11 @@ export default {
       return pages;
     },
     
-    // 获取最近的3条记录 - 完全保留
     recentRecords() {
       return this.historyData.slice().reverse().slice(0, 3);
     }
   },
   watch: {
-    // 当排序方式或搜索条件变化时，重置到第一页 - 完全保留
     sortBy() {
       this.currentPage = 1;
     },
@@ -405,52 +444,64 @@ export default {
     },
     searchQuery() {
       this.currentPage = 1;
+    },
+    // 新增：监听选中项变化，更新全选状态
+    selectedItems(newVal) {
+      this.selectAll = newVal.length === this.paginatedHistory.length && this.paginatedHistory.length > 0;
+    },
+    // 新增：监听分页变化，重置选中状态
+    currentPage() {
+      this.selectedItems = [];
+      this.selectAll = false;
     }
   },
   mounted() {
     this.historyModal = new Modal(document.getElementById('historyModal'));
     this.detailModal = new Modal(document.getElementById('historyDetailModal'));
+    this.videoPlayerModal = new Modal(document.getElementById('videoPlayerModal'));
     this.loadHistory();
   },
   methods: {
-    // 新增分页跳转方法 - 仅修改此处
-    goToPage(page) {
-      page = parseInt(page);
-      const validPage = Math.max(1, Math.min(page, this.totalPages));
-      if (validPage !== this.currentPage) {
-        this.currentPage = validPage;
-        // 滚动到表格顶部
-        const modalBody = document.querySelector('#historyModal .modal-body');
-        if (modalBody) {
-          modalBody.scrollTop = 0;
-        }
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
       }
     },
     
-    // 格式化日期为紧凑格式 - 完全保留
+    jumpToPage() {
+      if (this.jumpPage >= 1 && this.jumpPage <= this.totalPages) {
+        this.currentPage = this.jumpPage;
+      } else {
+        this.jumpPage = this.currentPage;
+      }
+    },
+    
     formatCompactDate(dateString) {
       if (!dateString) return '';
       const date = new Date(dateString);
       return `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
     },
     
-    // 截断文本 - 完全保留
     truncateText(text, maxLength) {
       if (!text) return '--';
       if (text.length <= maxLength) return text;
       return text.substring(0, maxLength) + '...';
     },
     
-    // 重置结果 - 完全保留
     resetResults() {
       this.currentResult = {
         semanticText: '',
         videoName: '',
         analysisDate: ''
       };
+      this.batchProgress = {
+        total: 0,
+        completed: 0,
+        percent: 0
+      };
+      this.batchResults = [];
     },
 
-    // 加载历史记录 - 完全保留
     async loadHistory() {
       try {
         const data = await module2API.getHistory();
@@ -460,12 +511,10 @@ export default {
       }
     },
     
-    // 显示历史模态框 - 完全保留
     showHistoryModal() {
       this.historyModal.show();
     },
     
-    // 显示详情模态框 - 完全保留
     async showDetailModal(id) {
       try {
         const response = await module2API.getHistoryDetail(id);
@@ -480,7 +529,7 @@ export default {
           alert('未获取到记录数据');
           return;
         }
-
+        
         this.currentDetail = {
           filename: record.filename,
           semantic_text: record.semantic_text,
@@ -494,30 +543,169 @@ export default {
       }
     },
     
-    // 删除记录 - 完全保留
-    async deleteRecord(id) {
-      if(confirm('确定删除这条记录吗？')) {
-        try {
-          const data = await module2API.deleteHistory(id);
-          if(data.status === "success") {
-            this.loadHistory();
-          }
-        } catch (error) {
-          console.error('删除失败:', error);
-          alert('删除失败，请稍后重试');
-        }
+    playVideo(rawPath) {
+      if (!rawPath) {
+        alert('无法获取视频路径');
+        return;
+      }
+      
+      this.currentVideoUrl = rawPath;
+      
+      this.$nextTick(() => {
+        this.videoPlayerModal.show();
+        const player = this.$refs.videoPlayer;
+        player.load();
+        player.play().catch(e => {
+          console.error('视频播放失败:', e);
+          alert('视频播放失败，请检查视频路径');
+        });
+      });
+    },
+    
+    closeVideoPlayer() {
+      this.pauseVideo();
+      this.videoPlayerModal.hide();
+    },
+    
+    pauseVideo() {
+      const player = this.$refs.videoPlayer;
+      if (player) {
+        player.pause();
       }
     },
     
-    // 删除所有记录 - 完全保留
+    extractFilename(filePath) {
+      return filePath ? filePath.replace(/^.*[\\\/]/, '') : '--';
+    },
+    
+    getVideoSource(rawPath) {
+      if (!rawPath) return '';
+      if (rawPath.startsWith('http') || rawPath.startsWith('/static')) {
+        return rawPath;
+      }
+      const filename = encodeURIComponent(this.extractFilename(rawPath));
+      return `/video-proxy/module2/${filename}`;
+    },
+    
+    // 修改：删除单条记录，增加silent参数控制是否显示通知
+    async deleteRecord(id, silent = true) {
+      const confirmMessage = `确定要删除选中的记录吗？`;
+      if (!confirm(confirmMessage)) return;
+      
+      try {
+        const data = await module2API.deleteHistory(id);
+        if(data.status === "success") {
+          if (!silent) {
+            this.$notify({
+              title: '删除成功',
+              message: '记录已删除',
+              type: 'success'
+            });
+          }
+          // 从选中项中移除
+          this.selectedItems = this.selectedItems.filter(item => item !== id);
+          // 刷新列表
+          await this.loadHistory();
+        } else {
+          throw new Error(data.error || '删除失败');
+        }
+      } catch (error) {
+        console.error('删除失败:', error);
+        if (!silent) {
+          this.$notify({
+            title: '删除失败',
+            message: error.message || '删除失败，请稍后重试',
+            type: 'error'
+          });
+        }
+        throw error; // 重新抛出错误以便上层捕获
+      }
+    },
+
+    async ds(id, silent = true) {
+      
+      try {
+        const data = await module2API.deleteHistory(id);
+        if(data.status === "success") {
+          if (!silent) {
+            this.$notify({
+              title: '删除成功',
+              message: '记录已删除',
+              type: 'success'
+            });
+          }
+          // 从选中项中移除
+          this.selectedItems = this.selectedItems.filter(item => item !== id);
+          // 刷新列表
+          await this.loadHistory();
+        } else {
+          throw new Error(data.error || '删除失败');
+        }
+      } catch (error) {
+        console.error('删除失败:', error);
+        if (!silent) {
+          this.$notify({
+            title: '删除失败',
+            message: error.message || '删除失败，请稍后重试',
+            type: 'error'
+          });
+        }
+        throw error; // 重新抛出错误以便上层捕获
+      }
+    },
+    
+    // 新增：删除选中项
+    async deleteSelectedRecords() {
+      if (this.selectedItems.length === 0) return;
+      
+      const confirmMessage = `确定要删除选中的 ${this.selectedItems.length} 条记录吗？`;
+      if (!confirm(confirmMessage)) return;
+      
+      this.isDeleting = true;
+      
+      try {
+        // 使用Promise.all并行删除，提高效率
+        const deletePromises = this.selectedItems.map(id => this.ds(id, false));
+        await Promise.all(deletePromises);
+        
+        // 显示成功消息
+        this.$notify({
+          title: '删除成功',
+          message: `已成功删除 ${this.selectedItems.length} 条记录`,
+          type: 'success'
+        });
+        
+        // 清空选择
+        this.selectedItems = [];
+        this.selectAll = false;
+        
+        // 刷新列表
+        await this.loadHistory();
+        
+      } catch (error) {
+        console.error('删除选中项失败:', error);
+        this.$notify({
+          title: '删除失败',
+          message: '部分记录删除失败，请重试',
+          type: 'error'
+        });
+      } finally {
+        this.isDeleting = false;
+        await this.loadHistory(); // 确保删除成功后重新加载
+        this.selectedItems.length=0
+      }
+    },
+    
     async deleteAllRecords() {
       const confirmMessage = this.searchQuery 
-        ? `确定要删除所有搜索结果吗？` 
+        ? `确定要删除所有筛选结果吗？` 
         : "确定要删除所有历史记录吗？";
       
       if (confirm(confirmMessage)) {
         try {
-          const data = await module2API.deleteAllHistory();
+          const data = await module2API.deleteAllHistory({
+            search: this.searchQuery
+          });
           if(data.status === "success") {
             this.loadHistory();
             this.searchQuery = '';
@@ -529,32 +717,35 @@ export default {
       }
     },
     
-    // 搜索历史 - 仅修改此处（添加分页重置）
-    searchHistory() {
-      this.currentPage = 1;
+    // 新增：全选/取消全选
+    toggleSelectAll() {
+      if (this.selectAll) {
+        this.selectedItems = this.paginatedHistory.map(item => item.id);
+      } else {
+        this.selectedItems = [];
+      }
     },
     
-    // 重置搜索 - 仅修改此处（添加分页重置）
+    searchHistory() {
+      // Computed property handles the filtering
+    },
+    
     resetSearch() {
       this.searchQuery = '';
-      this.currentPage = 1;
     },
     
-    // 单文件上传 - 完全保留
     handleSingleUpload(event) {
       if (event.target.files.length > 0) {
         this.handleFileUpload(event.target.files[0], true);
       }
     },
     
-    // 多文件上传 - 完全保留
     handleMultiUpload(event) {
       if (event.target.files.length > 0) {
         this.handleBatchUpload(event.target.files);
       }
     },
     
-    // 文件上传处理 - 完全保留
     async handleFileUpload(file, isSingle) {
       this.isAnalyzing = true;
       this.resetResults();
@@ -579,50 +770,57 @@ export default {
       }
     },
     
-    // 批量上传处理 - 完全保留
     async handleBatchUpload(files) {
+      this.isAnalyzing = true;
       this.resetResults();
-      this.currentResult.semanticText = `开始批量上传 ${files.length} 个视频...`;
-      
-      let completed = 0;
-      let hasError = false;
+      this.batchProgress = {
+        total: files.length,
+        completed: 0,
+        percent: 0
+      };
       
       for (const file of files) {
-        if (hasError) break;
-        
         try {
           const data = await module2API.uploadBatch(file);
           
           if(data.status === "success") {
-            completed++;
-            this.currentResult.semanticText = `已完成 ${completed}/${files.length} 个视频分析...`;
-            
-            if (completed === files.length) {
-              this.currentResult.semanticText += `\n批量分析完成`;
-              this.loadHistory();
-            }
+            this.batchResults.push({
+              filename: file.name,
+              status: 'success',
+              message: '分析成功'
+            });
           } else {
-            throw new Error(data.error || '上传失败');
+            this.batchResults.push({
+              filename: file.name,
+              status: 'error',
+              message: data.error || '分析失败'
+            });
           }
         } catch (error) {
           console.error('上传失败:', error);
-          hasError = true;
-          this.currentResult.semanticText = `分析失败: ${file.name} - ${error.message}`;
+          this.batchResults.push({
+            filename: file.name,
+            status: 'error',
+            message: error.message
+          });
+        } finally {
+          this.batchProgress.completed++;
+          this.batchProgress.percent = Math.round((this.batchProgress.completed / this.batchProgress.total) * 100);
         }
       }
+      
+      this.isAnalyzing = false;
+      this.loadHistory();
     },
     
-    // 获取视频URL - 完全保留
     getVideoUrl(videoName) {
       return module2API.getExampleVideoUrl(videoName);
     },
     
-    // 分析示例 - 完全保留
     analyzeExample(videoName) {
       this.handleExampleVideo(videoName);
     },
     
-    // 处理示例视频 - 完全保留
     async handleExampleVideo(videoName) {
       this.isAnalyzing = true;
       this.resetResults();
@@ -644,7 +842,7 @@ export default {
         console.error('示例视频处理失败:', error);
         this.currentResult.semanticText = `示例视频分析失败: ${error.message}`;
       } finally {
-        this.isAnalyzing = false;
+        this.isDeleting = false;
       }
     }
   }
@@ -669,80 +867,16 @@ export default {
   background: #f5f7fa;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .layout-sidebar {
-    flex: 0 0 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-layout {
-    flex-direction: column;
-  }
-  
-  .layout-sidebar {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-  
-  .layout-main {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 576px) {
-  .layout-main {
-    padding: 10px;
-  }
-}
-/* 全局样式 */
-body {
-  font-family: 'Arial', sans-serif;
-  background: #f5f7fa;
-  margin: 0;
-  padding: 0;
-  color: #333;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-}
-
-/* 主要内容区域 - 完全保留 */
-.content {
-  flex: 1;
-  padding: 30px;
-  background: #f5f7fa;
-  overflow-y: auto;
-}
-
 .content-area {
   padding: 40px;
   width: 100%;
   height: 100%;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   margin: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.content-area h2 {
-  color: #0056b3;
-  margin-bottom: 20px;
-  font-size: 2em;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
-}
-
-.content-area p {
-  color: #666;
-  font-size: 1.1em;
-  line-height: 1.6;
-}
-
-/* 功能项样式 - 完全保留 */
 .feature-overview {
   display: grid;
   gap: 30px;
@@ -757,24 +891,6 @@ html, body {
   transition: transform 0.3s ease;
 }
 
-.feature-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.feature-item h4 {
-  color: #0056b3;
-  margin-bottom: 15px;
-  font-size: 1.3em;
-}
-
-.feature-item p {
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-/* 按钮样式 - 完全保留 */
 .btn-primary {
   background: #3b87d8;
   color: white;
@@ -785,11 +901,6 @@ html, body {
   transition: background 0.3s;
 }
 
-.btn-primary:hover {
-  background: #2a6fc9;
-}
-
-/* 紧凑记录样式 - 完全保留 */
 .compact-records {
   display: flex;
   flex-direction: column;
@@ -800,12 +911,6 @@ html, body {
   padding: 8px;
   border-radius: 6px;
   background-color: #f9f9f9;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.compact-record-item:hover {
-  background-color: #f0f0f0;
 }
 
 .compact-record-header {
@@ -836,55 +941,108 @@ html, body {
   text-overflow: ellipsis;
 }
 
-/* 任务表格样式 - 完全保留 */
-.task-table-wrapper {
-  max-height: 600px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.analyzing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(59, 135, 216, 0.2);
+  border-top: 4px solid #3b87d8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.analyzing-text {
+  font-size: 18px;
+  color: #3b87d8;
+  font-weight: bold;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 900px;
 }
 
 .history-table th, 
 .history-table td {
-  padding: 12px 15px;
+  padding: 12px 10px;
   text-align: left;
   border-bottom: 1px solid #eee;
-  word-wrap: break-word;
 }
 
-.history-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.history-table th:nth-child(1), 
+.history-table td:nth-child(1) {
+  width: 60px;
 }
 
-.history-table tr:hover {
-  background-color: #f8f9fa;
+.history-table th:nth-child(2), 
+.history-table td:nth-child(2) {
+  width: 150px;
 }
 
-.task-actions {
-  display: flex;
-  gap: 8px;
+.history-table th:nth-child(3), 
+.history-table td:nth-child(3) {
+  min-width: 200px;
 }
 
-.task-actions button {
+.history-table th:nth-child(4), 
+.history-table td:nth-child(4) {
+  width: 300px;
+}
+
+.history-table th:nth-child(5), 
+.history-table td:nth-child(5) {
+  width: 180px;
+}
+
+.filename-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.btn-view, .btn-play, .btn-delete {
   padding: 5px 10px;
+  font-size: 0.85rem;
+  margin: 0 3px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.85em;
+  display: inline-block;
 }
 
 .btn-view {
   background: #28a745;
+  color: white;
+}
+
+.btn-play {
+  background: #3b87d8;
   color: white;
 }
 
@@ -893,45 +1051,42 @@ html, body {
   color: white;
 }
 
-/* 旋转动画 - 完全保留 */
-.spinner-border {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  vertical-align: text-bottom;
-  border: 0.25em solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spinner-border .75s linear infinite;
-}
-
-@keyframes spinner-border {
-  to { transform: rotate(360deg); }
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* 分页样式 - 完全保留 */
 .pagination-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-top: 20px;
   padding: 10px 0;
 }
 
-.pagination {
-  margin: 0;
+.page-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 新增的页码跳转样式 */
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-jump span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.page-jump-input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.page-jump-btn {
+  padding: 5px 10px;
 }
 
 .page-item.active .page-link {
@@ -939,47 +1094,101 @@ html, body {
   border-color: #3b87d8;
 }
 
-.page-link {
-  color: #3b87d8;
+.video-container {
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+  position: relative;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-.page-info {
-  color: #666;
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 批量分析进度样式 */
+.batch-progress-container {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.batch-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.batch-progress-bar {
+  height: 10px;
+  background: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.batch-progress-bar div {
+  height: 100%;
+  background: #3b87d8;
+  transition: width 0.3s ease;
+}
+
+.batch-results {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.batch-result-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.batch-result-item:last-child {
+  border-bottom: none;
+}
+
+.batch-filename {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.batch-status {
   font-size: 0.9em;
+  margin-top: 4px;
 }
 
-/* 表格列宽调整 - 完全保留 */
-.history-table th:nth-child(1),
-.history-table td:nth-child(1) {
-  width: 8%;
+.batch-status.success {
+  color: #28a745;
 }
 
-.history-table th:nth-child(2),
-.history-table td:nth-child(2) {
-  width: 20%;
+.batch-status.error {
+  color: #dc3545;
 }
 
-.history-table th:nth-child(3),
-.history-table td:nth-child(3) {
-  width: 25%;
+/* 视频元信息样式 */
+#videoMeta {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f5f7fa;
+  border-radius: 5px;
 }
 
-.history-table th:nth-child(4),
-.history-table td:nth-child(4) {
-  width: 35%;
-}
-
-.history-table th:nth-child(5),
-.history-table td:nth-child(5) {
-  width: 12%;
-}
-
-/* 响应式调整 - 完全保留 */
-@media (max-width: 1200px) {
-  .history-table th:nth-child(4),
-  .history-table td:nth-child(4) {
-    width: 30%;
-  }
+#videoMeta p {
+  margin: 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 992px) {
@@ -987,14 +1196,17 @@ html, body {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   
-  .history-table th:nth-child(2),
-  .history-table td:nth-child(2) {
-    width: 25%;
+  .history-table {
+    min-width: 800px;
   }
   
-  .history-table th:nth-child(4),
-  .history-table td:nth-child(4) {
-    display: none;
+  .history-table th:nth-child(2),
+  .history-table td:nth-child(2) {
+    width: 120px;
+  }
+  
+  .actions-cell {
+    width: 160px;
   }
 }
 
@@ -1007,42 +1219,62 @@ html, body {
     padding: 20px;
   }
   
-  .history-table th:nth-child(1),
-  .history-table td:nth-child(1) {
-    width: 10%;
+  .history-table {
+    min-width: 700px;
   }
   
-  .history-table th:nth-child(2),
+  .history-table th, 
+  .history-table td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+  
+  .btn-view, .btn-play, .btn-delete {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    margin: 0 2px;
+  }
+  
+  .actions-cell {
+    width: 150px;
+  }
+}
+.history-table th:first-child,
+.history-table td:first-child {
+  width: 40px;
+  text-align: center;
+}
+
+/* 调整序号列宽度 */
+.history-table th:nth-child(2), 
+.history-table td:nth-child(2) {
+  width: 50px;
+}
+
+/* 禁用状态样式 */
+.btn-danger:disabled,
+.btn-secondary:disabled,
+input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* 删除按钮加载状态 */
+.btn-danger .spinner-border {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .history-table th:first-child,
+  .history-table td:first-child {
+    width: 30px;
+  }
+  
+  .history-table th:nth-child(2), 
   .history-table td:nth-child(2) {
-    width: 30%;
-  }
-  
-  .history-table th:nth-child(3),
-  .history-table td:nth-child(3) {
-    width: 40%;
-  }
-  
-  .history-table th:nth-child(5),
-  .history-table td:nth-child(5) {
-    width: 20%;
-  }
-  
-  .pagination-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .compact-record-header {
-    flex-direction: column;
-  }
-  
-  .compact-filename {
-    max-width: 100%;
-    margin-bottom: 2px;
-  }
-  
-  .compact-date {
-    align-self: flex-end;
+    width: 40px;
   }
 }
 </style>
