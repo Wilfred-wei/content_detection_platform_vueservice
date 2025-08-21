@@ -85,7 +85,7 @@
                               <div class="batch-filename">{{ result.filename }}</div>
                               <div class="batch-status" :class="{ 'success': result.status === 'success', 'error': result.status === 'error' }">
                                 <span>置信度: {{ result.score || '--' }}%</span>
-                                <span v-if="result.category"> | 类别: {{ result.category }}</span>
+                                <span v-if="result.category"> | 危害类别: {{ result.category }}</span>
                                 <span v-else-if="result.message"> | {{ result.message }}</span>
                               </div>
                             </div>
@@ -122,14 +122,14 @@
                         </div>
                         <div class="compact-record-body">
                           <div class="compact-score">
-                            <span>可信度: </span>
+                            <span>置信度: </span>
                             <span class="score-value">{{ record.score }}%</span>
                             <div class="compact-progress">
                               <div :style="{ width: record.score + '%' }"></div>
                             </div>
                           </div>
                           <div class="compact-category">
-                            <span>类别: </span>
+                            <span>危害类别: </span>
                             <span>{{ record.category || '--' }}</span>
                           </div>
                         </div>
@@ -263,8 +263,8 @@
                   <th>序号</th>
                   <th>提交时间</th>
                   <th>视频名称</th>
-                  <th>可信度</th>
-                  <th>类别</th>
+                  <th>置信度</th>
+                  <th>危害类别</th>
                   <th>操作</th>
                 </tr>
               </thead>
@@ -1117,6 +1117,7 @@ export default {
   display: flex;
   align-items: center;
   font-size: 0.85em;
+  margin-right: 10px; 
 }
 
 .compact-progress {
@@ -1125,6 +1126,7 @@ export default {
   background: #eee;
   border-radius: 3px;
   overflow: hidden;
+  max-width: 450px
 }
 
 .compact-progress div {
