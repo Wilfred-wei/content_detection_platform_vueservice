@@ -18,10 +18,10 @@ from config import Config
 
 app = Flask(__name__)
 
-# 配置CORS，允许前端访问
+# 配置CORS，允许前端访问（放宽为允许任意来源，便于开发联调）
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:5173", "http://127.0.0.1:5173"],
+        "origins": "*",
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }

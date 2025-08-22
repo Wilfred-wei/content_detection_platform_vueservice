@@ -340,7 +340,7 @@
                            @click="showResultDetail(result, index)">
                         <!-- 结果图片 -->
                         <div class="result-image-container">
-                          <img :src="result.image_url || result.original_image_url" 
+                          <img :src="normalizeServiceUrl(result.image_url || result.original_image_url)" 
                                class="img-fluid rounded border" 
                                style="height: 80px; width: 100%; object-fit: cover; cursor: pointer;"
                                :alt="result.filename"
@@ -559,7 +559,7 @@
                     </h6>
                   </div>
                   <div class="card-body text-center">
-                    <img :src="currentResult.image_url || currentResult.original_image_url" 
+                    <img :src="normalizeServiceUrl(currentResult.image_url || currentResult.original_image_url)" 
                          class="img-fluid rounded shadow-sm" 
                          style="max-height: 350px; max-width: 100%;"
                          :alt="currentResult.filename"
@@ -589,7 +589,7 @@
                   <div class="card-body text-center">
                     <!-- 有热力图时显示 -->
                     <div v-if="currentResult.heatmap_url">
-                      <img :src="currentResult.heatmap_url" 
+                      <img :src="normalizeServiceUrl(currentResult.heatmap_url)" 
                            class="img-fluid rounded shadow-sm" 
                            style="max-height: 350px; max-width: 100%;"
                            :alt="'热力图 - ' + currentResult.filename"
@@ -988,8 +988,8 @@ export default defineComponent({
             formData.append('name', taskName.value)
           }
           
-          // 调用批量检测API
-          response = await fetch('http://localhost:8002/detect/batch', {
+          // 调用批量检测API（通过本地域名代理，避免跨域）
+          response = await fetch('/ai-detect/detect/batch', {
             method: 'POST',
             body: formData
           })
@@ -1003,7 +1003,7 @@ export default defineComponent({
             formData.append('name', taskName.value)
           }
           
-          response = await fetch('http://localhost:8002/detect/batch', {
+          response = await fetch('/ai-detect/detect/batch', {
             method: 'POST',
             body: formData
           })
@@ -1031,7 +1031,7 @@ export default defineComponent({
       if (!currentJob.value?.id) return
 
       try {
-        const response = await fetch(`http://localhost:8002/batch/${currentJob.value.id}/status`)
+        const response = await fetch(`/ai-detect/batch/${currentJob.value.id}/status`)
         if (response.ok) {
           const jobData = await response.json()
           currentJob.value = { ...currentJob.value, ...jobData }
@@ -1052,7 +1052,7 @@ export default defineComponent({
       if (!currentJob.value?.id) return
       
       try {
-        const response = await fetch(`http://localhost:8002/batch/${currentJob.value.id}/cancel`, {
+        const response = await fetch(`/ai-detect/batch/${currentJob.value.id}/cancel`, {
           method: 'POST'
         })
         if (response.ok) {
@@ -1215,6 +1215,19 @@ export default defineComponent({
       return classMap[status] || 'bg-primary'
     }
 
+    // 将后端返回的 http://localhost:8002/... URL 统一转换为代理路径，避免跨域/外网不可达
+    const normalizeServiceUrl = (url?: string) => {
+      if (!url) return url as any
+      try {
+        // 本地直接返回
+        if (url.startsWith('/')) return url
+        // 映射到 /ai-detect 代理前缀
+        return url.replace('http://localhost:8002', '/ai-detect')
+      } catch {
+        return url
+      }
+    }
+
     return {
       // 数据
       uploadMethod,
@@ -1277,6 +1290,7 @@ export default defineComponent({
       getStatusBadgeClass,
       getStatusText,
       getProgressBarClass
+      ,normalizeServiceUrl
     }
   }
 })
