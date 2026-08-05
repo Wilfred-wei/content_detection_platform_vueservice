@@ -76,6 +76,20 @@ sudo ./svc.sh status
 
 如果没有 sudo 权限，可以暂时使用 `tmux` 或 `screen` 运行 `./run.sh`，但这不是长期方案。服务运行用户必须能读写 Runner 目录和项目部署目录，并能执行 Node、npm、Python、uv、rsync 和项目脚本。
 
+当前服务器采用账号级 `systemd --user` 服务，避免依赖 sudo。服务文件位于：
+
+`~/.config/systemd/user/content-detection-agent-runner.service`
+
+服务内容需要把 `WorkingDirectory` 和 `ExecStart` 指向 Runner 目录，并保留服务器的出站代理环境。启用命令为：
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now content-detection-agent-runner.service
+systemctl --user status content-detection-agent-runner.service
+```
+
+如果希望用户退出登录后仍自动启动，需要管理员为该账号开启 user lingering；没有管理员权限时，保持服务器用户会话或使用管理员安装 `svc.sh`。
+
 ### 5. 设置仓库变量
 
 在 `Repository -> Settings -> Secrets and variables -> Actions -> Variables` 添加：
