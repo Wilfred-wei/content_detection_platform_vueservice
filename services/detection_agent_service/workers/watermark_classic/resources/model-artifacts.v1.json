@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "bundle": {
+    "id": "invisible-watermark-0.2.0-wheel",
+    "filename": "invisible_watermark-0.2.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/2b/57/18b5a914f6d7994dd349252873169e946dc824328e9a37fd15ed836deedc/invisible_watermark-0.2.0-py3-none-any.whl",
+    "sizeBytes": 1633253,
+    "sha256": "644311beed9cfe4a9a5a4a46c740f47800cef184fe2e1297f3f4542e2d992f8b"
+  },
+  "models": [
+    {
+      "id": "rivagan-decoder-onnx",
+      "filename": "rivagan_decoder.onnx",
+      "member": "imwatermark/rivagan_decoder.onnx",
+      "sha256": "6b006690cf352fa50a91a0b6d6241dbcded0a9957969e2c0665cf9a7011b3880"
+    },
+    {
+      "id": "rivagan-encoder-onnx",
+      "filename": "rivagan_encoder.onnx",
+      "member": "imwatermark/rivagan_encoder.onnx",
+      "sha256": "66bc7814fadac7d686105c8ab26c6cf2cc8e40deb83e67bb6ef5b9de9b8ece0d"
+    }
+  ]
+}

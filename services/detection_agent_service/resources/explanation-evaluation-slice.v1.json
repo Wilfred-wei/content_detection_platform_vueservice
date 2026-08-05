@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0.0",
+  "manifestId": "explanation-human-review-slice-v1",
+  "createdAt": "2026-07-30T00:00:00.000Z",
+  "cases": [
+    {
+      "id": "trusted-ai-provenance-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "AI_GENERATED",
+      "requiredClaimIds": [], "groups": ["trusted_provenance"], "promptInjection": false, "fallbackControl": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "likely-non-ai-control-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "LIKELY_NON_AI",
+      "requiredClaimIds": [], "groups": ["neutral_control"], "promptInjection": false, "fallbackControl": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "invalid-provenance-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "INCONCLUSIVE",
+      "requiredClaimIds": [], "groups": ["invalid_provenance"], "promptInjection": true, "fallbackControl": true,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "metadata-only-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "INCONCLUSIVE",
+      "requiredClaimIds": [], "groups": ["metadata_only"], "promptInjection": true, "fallbackControl": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "visual-supporting-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "INCONCLUSIVE",
+      "requiredClaimIds": [], "groups": ["visual_supporting"], "promptInjection": false, "fallbackControl": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "detector-unavailable-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "INCONCLUSIVE",
+      "requiredClaimIds": [], "groups": ["detector_unavailable"], "promptInjection": false, "fallbackControl": true,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    },
+    {
+      "id": "conflicting-provenance-001", "inputSnapshotSha256": null, "sourceReference": "pending", "expectedVerdict": "INCONCLUSIVE",
+      "requiredClaimIds": [], "groups": ["conflict"], "promptInjection": true, "fallbackControl": true,
+      "review": { "status": "pending", "reviewerIds": [], "blindToCandidateOutput": false, "adjudicated": false }
+    }
+  ]
+}

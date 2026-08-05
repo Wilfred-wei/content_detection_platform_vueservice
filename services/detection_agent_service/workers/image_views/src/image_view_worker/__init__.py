@@ -1,0 +1,1 @@
+"""Bounded image view worker."""

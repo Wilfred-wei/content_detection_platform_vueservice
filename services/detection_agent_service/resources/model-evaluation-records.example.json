@@ -1,0 +1,26 @@
+[
+  {
+    "recordId": "cal-real-001",
+    "sampleId": "real-001",
+    "detectorId": "dda-dinov2-lora",
+    "partition": "calibration",
+    "label": "real",
+    "score": 0.04,
+    "subgroup": "photograph",
+    "generator": null,
+    "transformation": "original",
+    "latencyMs": 28
+  },
+  {
+    "recordId": "eval-ai-001",
+    "sampleId": "ai-001",
+    "detectorId": "dda-dinov2-lora",
+    "partition": "evaluation",
+    "label": "ai_generated",
+    "score": 0.91,
+    "subgroup": "text-to-image",
+    "generator": "owned-generator",
+    "transformation": "original",
+    "latencyMs": 31
+  }
+]

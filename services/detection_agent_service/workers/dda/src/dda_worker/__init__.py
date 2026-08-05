@@ -1,0 +1,1 @@
+"""Local DDA detector worker."""

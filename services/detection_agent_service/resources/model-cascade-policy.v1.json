@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "model-cascade-policy.v1",
+  "policyVersion": "model-cascade-v1-2026-08-04",
+  "primaryDetectorId": "dda-dinov2-lora",
+  "complementaryDetectorIds": [
+    "safe-wavelet-resnet",
+    "mirror-dinov3-hplus",
+    "legacy-ai-detection"
+  ],
+  "nearBoundaryMargin": 0.08,
+  "escalateUncalibrated": true,
+  "escalateUnavailable": true,
+  "escalateOutOfDistribution": true,
+  "maxComplementaryDetectors": 3,
+  "fusionPolicy": "none_preserve_disagreement"
+}

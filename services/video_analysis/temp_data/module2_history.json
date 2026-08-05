@@ -1,0 +1,226 @@
+[
+  {
+    "id": "8d1de6ae-c0bd-4acb-b07e-842b4d731e85",
+    "filename": "birthday.mp4",
+    "semantic_text": "This video is mainly about a young man in a birthday hat sitting in front of a computer, waving his hands and smiling at the camera.\n\n</s>",
+    "date": "2025-07-18 21:49:04",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/18bda48cb05e4e709ca8486ebd0a6d54_birthday.mp4"
+  },
+  {
+    "id": "0c5080d1-0f5d-42f3-a3fc-e234408e6120",
+    "filename": "birthday.mp4",
+    "semantic_text": "This video is mainly about a young man having a party at home, sitting in front of a laptop with a laptop keyboard on his lap.\n\n\n</s>",
+    "date": "2025-07-18 21:49:51",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/bbe9e90202f9456290a20cd90bce8bb7_birthday.mp4"
+  },
+  {
+    "id": "1d0f8fce-1add-4e51-a7b0-1482ca5cecfb",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "Based on what i have just seen and heard, this video is mainly about a man opening a door and entering a room with a screen door\n \n</s>",
+    "date": "2025-07-18 21:59:22",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/04891bac10ca4a7eba8c3b68ec486390_dog_barking.mp4"
+  },
+  {
+    "id": "f40a2bba-e979-4ac2-b55b-fdf1bfbcece8",
+    "filename": "birthday.mp4",
+    "semantic_text": "This video is mainly about a human.\n\n</s>",
+    "date": "2025-07-18 21:59:42",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/7266db48827d422f9ae9549b03cf6879_birthday.mp4"
+  },
+  {
+    "id": "034a5512-2350-4218-bb18-f9ced70626f1",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "Based on what i have just seen and heard, the video is mainly about the man opening the pet door in his house and letting the dog out to play outside\n\n\n\n</s>",
+    "date": "2025-07-18 22:22:47",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/b9f7d8a3c3c74134ab2139eee5fab887_dog_barking.mp4"
+  },
+  {
+    "id": "cad9da04-d590-4150-a3c6-6551b282bdec",
+    "filename": "3x2cigv23kp5b4g.mp4",
+    "semantic_text": "The video is mainly about a man giving a speech on a microphone with text scrolling behind him, and people reacting and commenting in the chat.",
+    "date": "2025-07-20 16:42:47",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/fb96505069034e2bbaef03dfd76ec460_3x2cigv23kp5b4g.mp4"
+  },
+  {
+    "id": "48fe9739-ad65-46bc-8401-25ed90d186c4",
+    "filename": "3x2bxzme2kszq7c.mp4",
+    "semantic_text": "This video is about a cartoon video of a cat being in a basket and looking at its owners\n\n</s>",
+    "date": "2025-07-20 16:49:18",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/bc8dfe6dd75549b690fa776bbfded688_3x2bxzme2kszq7c.mp4"
+  },
+  {
+    "id": "2bde15a3-4113-402f-97b4-ba1481810023",
+    "filename": "3x2cigv23kp5b4g.mp4",
+    "semantic_text": "The video is about a young man who is commenting on a social media post, possibly a video or image, using the sound of his voice to convey his thoughts and emotions",
+    "date": "2025-07-20 16:49:40",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/e0f413cb34ac47a2b8a0e35ad48422b9_3x2cigv23kp5b4g.mp4"
+  },
+  {
+    "id": "4b9fcf6a-0cec-48a8-b87c-04ce38412c6f",
+    "filename": "3x2bnhiss94qcjg.mp4",
+    "semantic_text": "Based on the video that you provided, the main topic is about a korean singer, exo's kai performing on a stage and showing his dance skills\n his talent and the bright light and music of the background is making the video more entertaining and interesting",
+    "date": "2025-07-20 18:53:08",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/4ca8f93ce92c4c69a3fec088cb6916a9_3x2bnhiss94qcjg.mp4"
+  },
+  {
+    "id": "c711326f-3457-4da5-83f9-174a0f801fde",
+    "filename": "3x2bxzme2kszq7c.mp4",
+    "semantic_text": "This video is mainly about a girl who is talking to a robot in korean and then you see the robot talking in korean",
+    "date": "2025-07-20 18:57:37",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/5659ba77bd4741fcb7173f7688ad1e09_3x2bxzme2kszq7c.mp4"
+  },
+  {
+    "id": "563c5258-4c69-40b3-880c-71ed089834d6",
+    "filename": "3x2cigv23kp5b4g.mp4",
+    "semantic_text": "Based on the video you've provided, the main topic appears to be a chinese man singing a song on youtube, accompanied by a comment section of people giving their opinions and feedback on his performance\nthe video starts with the man holding a guitar and singing a song, followed by a sequence of people commenting on the video, praising or criticizing the man's performance, using chinese characters and emojis.",
+    "date": "2025-07-20 18:57:42",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/77b451b81f9347c9931d6df1aed52806_3x2cigv23kp5b4g.mp4"
+  },
+  {
+    "id": "19376388-d300-43c3-a338-9c9298eafbfa",
+    "filename": "example1.mp4",
+    "semantic_text": "Mainly about a speech by a president\n\n</s>",
+    "date": "2025-07-20 19:10:48",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/8de7e3ea9fb146cbb5e0443f950a161c_example1.mp4"
+  },
+  {
+    "id": "753180b8-4b78-43bc-afcf-13aa5b74c24e",
+    "filename": "example3_2_2_News.mp4",
+    "semantic_text": "The video is mainly about a person working on a computer, programming and assembly of an electronic product or device in a factory",
+    "date": "2025-07-20 19:57:38",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/fa40a72f959a48c7bc2ee0a022af6d84_example3_2_2_News.mp4"
+  },
+  {
+    "id": "119647dd-b90f-422b-a38b-a9a122eec5ff",
+    "filename": "birthday.mp4",
+    "semantic_text": "This video is mainly about a person celebrating a birthday.\n\n</s>",
+    "date": "2025-07-22 22:46:50",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/d7422f9795824f15868cd6d6f7e796f0_birthday.mp4"
+  },
+  {
+    "id": "6d9850b3-7a9b-4e35-9647-f96d51f2cda5",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u9019\u90e8\u5f71\u7247\u4e3b\u8981\u8b1b\u8ff0\u4e00\u500b\u4eba\u5728\u5bb6\u4f7f\u7528\u96fb\u8166\u6176\u795d\u751f\u65e5\u3002\u90a3\u4eba\u6709\u4e00\u53f0\u7b14\u8bb0\u672c\u96fb\u8166\uff0c\u5728\u80cc\u666f\u4e2d\u6709\u4e00\u4e9b\u71c8\u5149\u548c\u88dd\u98fe\u7269\u3002\u90a3\u500b\u4eba\u9084\u6234\u8457\u4e00\u9802\u559c\u6c23\u6d0b\u6d0b\u7684\u5e3d\u5b50\u3002",
+    "date": "2025-07-22 22:59:27",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/f97d324e982041a0a7575f2bef482ecb_birthday.mp4"
+  },
+  {
+    "id": "489bf3ae-8089-4fd4-a3e3-d6b11998b5d2",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "\u9019\u500b\u8996\u983b\u4e3b\u8981\u662f\u95dc\u65bc\u4e00\u500b\u7537\u4eba\u958b\u9580\u9032\u5165\u4ed6\u7684\u623f\u5b50\u3002",
+    "date": "2025-07-22 23:01:12",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/6795ba5280a7418f962bd610ce6b1163_dog_barking.mp4"
+  },
+  {
+    "id": "5ed8d49d-36df-48d8-b5fd-41566887d3a3",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u9019\u6bb5\u8996\u983b\u986f\u793a\u4e86\u4e00\u500b\u4eba\u5750\u5728\u684c\u524d\uff0c\u684c\u4e0a\u6709\u4e00\u53f0\u7b14\u8bb0\u672c\u96fb\u8166\u5728\u4ed6\u5011\u9762\u524d\u3002\u4ed6\u5011\u9762\u5e36\u5fae\u7b11\uff0c\u5728\u7a7a\u4e2d\u63ee\u821e\u8457\u624b\u3002\u4ed6\u5011\u5f88\u53ef\u80fd\u662f\u6176\u795d\u67d0\u4ef6\u4e8b\u60c5\uff0c\u6bd4\u5982\u751f\u65e5\u6216\u7279\u6b8a\u5834\u5408\u3002\u9019\u500b\u4eba\u7684\u81c9\u90e8\u7279\u5f81\u548c\u982d\u9aee\u98a8\u683c\u53ef\u4ee5\u63a8\u65b7\u51fa\u4ed6\u662f\u4e8c\u5341\u5e7e\u6b72\u6216\u4e09\u5341\u5e7e\u6b72\u7537\u6027\u3002",
+    "date": "2025-07-22 23:05:08",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/de6c189a030a4ae2bc443b2ad17cbf1d_birthday.mp4"
+  },
+  {
+    "id": "fa0b6496-3569-4184-b1b6-0ab32124fde3",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "\u9019\u6bb5\u8996\u983b\u4f3c\u4e4e\u662f\u4e00\u500b\u7537\u4eba\u958b\u9580\u548c\u95dc\u9580\u9032\u5165\u4e26\u9000\u51fa\u4e00\u500b\u623f\u9593\u3002\u9084\u62cd\u651d\u4e86\u9019\u500b\u623f\u9593\u5167\u7684\u4e00\u5c0f\u90e8\u5206\u3002",
+    "date": "2025-07-22 23:11:49",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/e68ba690cfc94b40a8b63a15eb3e053c_dog_barking.mp4"
+  },
+  {
+    "id": "938a2507-b819-4fab-a42f-09e17f043116",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u4eba\u5750\u5728\u5bb6\u91cc\u7684\u684c\u5b50\u65c1\uff0c\u7528\u7b14\u8bb0\u672c\u7535\u8111\u53c2\u52a0\u751f\u65e5\u6d3e\u5bf9\uff0c\u5934\u4e0a\u6234\u7740\u751f\u65e5\u5e3d\u3002",
+    "date": "2025-07-22 23:14:07",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/591f83ad67ee40e184f35f984ba98136_birthday.mp4"
+  },
+  {
+    "id": "006296af-ad26-4026-b68c-16e20130a943",
+    "filename": "example3_2_2_News.mp4",
+    "semantic_text": "\u672c\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u96c6\u6210\u7535\u8def\u5236\u9020\u7684\u3002",
+    "date": "2025-07-24 15:23:19",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/4a1799ba288f4e65883719eb805e5b0a_example3_2_2_News.mp4"
+  },
+  {
+    "id": "d779be21-39fa-4411-8e9c-17b0e3969281",
+    "filename": "3x2euwuw9ic3nac.mp4",
+    "semantic_text": "the video is about a man speaking on camera, and is not clear which language or topic it is about\n\n</s>",
+    "date": "2025-07-24 15:26:25",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/3b40d89d19db4924944d06a9a6f904ef_3x2euwuw9ic3nac.mp4"
+  },
+  {
+    "id": "77f021d8-a17c-4995-8f93-0e3881eb1822",
+    "filename": "3x2faiujuefctwu.mp4",
+    "semantic_text": "The video is about chinese soldiers' selfie photo in hong kong, which shows their power, strength and control over hong kong, and also reflects the chinese government's attitude towards the hong kong protests.\n\n\n\n\n\n</s>",
+    "date": "2025-07-24 15:26:29",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/39cf09c286084684a2af16ffb07e0c7e_3x2faiujuefctwu.mp4"
+  },
+  {
+    "id": "02e2f783-9efb-463e-9e4a-e620077b5085",
+    "filename": "example3_2_2_Life.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u7537\u4eba\u5728\u9910\u9986\u91cc\u559d\u5496\u5561\u7684\u3002",
+    "date": "2025-07-24 16:16:30",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/36e44537207b4f719da2981f20ab2919_example3_2_2_Life.mp4"
+  },
+  {
+    "id": "dfc4824e-1012-48c1-ab30-66185570f1d6",
+    "filename": "example3_2_2_Life.mp4",
+    "semantic_text": "\u672c\u89c6\u9891\u662f\u5173\u4e8e\u4e00\u4e2a\u7537\u4eba\u559d\u5496\u5561\uff0c\u559d\u725b\u5976\u3002",
+    "date": "2025-07-24 16:35:16",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/e23587cd0fad4ef59df87f58f2b8798b_example3_2_2_Life.mp4"
+  },
+  {
+    "id": "c66fbf9f-7987-4c41-bfad-6c399f5da81a",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u957f\u53d1\u7684\u767d\u4eba\u7537\u6027\uff0c\u6234\u7740\u8282\u65e5\u6d3e\u5bf9\u5e3d\u5b50\uff0c\u5750\u5728\u529e\u516c\u5ba4\u524d\u7684\u7535\u8111\u524d\uff0c\u5e86\u795d\u751f\u65e5\u6216\u5176\u4ed6\u7279\u6b8a\u573a\u5408\uff0c\u624b\u4e3e\u7740\u5174\u594b\u7684\u624b\u52bf\uff0c\u4e3e\u8d77\u53cc\u624b\uff0c\u7528\u624b\u6307\u4ea4\u53c9\uff0c\u5411\u6444\u50cf\u673a\u5c55\u793a\u4e2d\u6307\uff0c\u4e3e\u676f\u5e86\u795d\uff0c\u624b\u91cc\u62ff\u7740\u4e00\u676f\u9999\u69df\u3002",
+    "date": "2025-07-24 19:07:17",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/2e34da0881a64e20b1723fe2714c6584_birthday.mp4"
+  },
+  {
+    "id": "8b3f0969-f58b-438a-a901-26197cbc12c3",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u4eba\u5e86\u795d\u751f\u65e5\u7684",
+    "date": "2025-07-24 19:11:53",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/72ac4795ef0c4986984b4ca391b94833_birthday.mp4"
+  },
+  {
+    "id": "91390c9d-353a-4f9b-8c56-dd136abc640e",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u7537\u4eba\u6253\u5f00\u95e8\uff0c\u5c55\u793a\u4e00\u4e2a\u6709\u5ba2\u5385\u3001\u9732\u53f0\u548c\u4e00\u4e2a\u4eba\u4ece\u7a97\u6237\u5411\u5916\u770b\u7684\u623f\u5c4b\u3002",
+    "date": "2025-07-24 19:13:42",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/561d8f1300134781ab56d476bc56559d_dog_barking.mp4"
+  },
+  {
+    "id": "36dba5ec-309f-4fb4-a61e-5b6fbcc6bc8b",
+    "filename": "dog_barking.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e00\u4e2a\u7537\u4eba\u6253\u5f00\u548c\u5173\u95ed\u4e00\u6247\u6ed1\u52a8\u73bb\u7483\u95e8\u8fdb\u5165\u6216\u79bb\u5f00\u4e00\u4e2a\u623f\u95f4\uff0c\u4ee5\u5728\u80cc\u666f\u4e2d\u770b\u5230\u623f\u95f4\u7684\u5185\u90e8\u3002",
+    "date": "2025-07-24 19:16:40",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/b92a2da35fbc4cbb8d70e86d0aede34e_dog_barking.mp4"
+  },
+  {
+    "id": "ba8757fb-e356-41a8-8438-e575d901a15e",
+    "filename": "birthday.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u5c55\u793a\u4e86\u4e00\u4e2a\u4eba\u5728\u5bb6\u4e2d\u72ec\u81ea\u5e86\u795d\u751f\u65e5\uff0c\u7528\u7b14\u8bb0\u672c\u7535\u8111\u548c\u7b14\u8bb0\u672c\u7535\u8111\u6444\u50cf\u5934\uff0c\u6325\u821e\u7740\u4ed6\u7684\u624b\uff0c\u7136\u540e\u5fae\u7b11\uff0c\u4e3e\u8d77\u4ed6\u7684\u62c7\u6307\uff0c\u8868\u793a\u5feb\u4e50\u3002",
+    "date": "2025-07-24 19:16:42",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/e7d4ab52d5814419b0661e0c56b3926a_birthday.mp4"
+  },
+  {
+    "id": "8db32d38-36af-4b34-9b3c-9783750c9030",
+    "filename": "example3_2_2_News.mp4",
+    "semantic_text": "\u4e00\u4e2a\u4e2d\u56fd\u5de5\u5382\u751f\u4ea7\u7ebf\u7684\u89c6\u9891",
+    "date": "2025-07-25 02:17:28",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/73e2ecf7758446b5b0d6cbb9064c940b_example3_2_2_News.mp4"
+  },
+  {
+    "id": "ac53ea6d-2f0a-47ac-b87d-c2eef748fbd5",
+    "filename": "3-2.mp4",
+    "semantic_text": "\u8be5\u89c6\u9891\u4e3b\u8981\u662f\u5173\u4e8e\u4e0e\u7f16\u7a0b\u6216\u7f16\u7a0b\u6709\u5173\u7684\u8f6f\u4ef6\u6216\u7f51\u7ad9\u7684\u7f51\u9875\u754c\u9762\u3002",
+    "date": "2025-07-25 02:19:23",
+    "file_path": "/sda/home/limingxin/0704/video_analysis/temp_uploads/module2/4ce73c5dafb14b24aca585b86023f819_3-2.mp4"
+  },
+  {
+    "id": "5c5f31e0-3ea9-4b2e-94d9-18141327d0e1",
+    "filename": "example3_2_2_News.mp4",
+    "semantic_text": "\u8fd9\u662f\u4e00\u4e2a\u65b0\u95fb\u89c6\u9891\uff0c\u5185\u5bb9\u6d89\u53ca\u65f6\u4e8b\u62a5\u9053\u548c\u65b0\u95fb\u64ad\u62a5\u3002",
+    "date": "2025-07-25 16:59:20",
+    "file_path": "/sda/home/temp/weiwenfei/content_detection_platform_vueservice-master/services/video_analysis/temp_uploads/module2/19ff1fd1bae3473eae20e19667dac49c_example3_2_2_News.mp4"
+  }
+]

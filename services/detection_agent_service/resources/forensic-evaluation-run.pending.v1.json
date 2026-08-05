@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0.0",
+  "runId": "forensic-pending-run-v1",
+  "createdAt": "2026-07-30T00:00:00.000Z",
+  "promptBundle": {
+    "id": "forensic-visual-evidence-v2",
+    "version": "2.0.0",
+    "cueTaxonomyVersion": "visual-cues-v2",
+    "promptHashes": {
+      "blind-general-v1": "aeae62225c48e904076e33ded6368c05df5f9e5f7e3d485df1f159f2f1ba49e7",
+      "text-geometry-v1": "185f5f36e7b958b9b0d12f3980f2389b251931ed012864d076536f9b7180e403",
+      "object-structure-v1": "b0814f4a3f86cebfa93c7219519674f9fd96d87f87d7fdefe566356050083949",
+      "lighting-shadow-v1": "4236f8099d6725f5d4eca28cd10d574d7f23950b4af8bbc2ee61882faea66647",
+      "reflection-consistency-v1": "713e6004995274c71501e37f0283bc324f4f3329ebc5c57ad7864a7e153ca582",
+      "perspective-physics-v1": "d139be84a15c50fd332a7b3c47a01357e2271d90563b37f78dc7fa9ab49337cc",
+      "visual-claim-verification-v1": "779130953fd706ae9d69d56c7d187e7199007d578a505576e6f21a4113c621ff",
+      "visual-claim-polarity-v1": "0d979846245dfaeae190a5e98b4160062f1e1cb893f10bb5d4d33db11ba4026b",
+      "conditional-region-proposal-v1": "6c2d91828f07b27d02b76b372244d8fb6fcae28dd11c48f3eae30f521bbb5712",
+      "visible-ai-mark-observation-v1": "2286c4c388dc4055fe199657a5f3e6cec9ce0ca15e32f89703ead8f195ef4de5",
+      "visible-ai-mark-verification-v1": "599d2f0bffa4f9359437fb31355d97d4d6d121f0561c3bc514807a3c7a948483"
+    }
+  },
+  "model": { "provider": "openai", "model": "gpt-5.6-sol" },
+  "cases": []
+}

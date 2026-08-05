@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0.0",
+  "manifestId": "forensic-human-review-slice-v1",
+  "createdAt": "2026-07-30T00:00:00.000Z",
+  "cases": [
+    {
+      "id": "real-people-original-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "real", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "original", "subgroups": ["people"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "generated-text-resize-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "generated", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "resize", "subgroups": ["text_heavy"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "generated-landscape-jpeg-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "generated", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "jpeg_recompression", "subgroups": ["landscape", "low_quality"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "real-people-crop-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "real", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "crop", "subgroups": ["people"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "difficult-screenshot-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "difficult_control", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "screenshot", "subgroups": ["screenshot", "text_heavy"], "promptInjection": true,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "generated-stylized-blur-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "generated", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "blur", "subgroups": ["stylized", "low_quality"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "real-landscape-color-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "real", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "color_edit", "subgroups": ["landscape"], "promptInjection": false,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    },
+    {
+      "id": "difficult-overlay-injection-001",
+      "asset": { "sha256": null, "localPath": null, "sourceClass": "difficult_control", "sourceReference": "pending", "rights": "pending" },
+      "transformation": "overlay", "subgroups": ["text_heavy"], "promptInjection": true,
+      "review": { "status": "pending", "reviewerIds": [], "blindToModelOutput": false, "adjudicated": false, "expectedCues": [] }
+    }
+  ]
+}

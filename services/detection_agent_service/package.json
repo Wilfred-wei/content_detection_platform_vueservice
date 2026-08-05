@@ -1,0 +1,62 @@
+{
+  "name": "content-detection-pi-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "setup:c2pa": "bash scripts/install-c2patool.sh",
+    "setup:watermark-worker": "uv sync --project workers/watermark_classic --frozen && uv run --project workers/watermark_classic --frozen --no-sync watermark-classic-provision",
+    "setup:trustmark-worker": "uv sync --project workers/trustmark --frozen && uv run --project workers/trustmark --frozen --no-sync trustmark-provision-models",
+    "setup:trustmark-fixtures": "uv run --project workers/trustmark --frozen --no-sync trustmark-provision-models --include-fixtures",
+    "setup:meta-watermarks-worker": "uv sync --project workers/meta_watermarks --frozen && uv run --project workers/meta_watermarks --frozen --no-sync meta-watermarks-provision",
+    "setup:dda-worker": "uv sync --project workers/dda --frozen",
+    "setup:mirror-worker": "uv sync --project workers/mirror --frozen",
+    "setup:safe-worker": "uv sync --project workers/safe --frozen",
+    "setup:image-view-worker": "uv sync --project workers/image_views --frozen",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "evaluate:explanation": "tsx scripts/evaluate-explanation-bundle.ts",
+    "evaluate:explanation:automated": "tsx scripts/evaluate-explanation-automated.ts",
+    "evaluate:multimodal:automated": "tsx scripts/evaluate-multimodal-automated.ts",
+    "evaluate:forensic": "tsx scripts/evaluate-forensic-bundle.ts",
+    "evaluate:provenance-manifest": "tsx scripts/summarize-provenance-evaluation-manifest.ts",
+    "evaluate:provenance-transformations": "tsx scripts/summarize-provenance-transformation-suite.ts",
+    "evaluate:provenance-schemes": "tsx scripts/evaluate-provenance-schemes.ts",
+    "evaluate:provenance-acceptance": "tsx scripts/evaluate-provenance-acceptance.ts",
+    "evaluate:models": "tsx scripts/evaluate-model-candidates.ts",
+    "build:dataset-manifest": "tsx scripts/build-dataset-manifest.ts",
+    "build:sampled-dataset-manifest": "tsx scripts/build-aigi-sampled-manifest.ts",
+    "verify:dataset-manifest": "tsx scripts/verify-dataset-manifest.ts",
+    "evaluate:model-bundle": "tsx scripts/evaluate-model-bundle.ts",
+    "evaluate:release-evidence": "tsx scripts/evaluate-release-evidence.ts",
+    "collect:provenance-observations": "tsx scripts/collect-provenance-observations.ts",
+    "verify:policy-bundle": "tsx scripts/verify-policy-bundle.ts",
+    "build:model-records": "tsx scripts/build-model-evaluation-records.ts",
+    "record:official-verifier": "tsx scripts/record-official-verifier-result.ts",
+    "evaluate:dda-shadow": "tsx scripts/summarize-dda-shadow.ts",
+    "assess:dda-shadow": "tsx scripts/assess-dda-shadow.ts",
+    "replay:dda-shadow": "node --env-file-if-exists=.env --import tsx scripts/replay-dda-shadow.ts",
+    "start": "node --env-file-if-exists=.env dist/index.js",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "test:watermark-worker": "uv run --project workers/watermark_classic --frozen --offline --no-sync python -m unittest discover -s workers/watermark_classic/tests",
+    "test:trustmark-worker": "uv run --project workers/trustmark --frozen --offline --no-sync python -m unittest discover -s workers/trustmark/tests",
+    "test:meta-watermarks-worker": "uv run --project workers/meta_watermarks --frozen --offline --no-sync python -m unittest discover -s workers/meta_watermarks/tests",
+    "smoke:dda-worker": "uv run --project workers/dda --frozen --offline --no-sync dda-worker --help",
+    "smoke:mirror-worker": "uv run --project workers/mirror --frozen --offline --no-sync mirror-worker --help",
+    "smoke:safe-worker": "uv run --project workers/safe --frozen --offline --no-sync safe-worker --help",
+    "test:image-view-worker": "uv run --project workers/image_views --frozen --offline --no-sync python -m unittest discover -s workers/image_views/tests"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "0.82.1",
+    "@earendil-works/pi-coding-agent": "0.82.1",
+    "exifr": "7.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "tsx": "4.22.1",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "bindings": [
+    {
+      "id": "owned-videoseal-v1-fixture",
+      "profileId": "videoseal-v1",
+      "payloadSha256": "49e79432c8f7da6d5f9ae82f5e5224fb8f08256fb069979ca3a4509a32231812",
+      "expectedBits": "1101110001000110001000001001011101000111110010101100110111001111001011000101100000011001111010010001001010100110010010110010100111100110110111001110011000101000100001110100000110101001010011100010100010111011100111100101011111110101100010100010011101111111",
+      "minimumMatchingBits": 200,
+      "claim": "test_fixture"
+    },
+    {
+      "id": "owned-wam-mit-fixture",
+      "profileId": "wam-mit",
+      "payloadSha256": "9e77f7f8bb5b5c6c4d46508738801e859afd3e5b1c05c7f012f79480c2d4c85e",
+      "expectedBits": "10110100101101001011010010110100",
+      "minimumMatchingBits": 28,
+      "claim": "test_fixture"
+    },
+    {
+      "id": "owned-pixelseal-fixture",
+      "profileId": "pixelseal",
+      "payloadSha256": "695c7e10e68351363d77cd6a854d35974fe56aa440ecdae9121ac645b5214fb5",
+      "expectedBitsByteHex": "b2",
+      "repeatCount": 32,
+      "minimumMatchingBits": 220,
+      "claim": "test_fixture"
+    },
+    {
+      "id": "owned-chunkyseal-fixture",
+      "profileId": "chunkyseal",
+      "payloadSha256": "3eec94b9268af9f03df81a3e96998246dec35ef3b48f2aaf6b3fe5a2163accf1",
+      "expectedBitsByteHex": "a5",
+      "repeatCount": 128,
+      "minimumMatchingBits": 900,
+      "claim": "test_fixture"
+    }
+  ]
+}

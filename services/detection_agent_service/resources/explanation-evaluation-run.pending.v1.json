@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "runId": "explanation-pending-run-v1",
+  "createdAt": "2026-07-30T00:00:00.000Z",
+  "promptBundle": {
+    "id": "evidence-grounded-explanation-v1",
+    "version": "1.2.0",
+    "promptHashes": {
+      "synthesisSystem": "2a8f6f194af91d6ecfa192747cad760c7c663bdb8d43b756b0992baccfe2fa5a",
+      "synthesisTask": "0a9da6ddd453d0f95f64687c273413bfe6abf904332ae7447111a536edd2ad9e",
+      "verifierSystem": "c047e68f8e86f1a6088629efa7e3891ca0b970d30696de9167e26644e84f0931",
+      "verifierShared": "05ae22fa1043a6b65beb54c7b35215d172c9149b9c7eb556874b5f5c09b4ca04",
+      "verifierPositive": "c90fa6397617445c89171f2ee463f764f5e22693e2569880f3090f49b06a3025",
+      "verifierInverse": "9e0ab40d17dd567e3513dc9af9e65b97583e59fa22caa5f6bf192311deea16e5",
+      "verifierParaphrase": "6b776fff600d38dd12e312450fe38b7c3b47c4bebcf0f602e351dfa770f650be",
+      "verifierForcedChoice": "a2a0027fc75fda7058497f4e7d1fdfb94405965d612deb42da9083fb5eac0f50"
+    }
+  },
+  "model": { "provider": "openai", "model": "gpt-5.6-sol" },
+  "cases": []
+}

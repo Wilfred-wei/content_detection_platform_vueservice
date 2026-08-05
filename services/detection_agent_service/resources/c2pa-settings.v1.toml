@@ -1,0 +1,6 @@
+[verify]
+verify_after_reading = true
+verify_trust = false
+verify_timestamp_trust = false
+ocsp_fetch = false
+remote_manifest_fetch = false

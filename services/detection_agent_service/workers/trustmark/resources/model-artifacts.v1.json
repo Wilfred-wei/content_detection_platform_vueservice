@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceCommit": "0ed40cbe8188f664fd9cbbeacd969807de27440a",
+  "sourcePackage": {
+    "name": "trustmark",
+    "version": "0.9.1",
+    "sha256": "dc79e3fb070f5d94765acf8868a51f50a612cc05b53223cf1e6b605d4ff1e0ae"
+  },
+  "models": [
+    {
+      "id": "trustmark-p-config",
+      "filename": "trustmark_P.yaml",
+      "url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/trustmark_P.yaml",
+      "sizeBytes": 2009,
+      "md5": "fe40df84a7feeebfceb7a7678d7e6ec6",
+      "sha256": "43f37103f92efa8bd6b1c5902bb537cc12a981dc699fca19d9bb7de8c62d03d9"
+    },
+    {
+      "id": "trustmark-p-decoder",
+      "filename": "decoder_P.ckpt",
+      "url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/decoder_P.ckpt",
+      "sizeBytes": 47647180,
+      "md5": "9450972bc0c3c217cb7b8220dd2f7a3c",
+      "sha256": "f5f1d570c889c5908c6e4a28c07dc90cf33990ebaf24037254ebe0b8849b1bdc"
+    },
+    {
+      "id": "trustmark-q-config",
+      "filename": "trustmark_Q.yaml",
+      "url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/trustmark_Q.yaml",
+      "sizeBytes": 2009,
+      "md5": "fe40df84a7feeebfceb7a7678d7e6ec6",
+      "sha256": "43f37103f92efa8bd6b1c5902bb537cc12a981dc699fca19d9bb7de8c62d03d9"
+    },
+    {
+      "id": "trustmark-q-decoder",
+      "filename": "decoder_Q.ckpt",
+      "url": "https://cai-watermark.adobe.net/watermarking/trustmark-models/decoder_Q.ckpt",
+      "sizeBytes": 47652460,
+      "md5": "4ced90e9cfe13e3295ad082887fe9187",
+      "sha256": "e3d9cea5406a26590735719f8f15cb10802b11852ae69047eaf4cf17214df781"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "trustmark-official-p-fixture",
+      "filename": "ufo_240_P.png",
+      "url": "https://raw.githubusercontent.com/adobe/trustmark/0ed40cbe8188f664fd9cbbeacd969807de27440a/images/ufo_240_P.png",
+      "sizeBytes": 106187,
+      "md5": "1205006fb3ee0ed526516cc40de54554",
+      "sha256": "dccf13e33e0ecb2b1971a309df8582caad7d2998c3041aea5c9d8dc89d2b14cf"
+    },
+    {
+      "id": "trustmark-official-q-fixture",
+      "filename": "ufo_240_Q.png",
+      "url": "https://raw.githubusercontent.com/adobe/trustmark/0ed40cbe8188f664fd9cbbeacd969807de27440a/images/ufo_240_Q.png",
+      "sizeBytes": 102860,
+      "md5": "09aa0f0ee1440ee82a1b69e0a66ae198",
+      "sha256": "f388997ad006ae755e332a0fe3bae2a6a5f77bd8222f0e71ed09301c289e6922"
+    }
+  ]
+}

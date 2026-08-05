@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryVersion": "2026-07-28.1",
+  "bindings": [
+    {
+      "id": "adobe-official-p-fixture",
+      "secretSha256": "b6ba4977124ce79529b82bf9ce751f415e43f1f0ea492176bb6648d500666ec5",
+      "schemas": [1],
+      "claim": "test_fixture"
+    },
+    {
+      "id": "adobe-official-q-fixture",
+      "secretSha256": "652c7dc687d98c9889304ed2e408c74b611e86a40caa51c4b43f1dd5913c5cd0",
+      "schemas": [1],
+      "claim": "test_fixture"
+    }
+  ]
+}

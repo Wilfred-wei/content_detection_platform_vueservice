@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0.0",
+  "sources": {
+    "videoseal": {
+      "commit": "870ca7fb33578b90f14c602016b6c2788096226e",
+      "filename": "videoseal-source.tar.gz",
+      "url": "https://api.github.com/repos/facebookresearch/videoseal/tarball/870ca7fb33578b90f14c602016b6c2788096226e",
+      "sizeBytes": 5610921,
+      "sha256": "f7428df87dedeafba79b6104f9a5c4fdc0c891d952e0d8dae90c5f9ba7816929"
+    },
+    "watermark-anything": {
+      "commit": "2c08af04d037d5667c02f6ddebbda9ff04581c3e",
+      "filename": "wam-source.tar.gz",
+      "url": "https://api.github.com/repos/facebookresearch/watermark-anything/tarball/2c08af04d037d5667c02f6ddebbda9ff04581c3e",
+      "sizeBytes": 10836289,
+      "sha256": "f3e00ac66b72649b280da2a56c93c1fb334ae8860dfb72303608bc6c83a1d1c3"
+    }
+  },
+  "models": [
+    {
+      "id": "meta-videoseal-v1-model",
+      "profileId": "videoseal-v1",
+      "filename": "videoseal_1.0.pth",
+      "url": "https://dl.fbaipublicfiles.com/videoseal/y_256b_img.pth",
+      "sizeBytes": 228351471,
+      "sha256": "3d2ff2523d2a89e3532c6dfdcf693098799326e9b3e74c185e815e9baa8340a3",
+      "payloadBits": 256,
+      "license": "MIT"
+    },
+    {
+      "id": "meta-pixelseal-model",
+      "profileId": "pixelseal",
+      "filename": "pixelseal.pth",
+      "url": "https://dl.fbaipublicfiles.com/videoseal/pixelseal/checkpoint.pth",
+      "sizeBytes": 1237429197,
+      "sha256": "0c5665cff20eb6ce1b5aaa7d91c19dafb418bfee32d02dd3344e4ed60d9d75bd",
+      "payloadBits": 256,
+      "license": "MIT"
+    },
+    {
+      "id": "meta-chunkyseal-model",
+      "profileId": "chunkyseal",
+      "filename": "chunkyseal.pth",
+      "url": "https://dl.fbaipublicfiles.com/videoseal/chunkyseal/checkpoint.pth",
+      "sizeBytes": 13377060165,
+      "sha256": "d1c8f1f2db4ce6a3ba7014a538afc3e542a21e9e54b3b299695c6df68f8b0b05",
+      "payloadBits": 1024,
+      "license": "MIT"
+    },
+    {
+      "id": "meta-wam-mit-model",
+      "profileId": "wam-mit",
+      "filename": "wam_mit.pth",
+      "url": "https://dl.fbaipublicfiles.com/watermark_anything/wam_mit.pth",
+      "sizeBytes": 377825938,
+      "sha256": "90ef232384e023bd63245eb0c131abd69d2afc7b8f17a71ccedceb542bf009e2",
+      "payloadBits": 32,
+      "license": "MIT"
+    }
+  ]
+}

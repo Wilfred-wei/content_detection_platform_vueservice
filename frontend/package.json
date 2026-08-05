@@ -1,0 +1,30 @@
+{
+  "name": "content-detection-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test:agent-contract": "node contracts/detection-agent-evidence-presentation.contract.mjs",
+    "test:agent-e2e": "node tests/detection-agent-settings.e2e.mjs"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0",
+    "axios": "^1.6.2",
+    "bootstrap": "^5.3.7",
+    "element-plus": "^2.10.7",
+    "mammoth": "^1.6.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.11",
+    "vue-router": "^4.2.5",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vue-tsc": "^1.8.25"
+  }
+}

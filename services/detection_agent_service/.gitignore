@@ -1,0 +1,18 @@
+dist/
+node_modules/
+.env
+runtime/
+.data/
+.toolchains/
+.tools/
+
+# Keep the isolated worker's uv Python pin and contract tests in source control.
+!workers/watermark_classic/.python-version
+!workers/watermark_classic/tests/
+!workers/watermark_classic/tests/test_worker.py
+!workers/trustmark/.python-version
+!workers/trustmark/tests/
+!workers/trustmark/tests/test_worker.py
+!workers/meta_watermarks/.python-version
+!workers/meta_watermarks/tests/
+!workers/meta_watermarks/tests/test_worker.py

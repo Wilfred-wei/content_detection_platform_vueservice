@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "policy-bundle.v1",
+  "bundleId": "detection-agent-initial-2026-08-04",
+  "policyVersion": "policy-bundle-v1",
+  "createdAt": "2026-08-04T00:00:00.000Z",
+  "productionSwapAuthorized": false,
+  "automaticPolicyMutation": false,
+  "entries": [
+    { "path": "resources/model-candidates.v1.json", "sha256": "e00a19281d220f744e0aa1b5a2a7071e69c6ba986523f8c037dbb46b02d0b89f" },
+    { "path": "resources/model-cascade-policy.v1.json", "sha256": "c37a05b0b2f6771a8d6717cd18430f29bcf174563f79c98ce6c10794e03a3b6b" },
+    { "path": "resources/model-drift-policy.v1.json", "sha256": "54a86df2649fb793ed696779433cf7a5de5cb1df548f9e7265d29fd21dac0a28" },
+    { "path": "resources/model-evaluation-policy.v1.json", "sha256": "ae6c6cfef6324d8a180873ea29ee51acf3a622c0cf9061ace84ba35a2aaa3fdb" },
+    { "path": "resources/provenance-release-gates.v1.json", "sha256": "052a41b54a2df6e9504ad73566b27372cda31451ca9938b32fa54f6a598203b8" },
+    { "path": "resources/provenance-schemes.v1.json", "sha256": "9e42a2751ee496fe9b16b5d95abb55cdaa3778d07e52b381b0189af2f7540ff8" },
+    { "path": "resources/explanation-evaluation-policy.v1.json", "sha256": "835678c138f58d7090b8b2a37dccf04fa2b73dcbcdb18c6838aeb862278c56bd" },
+    { "path": "resources/forensic-evaluation-policy.v1.json", "sha256": "565a5e7f817eee3c7b302c127d96ff9a5634659df1769833af820efa10fe42d6" }
+  ],
+  "rollback": {
+    "previousBundleId": null,
+    "procedure": "停机、恢复上一份经校验的 bundle 和其锁定的模型/策略产物，校验全部 SHA-256 后再启动；不得在线修改策略。"
+  }
+}

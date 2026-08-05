@@ -1,0 +1,409 @@
+{
+  "schemaVersion": "model-candidate-registry.v1",
+  "registryVersion": "2026-08-03.1",
+  "researchedAt": "2026-08-03",
+  "policy": {
+    "commercialUseRequired": true,
+    "unlicensedArtifactsRunnable": false,
+    "unlicensedExperimentalArtifactsRunnable": true,
+    "unreleasedArtifactsRunnable": false,
+    "uncalibratedModelsAuthoritative": false
+  },
+  "candidates": [
+    {
+      "id": "dda-dinov2-lora",
+      "name": "Dual Data Alignment (DDA)",
+      "modelVersion": "universal-v2-medium-all-types-seed5291-v6-step7200",
+      "paper": {
+        "title": "Generalizable AI-Generated Image Detection by Dual Data Alignment",
+        "url": "https://arxiv.org/abs/2505.12335",
+        "submittedAt": "2025-05-18"
+      },
+      "sourceRepository": "https://github.com/Junwei-Xi/Dual-Data-Alignment",
+      "sourceRevision": "0a011160bc5a858be8e1d63eaab9b37a4430f53d",
+      "releaseStatus": "inference_released",
+      "trainingDomains": [
+        "DDA aligned real and VAE-reconstructed image pairs",
+        "DINOv2-L/14 with LoRA"
+      ],
+      "signalFamily": "foundation-model representation alignment classifier",
+      "preprocessing": {
+        "id": "resize-336-clip-normalize-v1",
+        "steps": [
+          "decode original as RGB",
+          "deterministic resize to 336x336",
+          "CLIP mean and standard-deviation normalization",
+          "no label-dependent evaluation preprocessing"
+        ]
+      },
+      "runtime": {
+        "costClass": "high",
+        "deviceClass": "CUDA GPU with resident DINOv2-L/14 worker",
+        "admission": "single inference per resident worker with bounded Node queue",
+        "adapterId": "dda-dinov2-lora-v1",
+        "protocolVersion": "model-detector.v1",
+        "transport": "process"
+      },
+      "outputSchema": {
+        "scoreSemantics": "sigmoid probability-like score; larger supports AI-generated direction",
+        "thresholdSemantics": "official evaluation default 0.5; not calibrated for this deployment",
+        "localization": "none"
+      },
+      "artifacts": [
+        {
+          "id": "dda-universal-v2-step7200",
+          "kind": "checkpoint",
+          "availability": "available_local",
+          "source": "/sda/home/temp/weiwenfei/newAI/experiments/dda_universal_v2/checkpoints/universal_v2_medium_all_types_seed5291_v6/model_iters_7200.pth",
+          "sha256": "98c35f6b6126a0280def040c0ee80b0d7de0077f58ac38d6c7856157f3bd96e6",
+          "licenseStatus": "verified"
+        },
+        {
+          "id": "dda-official-checkpoint",
+          "kind": "checkpoint",
+          "availability": "available_local",
+          "source": "operator-configured local artifact originally published by the authors",
+          "sha256": "b27a31d39374803ddeff02bfabb2be76e190b04300490cddfafb24f683f37e3e",
+          "licenseStatus": "verified"
+        },
+        {
+          "id": "dda-source",
+          "kind": "source",
+          "availability": "available_local",
+          "source": "https://github.com/Junwei-Xi/Dual-Data-Alignment",
+          "sha256": null,
+          "licenseStatus": "verified"
+        },
+        {
+          "id": "dinov2-backbone",
+          "kind": "backbone",
+          "availability": "operator_supplied",
+          "source": "https://github.com/facebookresearch/dinov2",
+          "sha256": null,
+          "licenseStatus": "custom_terms"
+        },
+        {
+          "id": "dda-uv-lock",
+          "kind": "dependency_lock",
+          "availability": "available_local",
+          "source": "repository-owned workers/dda/uv.lock",
+          "sha256": "5bdbb55401ee497958b9cd1b60f9284a376d32588227f2d03c3f88d4d4ca3192",
+          "licenseStatus": "verified"
+        }
+      ],
+      "license": {
+        "code": "Apache-2.0",
+        "codeStatus": "verified",
+        "weights": "locally trained universal-v2 checkpoint; source and dataset review retained",
+        "weightsStatus": "verified",
+        "backbone": "DINOv2 upstream terms",
+        "backboneStatus": "custom_terms",
+        "commercialUse": "candidate_with_review"
+      },
+      "calibration": {
+        "status": "official_threshold_unverified_for_deployment",
+        "artifact": null
+      },
+      "runtimeEligibility": "provisional_supporting",
+      "productionEligibility": {
+        "status": "candidate",
+        "reason": "Local route is runnable only as supporting evidence until deployment-domain evaluation and calibration pass."
+      },
+      "lastVerifiedAt": "2026-08-03",
+      "notes": [
+        "The active engineering route is universal-v2-medium-all-types-seed5291-v6-step7200; offline test AUC was 0.9398 and balanced direction score was 0.8693.",
+        "The active checkpoint is not deployment-calibrated and remains supporting-only for AI adjudication.",
+        "Negative output does not prove authenticity.",
+        "The detector cannot independently change the deterministic provenance-first verdict."
+      ]
+    },
+    {
+      "id": "safe-wavelet-resnet",
+      "name": "Simple Preserved and Augmented FEatures (SAFE)",
+      "modelVersion": "official-kdd2025-4e998724",
+      "paper": {
+        "title": "Improving Synthetic Image Detection Towards Generalization: An Image Transformation Perspective",
+        "url": "https://arxiv.org/abs/2408.06741",
+        "submittedAt": "2024-08-13"
+      },
+      "sourceRepository": "https://github.com/Ouxiang-Li/SAFE",
+      "sourceRevision": "4e998724651b227def64f5be0cd60c0aa1552c35",
+      "releaseStatus": "inference_released",
+      "trainingDomains": [
+        "CNNDetection ForenSynths training split",
+        "crop-preserved and augmented local artifact features",
+        "truncated ResNet-50 with high-frequency wavelet preprocessing"
+      ],
+      "signalFamily": "local high-frequency wavelet artifacts with crop-preserved CNN features",
+      "preprocessing": {
+        "id": "safe-center-crop256-totensor-v1",
+        "steps": [
+          "decode original as RGB",
+          "center crop to 256x256 using torchvision CenterCrop padding semantics for smaller inputs",
+          "convert pixels to an unnormalized tensor in [0,1]",
+          "apply the released bior1.3 high-frequency DWT path inside the model"
+        ]
+      },
+      "runtime": {
+        "costClass": "high",
+        "deviceClass": "CUDA GPU with resident lightweight SAFE worker",
+        "admission": "single inference per resident worker with bounded Node queue",
+        "adapterId": "safe-wavelet-resnet-v1",
+        "protocolVersion": "model-detector.v1",
+        "transport": "process"
+      },
+      "outputSchema": {
+        "scoreSemantics": "softmax class-1 probability-like score; larger supports AI-generated direction",
+        "thresholdSemantics": "official evaluation uses class-1 score strictly greater than 0.5; not calibrated for this deployment",
+        "localization": "none"
+      },
+      "artifacts": [
+        {
+          "id": "safe-official-checkpoint",
+          "kind": "checkpoint",
+          "availability": "available_local",
+          "source": "https://github.com/Ouxiang-Li/SAFE/blob/4e998724651b227def64f5be0cd60c0aa1552c35/checkpoint/checkpoint-best.pth",
+          "sha256": "b3f5ecfb46a154ed553aaaf4bf3ba59182310726ddb0cbb1fe42bd0e22d2f20e",
+          "licenseStatus": "verified"
+        },
+        {
+          "id": "safe-executed-resnet-source",
+          "kind": "source",
+          "availability": "available_local",
+          "source": "https://github.com/Ouxiang-Li/SAFE/blob/4e998724651b227def64f5be0cd60c0aa1552c35/models/resnet.py",
+          "sha256": "f0d3956e8586f0c122a06f2b674799f21b82d65690b3460b06e15679ae7be528",
+          "licenseStatus": "verified"
+        },
+        {
+          "id": "safe-worker-uv-lock",
+          "kind": "dependency_lock",
+          "availability": "available_local",
+          "source": "workers/safe/uv.lock",
+          "sha256": "f93ca3824d85d07fc2781b80050d0821a7a4268093f586c31fd06b4ff0d01dd5",
+          "licenseStatus": "verified"
+        }
+      ],
+      "license": {
+        "code": "Apache-2.0",
+        "codeStatus": "verified",
+        "weights": "Author-published checkpoint included in the Apache-2.0 repository",
+        "weightsStatus": "verified",
+        "backbone": "Not applicable; released checkpoint is a self-contained truncated ResNet",
+        "backboneStatus": "verified",
+        "commercialUse": "candidate_with_review"
+      },
+      "calibration": {
+        "status": "official_threshold_unverified_for_deployment",
+        "artifact": null
+      },
+      "runtimeEligibility": "provisional_supporting",
+      "productionEligibility": {
+        "status": "candidate",
+        "reason": "Apache-2.0 assets are runnable, but deployment-domain fixed-FPR calibration, held-out-generator validation, and robustness gates have not passed."
+      },
+      "lastVerifiedAt": "2026-08-01",
+      "notes": [
+        "Local prior evaluation reported strong DiTFake and GenImage results but severe real-image false positives on some CNNDetection subsets such as CRN and IMLE.",
+        "Negative output does not prove authenticity and positive output does not prove origin.",
+        "The detector cannot independently change the deterministic provenance-first verdict."
+      ]
+    },
+    {
+      "id": "mirror-dinov3-hplus",
+      "name": "MIRROR",
+      "modelVersion": "dinov3-hplus-inference-release-2026-04",
+      "paper": {
+        "title": "MIRROR: Manifold Ideal Reference ReconstructOR for Generalizable AI-Generated Image Detection",
+        "url": "https://arxiv.org/abs/2602.02222",
+        "submittedAt": "2026-02-02"
+      },
+      "sourceRepository": "https://github.com/handsome-rich/MIRROR",
+      "sourceRevision": "18c56efa303d96f038a6aac4e11ba1a512a2cbde",
+      "releaseStatus": "inference_released",
+      "trainingDomains": [
+        "Phase 1 real-only MSCOCO manifold memory",
+        "Phase 2 JPEG-aligned GenImage SDv1.4",
+        "DINOv3-H+/16 with LoRA"
+      ],
+      "signalFamily": "real-manifold reference reconstruction with memory-bank perplexity and residual comparison",
+      "preprocessing": {
+        "id": "mirror-short512-center224-jpeg96-v1",
+        "steps": [
+          "decode as RGB",
+          "resize the short side to 512 only when it exceeds 512 pixels",
+          "center crop to 224x224",
+          "JPEG-align PNG, BMP, and TIFF inputs at quality 96",
+          "convert to tensor; the model applies ImageNet normalization"
+        ]
+      },
+      "runtime": {
+        "costClass": "very_high",
+        "deviceClass": "CUDA GPU for DINOv3-H+/16 plus phase-1 memory bank",
+        "admission": "resident worker with bounded single-device admission and a maximum queued-request count",
+        "adapterId": "mirror-dinov3-hplus-v1",
+        "protocolVersion": "model-detector.v1",
+        "transport": "process"
+      },
+      "outputSchema": {
+        "scoreSemantics": "forgery probability from reconstruction perplexity and comparison residual",
+        "thresholdSemantics": "repository inference uses a binary probability boundary; deployment calibration is absent",
+        "localization": "none"
+      },
+      "artifacts": [
+        {
+          "id": "mirror-phase2-checkpoint",
+          "kind": "checkpoint",
+          "availability": "available_local",
+          "source": "https://drive.google.com/file/d/1gos1QgZA4Xuj706oa5i5E6vsOAoaLyr3/view",
+          "sha256": "829ef07b52caa26c1cb3917e603a275cfd1c7f494f7b750f86fb218710ac66d5",
+          "licenseStatus": "unverified"
+        },
+        {
+          "id": "mirror-phase1-memory-bank",
+          "kind": "memory_bank",
+          "availability": "available_local",
+          "source": "https://drive.google.com/file/d/1CpgltI-F7JN7hDyk2O16Ix3Zr_2d2-G0/view",
+          "sha256": "b1ae70a6cd8ec3f3f792c64a58c4db469fd248194be07ed98a836b6430af144a",
+          "licenseStatus": "unverified"
+        },
+        {
+          "id": "mirror-source",
+          "kind": "source",
+          "availability": "available_local",
+          "source": "https://github.com/handsome-rich/MIRROR/blob/18c56efa303d96f038a6aac4e11ba1a512a2cbde/models/mirror.py",
+          "sha256": "1c9eccbf8b8d83c874164a9e437aeaf6d6b6f66d44d6d5c5236f7f0928edf1d9",
+          "licenseStatus": "unverified"
+        },
+        {
+          "id": "dinov3-hplus-backbone",
+          "kind": "backbone",
+          "availability": "available_local",
+          "source": "https://github.com/facebookresearch/dinov3",
+          "sha256": "3e1d4d18b9bfa9f28fad8e9de6a783f1313532d3460efa4cd0b12521d81d1a4d",
+          "licenseStatus": "custom_terms"
+        },
+        {
+          "id": "mirror-worker-uv-lock",
+          "kind": "dependency_lock",
+          "availability": "available_local",
+          "source": "workers/mirror/uv.lock",
+          "sha256": "7b8c3a4d9b0b77672df237d49393182aadf3c5acb73f049b69c34745c123af1b",
+          "licenseStatus": "custom_terms"
+        }
+      ],
+      "license": {
+        "code": "No repository license file as of verification date",
+        "codeStatus": "unverified",
+        "weights": "No explicit checkpoint license found",
+        "weightsStatus": "unverified",
+        "backbone": "DINOv3 License",
+        "backboneStatus": "custom_terms",
+        "commercialUse": "blocked"
+      },
+      "calibration": {
+        "status": "experimental_threshold_unverified_for_deployment",
+        "artifact": null
+      },
+      "runtimeEligibility": "experimental_supporting",
+      "productionEligibility": {
+        "status": "blocked",
+        "reason": "Inference assets are public, but MIRROR code and checkpoint licensing is not stated and local calibration is absent."
+      },
+      "lastVerifiedAt": "2026-07-31",
+      "notes": [
+        "This is MIRROR, not the unrelated local MiraGe detector.",
+        "All local runtime assets are pinned by SHA-256 and the source revision is checked before worker startup.",
+        "It can run only with an explicit non-production operator override and cannot establish an authoritative verdict."
+      ]
+    },
+    {
+      "id": "rem-dinov3-hplus",
+      "name": "Real-Centric Envelope Modeling (REM)",
+      "modelVersion": "paper-v1",
+      "paper": {
+        "title": "Beyond Artifacts: Real-Centric Envelope Modeling for Reliable AI-Generated Image Detection",
+        "url": "https://arxiv.org/abs/2512.20937",
+        "submittedAt": "2025-12-24"
+      },
+      "sourceRepository": "https://github.com/handsome-rich/REM",
+      "sourceRevision": "c1e8aacf68f041d3abe6509dc01425c5e42ab01e",
+      "releaseStatus": "paper_only",
+      "trainingDomains": [
+        "real-only MSCOCO with VAE latent perturbation near-real samples",
+        "simulated chain degradation consistency",
+        "DINOv3-H+/16 with LoRA"
+      ],
+      "signalFamily": "real-manifold envelope estimation with cross-domain consistency",
+      "preprocessing": {
+        "id": "rem-paper-center-crop-224-v1",
+        "steps": [
+          "resize images larger than 512x512 proportionally to short side 512",
+          "center crop to 224x224 during inference",
+          "exact executable processor remains unavailable"
+        ]
+      },
+      "runtime": {
+        "costClass": "very_high",
+        "deviceClass": "paper specifies DINOv3-H+/16 CUDA training and inference",
+        "admission": "not admitted because inference artifacts are not released",
+        "adapterId": null,
+        "protocolVersion": "model-detector.v1",
+        "transport": "none"
+      },
+      "outputSchema": {
+        "scoreSemantics": "binary real-envelope classification score; executable semantics not released",
+        "thresholdSemantics": "not released",
+        "localization": "not_released"
+      },
+      "artifacts": [
+        {
+          "id": "rem-checkpoint",
+          "kind": "checkpoint",
+          "availability": "not_released",
+          "source": "https://github.com/handsome-rich/REM",
+          "sha256": null,
+          "licenseStatus": "not_released"
+        },
+        {
+          "id": "rem-inference-source",
+          "kind": "source",
+          "availability": "not_released",
+          "source": "https://github.com/handsome-rich/REM",
+          "sha256": null,
+          "licenseStatus": "not_released"
+        },
+        {
+          "id": "dinov3-hplus-backbone",
+          "kind": "backbone",
+          "availability": "operator_supplied",
+          "source": "https://github.com/facebookresearch/dinov3",
+          "sha256": null,
+          "licenseStatus": "custom_terms"
+        }
+      ],
+      "license": {
+        "code": "README states MIT for future code, but no implementation or license file is present",
+        "codeStatus": "not_released",
+        "weights": "Not released",
+        "weightsStatus": "not_released",
+        "backbone": "DINOv3 License",
+        "backboneStatus": "custom_terms",
+        "commercialUse": "blocked"
+      },
+      "calibration": {
+        "status": "unavailable",
+        "artifact": null
+      },
+      "runtimeEligibility": "unavailable",
+      "productionEligibility": {
+        "status": "blocked",
+        "reason": "The official repository has no training code, inference code, or checkpoint release."
+      },
+      "lastVerifiedAt": "2026-07-31",
+      "notes": [
+        "The released RealChain dataset is CC BY-NC 4.0 and is not a commercial training asset.",
+        "Re-evaluate only after the authors publish executable artifacts and explicit licenses."
+      ]
+    }
+  ]
+}

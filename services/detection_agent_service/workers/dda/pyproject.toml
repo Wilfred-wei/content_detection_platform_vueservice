@@ -1,0 +1,30 @@
+[project]
+name = "dda-detector-worker"
+version = "0.1.0"
+description = "Resident local DDA DINOv2-LoRA inference worker"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "omegaconf==2.3.0",
+  "Pillow==11.3.0",
+  "torch==2.5.1+cu121",
+  "torchvision==0.20.1+cu121",
+]
+
+[project.scripts]
+dda-worker = "dda_worker.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dda_worker"]
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu121" }
+torchvision = { index = "pytorch-cu121" }

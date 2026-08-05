@@ -1,0 +1,599 @@
+{
+  "schemaVersion": "provenance-evaluation-manifest.v1",
+  "manifestVersion": "2026-08-03.1",
+  "createdAt": "2026-08-03",
+  "provenanceRegistryVersion": "2026-07-29.2",
+  "releaseGateRegistryVersion": "2026-08-02.1",
+  "purpose": "evaluation_only",
+  "releaseGateEligible": false,
+  "policy": {
+    "productionEvidenceEligible": false,
+    "shortCircuitEligible": false,
+    "userUploadDerivedAssetsAllowed": false,
+    "minimumUnmarkedControlsForRelease": 10000
+  },
+  "cases": [
+    {
+      "id": "c2pa-official-c-trusted-test-anchors-v1",
+      "caseType": "c2pa_trusted",
+      "targetSchemeIds": ["c2pa"],
+      "asset": {
+        "materialization": "bundled_file",
+        "relativePath": "test/fixtures/c2pa/C.jpg",
+        "sha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd",
+        "sizeBytes": 132518,
+        "mimeType": "image/jpeg",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "c2pa-local-validation-v1",
+        "configurationId": "official-test-anchors-and-trust-pattern-v1",
+        "outcome": "valid_trusted",
+        "evidenceAuthority": "strong",
+        "testOnlyTrustOrAuthentication": true
+      },
+      "provenance": {
+        "sourceKind": "official_fixture",
+        "sourceUrl": "https://github.com/contentauth/c2pa-rs",
+        "sourceRevision": "git-blob:b6579b3281fbd448163f77fe46bf8d24f3e5a018",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Authenticity Initiative upstream fixture",
+        "license": "MIT OR Apache-2.0",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/contentauth/c2pa-rs"
+      },
+      "notes": "Trusted only under the pinned official test anchors and trust-pattern configuration; this does not trust the fixture issuer in production."
+    },
+    {
+      "id": "c2pa-official-c-default-untrusted-v1",
+      "caseType": "c2pa_untrusted",
+      "targetSchemeIds": ["c2pa"],
+      "asset": {
+        "materialization": "bundled_file",
+        "relativePath": "test/fixtures/c2pa/C.jpg",
+        "sha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd",
+        "sizeBytes": 132518,
+        "mimeType": "image/jpeg",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "c2pa-local-validation-v1",
+        "configurationId": "production-default-no-test-anchors-v1",
+        "outcome": "valid_untrusted",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "official_fixture",
+        "sourceUrl": "https://github.com/contentauth/c2pa-rs",
+        "sourceRevision": "git-blob:b6579b3281fbd448163f77fe46bf8d24f3e5a018",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Authenticity Initiative upstream fixture",
+        "license": "MIT OR Apache-2.0",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/contentauth/c2pa-rs"
+      },
+      "notes": "The same bytes are intentionally evaluated without test trust anchors to prove that signature validity and issuer trust remain separate states."
+    },
+    {
+      "id": "gb45438-unsigned-xmp-recipe-v1",
+      "caseType": "unsigned_metadata",
+      "targetSchemeIds": ["gb-45438-2025-metadata"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "ac4f91e555a2a0998bf5d764eab22cd7a1d978334dd8d0e181549fb118fde570",
+        "sizeBytes": 133100,
+        "mimeType": "image/jpeg",
+        "recipe": {
+          "recipeId": "gb45438-xmp-unsigned-v1",
+          "implementationPath": "src/provenance-evaluation-fixtures.ts",
+          "implementationSha256": "ed673bac626028dc81d64acef19cdfa8ddd2d02a90246a074921f638ef4f5350",
+          "parameters": {
+            "baseAssetSha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd",
+            "mode": "unsigned"
+          },
+          "parametersSha256": "1e286149052c9ac2db17486978d6114b810a1e9e31ff5219d63bc29bf6921b03"
+        }
+      },
+      "expected": {
+        "profileId": "gb45438-xmp-parser-v1",
+        "configurationId": "no-authenticator-v1",
+        "outcome": "valid_unsigned",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://std.samr.gov.cn/gb/search/gbDetailed?id=301E0388CB75788DE06397BE0A0AE1B4",
+        "sourceRevision": "GB 45438-2025 compatible test marker recipe v1",
+        "parentAssetSha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd"
+      },
+      "rights": {
+        "owner": "Content Detection Platform evaluation recipe",
+        "license": "Project test fixture terms; C2PA base remains MIT OR Apache-2.0",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/contentauth/c2pa-rs"
+      },
+      "notes": "A syntactically complete marker with no independent signature, content binding, or trusted issuer must remain supporting evidence."
+    },
+    {
+      "id": "gb45438-controlled-authenticated-xmp-recipe-v1",
+      "caseType": "authenticated_metadata",
+      "targetSchemeIds": ["gb-45438-2025-metadata"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "985f1fb594e5a9b640ff75ffa79f2a7ec0b95eb28f8e9dce035906512a2315e7",
+        "sizeBytes": 133117,
+        "mimeType": "image/jpeg",
+        "recipe": {
+          "recipeId": "gb45438-xmp-controlled-authenticated-v1",
+          "implementationPath": "src/provenance-evaluation-fixtures.ts",
+          "implementationSha256": "ed673bac626028dc81d64acef19cdfa8ddd2d02a90246a074921f638ef4f5350",
+          "parameters": {
+            "baseAssetSha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd",
+            "mode": "controlled_authenticated",
+            "authenticator": "controlledEvaluationMetadataAuthentication"
+          },
+          "parametersSha256": "f39b5d6fba097358908a02da0ccf90f327ad7fd043f40b3396c6c16661234398"
+        }
+      },
+      "expected": {
+        "profileId": "gb45438-xmp-parser-v1",
+        "configurationId": "controlled-test-authenticator-v1",
+        "outcome": "valid_authenticated",
+        "evidenceAuthority": "strong",
+        "testOnlyTrustOrAuthentication": true
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://std.samr.gov.cn/gb/search/gbDetailed?id=301E0388CB75788DE06397BE0A0AE1B4",
+        "sourceRevision": "GB 45438-2025 controlled authenticator path recipe v1",
+        "parentAssetSha256": "a2d14755db55de67a47c04090340d8266e892367be4104a45626d7a6fa6e9ffd"
+      },
+      "rights": {
+        "owner": "Content Detection Platform evaluation recipe",
+        "license": "Project test fixture terms; C2PA base remains MIT OR Apache-2.0",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/contentauth/c2pa-rs"
+      },
+      "notes": "Authentication is supplied by a controlled test authenticator, not a vendor production trust chain; it validates code semantics only."
+    },
+    {
+      "id": "sdxl-dwt-dct-exact-payload-recipe-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["sdxl-invisible-watermark"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "24040eba7cc1e92f9f73b1d8658b3497447492d2534866c60ff55348bc42f8db",
+        "sizeBytes": 788404,
+        "mimeType": "image/png",
+        "recipe": {
+          "recipeId": "classic-watermark-sdxl-dwt-dct-v1",
+          "implementationPath": "workers/watermark_classic/tests/test_worker.py",
+          "implementationSha256": "533b23cae4e85ce6ee37a69167f1b44536bfa021e26969e86432b5ebf29ac3aa",
+          "parameters": {
+            "method": "dwtDct",
+            "seed": 20260728,
+            "payloadHex": "b3ec907bb19e",
+            "width": 512,
+            "height": 512,
+            "outputFormat": "png"
+          },
+          "parametersSha256": "3458a036a59ab27ed2ad4a0b1a75e8b2c3e65e996d37eddcc7961ca0f89d3a97"
+        }
+      },
+      "expected": {
+        "profileId": "diffusers-sdxl-default-48bit-v1",
+        "configurationId": "registered-test-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://github.com/ShieldMnt/invisible-watermark",
+        "sourceRevision": "pinned watermark-classic uv.lock and recipe implementation digest",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform deterministic synthetic fixture",
+        "license": "MIT implementation; project-owned random source pixels",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/ShieldMnt/invisible-watermark"
+      },
+      "notes": "Exact 48-bit registered payload; remains supporting until calibration and the production release gate pass."
+    },
+    {
+      "id": "classic-dwt-dct-svd-exact-payload-recipe-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["classic-dwt-dct-svd"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "d6870a8b25ba19452d84dc10c3f809d44c67cdd627d8b7f4e35509f66a0abfe5",
+        "sizeBytes": 788404,
+        "mimeType": "image/png",
+        "recipe": {
+          "recipeId": "classic-watermark-dwt-dct-svd-v1",
+          "implementationPath": "workers/watermark_classic/tests/test_worker.py",
+          "implementationSha256": "533b23cae4e85ce6ee37a69167f1b44536bfa021e26969e86432b5ebf29ac3aa",
+          "parameters": {
+            "method": "dwtDctSvd",
+            "seed": 20260731,
+            "payloadHex": "a17ec3d459b268f0",
+            "width": 512,
+            "height": 512,
+            "outputFormat": "png"
+          },
+          "parametersSha256": "fd252b78ec5e512a1b177a5dfcd885e83d7844e2d87c8f9616d36b632b728bce"
+        }
+      },
+      "expected": {
+        "profileId": "classic-dwt-dct-svd-64bit-v1",
+        "configurationId": "registered-test-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://github.com/ShieldMnt/invisible-watermark",
+        "sourceRevision": "pinned watermark-classic uv.lock and recipe implementation digest",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform deterministic synthetic fixture",
+        "license": "MIT implementation; project-owned random source pixels",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/ShieldMnt/invisible-watermark"
+      },
+      "notes": "Exact registered 64-bit payload compatibility case; it is not evidence that arbitrary internet images came from a vendor."
+    },
+    {
+      "id": "classic-rivagan-exact-payload-recipe-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["classic-rivagan-32"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "6b721ae917ff66f27eb0644ecabf617adb01e2fcc7509022561aedad2376b69f",
+        "sizeBytes": 278902,
+        "mimeType": "image/png",
+        "recipe": {
+          "recipeId": "classic-watermark-rivagan-v1",
+          "implementationPath": "workers/watermark_classic/tests/test_worker.py",
+          "implementationSha256": "533b23cae4e85ce6ee37a69167f1b44536bfa021e26969e86432b5ebf29ac3aa",
+          "parameters": {
+            "method": "rivaGan",
+            "seed": 3,
+            "payloadHex": "c0decafe",
+            "lowFrequencyWidth": 8,
+            "lowFrequencyHeight": 8,
+            "width": 512,
+            "height": 512,
+            "outputFormat": "png"
+          },
+          "parametersSha256": "4eebe075986ef3d639c126295639a6238d573b4f4b445f44f66d386ac1500c52"
+        }
+      },
+      "expected": {
+        "profileId": "classic-rivagan-32bit-v1",
+        "configurationId": "registered-test-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://github.com/ShieldMnt/invisible-watermark",
+        "sourceRevision": "pinned watermark-classic uv.lock and recipe implementation digest",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform deterministic synthetic fixture",
+        "license": "MIT implementation; project-owned low-frequency source pixels",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/ShieldMnt/invisible-watermark"
+      },
+      "notes": "Exact registered 32-bit payload compatibility case; matching remains supporting before calibration."
+    },
+    {
+      "id": "adobe-trustmark-official-p-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["adobe-trustmark"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/trustmark/fixtures/ufo_240_P.png",
+        "sha256": "dccf13e33e0ecb2b1971a309df8582caad7d2998c3041aea5c9d8dc89d2b14cf",
+        "sizeBytes": 106187,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "trustmark-pq-rotations-v1",
+        "configurationId": "official-p-fixture-registered-secret-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "official_fixture",
+        "sourceUrl": "https://github.com/adobe/trustmark",
+        "sourceRevision": "0ed40cbe8188f664fd9cbbeacd969807de27440a",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Adobe TrustMark upstream fixture",
+        "license": "MIT",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/adobe/trustmark"
+      },
+      "notes": "Provisioned from the immutable upstream URL and verified by size and SHA-256."
+    },
+    {
+      "id": "adobe-trustmark-official-q-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["adobe-trustmark"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/trustmark/fixtures/ufo_240_Q.png",
+        "sha256": "f388997ad006ae755e332a0fe3bae2a6a5f77bd8222f0e71ed09301c289e6922",
+        "sizeBytes": 102860,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "trustmark-pq-rotations-v1",
+        "configurationId": "official-q-fixture-registered-secret-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "official_fixture",
+        "sourceUrl": "https://github.com/adobe/trustmark",
+        "sourceRevision": "0ed40cbe8188f664fd9cbbeacd969807de27440a",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Adobe TrustMark upstream fixture",
+        "license": "MIT",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/adobe/trustmark"
+      },
+      "notes": "Second official profile case prevents P-only compatibility from being mistaken for full P/Q coverage."
+    },
+    {
+      "id": "meta-videoseal-owned-positive-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["meta-videoseal-v1"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/meta_watermarks/fixtures/generated/videoseal-v1-owned.png",
+        "sha256": "b8730abb16f976a4ef3c55d3243ed015ef5b6bb53ea8516fd3a9db123341502c",
+        "sizeBytes": 63878,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "videoseal-v1",
+        "configurationId": "owned-registered-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "owned_generated",
+        "sourceUrl": "https://github.com/facebookresearch/videoseal",
+        "sourceRevision": "870ca7fb33578b90f14c602016b6c2788096226e",
+        "parentAssetSha256": "bfc838b42d3f9db0d5028a2cff929d7762f8e552b61451666f9cfc342143b8d3"
+      },
+      "rights": {
+        "owner": "Content Detection Platform synthetic evaluation fixture",
+        "license": "Project-owned gradient base; MIT encoder and weights",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/facebookresearch/videoseal"
+      },
+      "notes": "Locally generated from the owned gradient control with the pinned VideoSeal source, model digest, and registered test payload."
+    },
+    {
+      "id": "meta-wam-mit-owned-positive-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["meta-watermark-anything-mit"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/meta_watermarks/fixtures/generated/wam-mit-owned.png",
+        "sha256": "d1c963c3f4c536775b5374a328cc0c8315ab8593eea91ee2ee088d32bed31a8c",
+        "sizeBytes": 102968,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "wam-mit",
+        "configurationId": "owned-registered-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "owned_generated",
+        "sourceUrl": "https://github.com/facebookresearch/watermark-anything",
+        "sourceRevision": "2c08af04d037d5667c02f6ddebbda9ff04581c3e",
+        "parentAssetSha256": "bfc838b42d3f9db0d5028a2cff929d7762f8e552b61451666f9cfc342143b8d3"
+      },
+      "rights": {
+        "owner": "Content Detection Platform synthetic evaluation fixture",
+        "license": "Project-owned gradient base; MIT source and wam_mit weights",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/facebookresearch/watermark-anything"
+      },
+      "notes": "Only the MIT checkpoint is represented; this case does not cover or authorize the noncommercial COCO checkpoint."
+    },
+    {
+      "id": "meta-pixelseal-owned-positive-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["meta-pixelseal"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/meta_watermarks/fixtures/generated/pixelseal-owned.png",
+        "sha256": "aae209e1703f17fd1bdd366911ccb7d90834d51ef927928f5f4795cfda7073e2",
+        "sizeBytes": 80166,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "pixelseal",
+        "configurationId": "owned-registered-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "owned_generated",
+        "sourceUrl": "https://github.com/facebookresearch/videoseal",
+        "sourceRevision": "870ca7fb33578b90f14c602016b6c2788096226e",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform synthetic evaluation fixture",
+        "license": "Project-owned synthetic base; MIT encoder and weights",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/facebookresearch/videoseal"
+      },
+      "notes": "Evaluation-only registered profile case; runtime and memory suitability remain separate from fixture compatibility."
+    },
+    {
+      "id": "meta-chunkyseal-owned-positive-v1",
+      "caseType": "watermark_positive",
+      "targetSchemeIds": ["meta-chunkyseal"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/meta_watermarks/fixtures/generated/chunkyseal-owned.png",
+        "sha256": "1a286ac76fd3db714ea72071dc7940bd349ad39716897334a12477c60d00d0b5",
+        "sizeBytes": 749015,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "chunkyseal",
+        "configurationId": "owned-registered-payload-v1",
+        "outcome": "possibly_present",
+        "evidenceAuthority": "supporting",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "owned_generated",
+        "sourceUrl": "https://github.com/facebookresearch/videoseal",
+        "sourceRevision": "870ca7fb33578b90f14c602016b6c2788096226e",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform synthetic evaluation fixture",
+        "license": "Project-owned synthetic base; MIT encoder and weights",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/facebookresearch/videoseal"
+      },
+      "notes": "Evaluation-only large-checkpoint profile case; the manifest does not make the profile production-runnable."
+    },
+    {
+      "id": "classic-watermarks-unmarked-random-control-v1",
+      "caseType": "unmarked_control",
+      "targetSchemeIds": ["sdxl-invisible-watermark", "classic-dwt-dct-svd", "classic-rivagan-32"],
+      "asset": {
+        "materialization": "deterministic_recipe",
+        "relativePath": null,
+        "sha256": "eaa21242bb4014e32b920d9c71db81c4ac6ba3ce3d7f28b71306b7a65f817b61",
+        "sizeBytes": 788404,
+        "mimeType": "image/png",
+        "recipe": {
+          "recipeId": "classic-watermark-unmarked-random-control-v1",
+          "implementationPath": "workers/watermark_classic/tests/test_worker.py",
+          "implementationSha256": "533b23cae4e85ce6ee37a69167f1b44536bfa021e26969e86432b5ebf29ac3aa",
+          "parameters": {
+            "method": "unmarkedRandomControl",
+            "seed": 20260729,
+            "width": 512,
+            "height": 512,
+            "outputFormat": "png"
+          },
+          "parametersSha256": "0e293ac351db0c9b8cb66ac4ba9cbafdf385f8c2bb9a0e99bd397427d6d83577"
+        }
+      },
+      "expected": {
+        "profileId": "classic-watermark-control-v1",
+        "configurationId": "all-registered-classic-payloads-v1",
+        "outcome": "not_detected",
+        "evidenceAuthority": "neutral",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "deterministic_recipe",
+        "sourceUrl": "https://github.com/ShieldMnt/invisible-watermark",
+        "sourceRevision": "pinned watermark-classic uv.lock and recipe implementation digest",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform deterministic synthetic fixture",
+        "license": "Project-owned random source pixels",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/ShieldMnt/invisible-watermark"
+      },
+      "notes": "A functional negative control only; one image is not false-positive calibration and absence remains neutral."
+    },
+    {
+      "id": "meta-watermarks-owned-gradient-control-v1",
+      "caseType": "unmarked_control",
+      "targetSchemeIds": ["meta-videoseal-v1", "meta-watermark-anything-mit", "meta-pixelseal", "meta-chunkyseal"],
+      "asset": {
+        "materialization": "provisioned_file",
+        "relativePath": "workers/meta_watermarks/fixtures/generated/videoseal-v1-original.png",
+        "sha256": "bfc838b42d3f9db0d5028a2cff929d7762f8e552b61451666f9cfc342143b8d3",
+        "sizeBytes": 4377,
+        "mimeType": "image/png",
+        "recipe": null
+      },
+      "expected": {
+        "profileId": "meta-watermarks-control-v1",
+        "configurationId": "all-registered-meta-test-payloads-v1",
+        "outcome": "not_detected",
+        "evidenceAuthority": "neutral",
+        "testOnlyTrustOrAuthentication": false
+      },
+      "provenance": {
+        "sourceKind": "owned_generated",
+        "sourceUrl": "https://github.com/facebookresearch/videoseal",
+        "sourceRevision": "owned RGB coordinate-gradient fixture v1",
+        "parentAssetSha256": null
+      },
+      "rights": {
+        "owner": "Content Detection Platform synthetic evaluation fixture",
+        "license": "Project-owned coordinate-gradient pixels",
+        "commercialEvaluationAllowed": true,
+        "redistributable": true,
+        "evidenceUrl": "https://github.com/facebookresearch/videoseal"
+      },
+      "notes": "Shared owned source image for local compatibility checks; it is not a statistically representative unmarked corpus."
+    }
+  ]
+}

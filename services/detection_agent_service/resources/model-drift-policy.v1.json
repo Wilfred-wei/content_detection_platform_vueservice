@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "model-drift-policy.v1",
+  "policyVersion": "model-drift-v1-2026-08-04",
+  "windowSize": 1000,
+  "minimumWindowSamples": 100,
+  "maxMeanZScore": 3,
+  "maxDetectedRateDelta": 0.15,
+  "maxOodRate": 0.2,
+  "baselines": []
+}

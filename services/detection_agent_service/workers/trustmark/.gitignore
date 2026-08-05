@@ -1,0 +1,5 @@
+.venv/
+models/
+fixtures/
+**/__pycache__/
+*.pyc

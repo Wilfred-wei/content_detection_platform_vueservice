@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "provenance-transformation-suite.v1",
+  "suiteVersion": "2026-08-03.1",
+  "createdAt": "2026-08-03",
+  "purpose": "evaluation_only",
+  "releaseGateEligible": false,
+  "policy": {
+    "productionEvidenceEligible": false,
+    "shortCircuitEligible": false,
+    "networkAccessAllowed": false,
+    "arbitraryOperationChainsAllowed": false
+  },
+  "worker": {
+    "protocolVersion": "1.0.0",
+    "recipeVersion": "provenance-transform.v1",
+    "implementationPath": "workers/image_views/src/image_view_worker/__main__.py",
+    "implementationSha256": "4bbdc2c116842b03a4e4189085d15681642a5f0ab1ae4427579215e99b08c8f5",
+    "lockPath": "workers/image_views/uv.lock",
+    "lockSha256": "f92682c596aca24383c0f17eb0a25016d57631a01a0fed21909182732a1ed39c",
+    "pillowVersion": "11.3.0"
+  },
+  "limits": {
+    "maxInputBytes": 52428800,
+    "maxPixels": 100000000,
+    "maxDimension": 4096
+  },
+  "recipes": [
+    {
+      "id": "resize-256-square-v1",
+      "operation": "resize",
+      "parameters": { "width": 256, "height": 256 },
+      "parametersSha256": "647953d312c2558b12f6ec2dce5f3038dc28b171365c1fa007bb3871a9c8fffa",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Deterministic 256 by 256 Lanczos resize."
+    },
+    {
+      "id": "jpeg-quality-75-v1",
+      "operation": "recompression",
+      "parameters": { "quality": 75 },
+      "parametersSha256": "f5ef7e7601585842c447d34276d8e943fa9eaca30494d2c20d0138b2b1899774",
+      "outputFormat": "jpeg",
+      "metadataExpected": "removed",
+      "description": "JPEG quality 75 with fixed 4:4:4 subsampling and non-progressive encoding."
+    },
+    {
+      "id": "center-crop-90-v1",
+      "operation": "crop",
+      "parameters": { "region": [0.05, 0.05, 0.95, 0.95] },
+      "parametersSha256": "37f6747f3a724cbffb4bf7028f5429695dad9ab714c4cab1633a6f2ac980d9bb",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Deterministic centered crop retaining 90 percent of each dimension."
+    },
+    {
+      "id": "screenshot-1024x768-v1",
+      "operation": "screenshot",
+      "parameters": { "viewportWidth": 1024, "viewportHeight": 768, "deviceScaleFactor": 1, "background": [245, 245, 245] },
+      "parametersSha256": "dc6296ca2288eef064b847d29e545a07b34ad524d228cddaaba4daa2a0fd6bd2",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Contain the image in a fixed light 1024 by 768 screenshot canvas."
+    },
+    {
+      "id": "gaussian-blur-1_5-v1",
+      "operation": "blur",
+      "parameters": { "radius": 1.5 },
+      "parametersSha256": "0bef92e7f6189ddb118fef2da02a6ca9581388b000e42da40c43a9ccce9c150f",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Gaussian blur with a fixed radius of 1.5 pixels."
+    },
+    {
+      "id": "color-edit-moderate-v1",
+      "operation": "color_edit",
+      "parameters": { "brightness": 1.08, "contrast": 1.1, "saturation": 0.85, "hueDegrees": 8 },
+      "parametersSha256": "7984e3bd244c03ce2b2643239e90e54da2f344c1b6bb04fe2420330e88194222",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "A bounded combined brightness, contrast, saturation, and hue edit."
+    },
+    {
+      "id": "translucent-overlay-center-v1",
+      "operation": "overlay",
+      "parameters": { "region": [0.25, 0.25, 0.75, 0.75], "rgba": [255, 255, 255, 32] },
+      "parametersSha256": "b1033cb6501738aa6914e110a3a52982c94d55e3afe0034750071890f69339f8",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "A low-alpha centered white overlay for occlusion robustness."
+    },
+    {
+      "id": "metadata-removal-jpeg-v1",
+      "operation": "metadata_removal",
+      "parameters": { "outputFormat": "jpeg", "quality": 92 },
+      "parametersSha256": "f0e706301ca7aaf9fbb92974ef32eccb3ae3b1acdf8d0a69bde964dcd34c03dd",
+      "outputFormat": "jpeg",
+      "metadataExpected": "removed",
+      "description": "Decode and re-encode without EXIF, XMP, IPTC, or ICC payloads."
+    },
+    {
+      "id": "visible-label-forgery-v1",
+      "operation": "visible_label_forgery",
+      "parameters": { "text": "AI GENERATED", "region": [0.05, 0.78, 0.95, 0.98], "rgba": [255, 255, 255, 255], "background": [180, 0, 0, 220] },
+      "parametersSha256": "bc6cd0755d307de8fa0d63278c791403153993ca21db57481206d1edbbd66db6",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Forge a visible AI label; the output is a negative authority control, never provenance."
+    },
+    {
+      "id": "adversarial-social-jpeg-resize-v1",
+      "operation": "adversarial",
+      "parameters": { "profile": "social_jpeg_resize" },
+      "parametersSha256": "159280ba639dc44f35ef237d9fe99ed3a096cb76b8437263149b5d07023a6644",
+      "outputFormat": "jpeg",
+      "metadataExpected": "removed",
+      "description": "Half-resolution resize followed by fixed JPEG quality 50 encoding."
+    },
+    {
+      "id": "adversarial-screenshot-jpeg-v1",
+      "operation": "adversarial",
+      "parameters": { "profile": "screenshot_jpeg" },
+      "parametersSha256": "8332f93f4f42078949a153f8a748267c015a2e1d379184be26458072b4734741",
+      "outputFormat": "jpeg",
+      "metadataExpected": "removed",
+      "description": "Contain in a fixed 1024 square screenshot canvas and encode at JPEG quality 75."
+    },
+    {
+      "id": "adversarial-blur-overlay-v1",
+      "operation": "adversarial",
+      "parameters": { "profile": "blur_overlay" },
+      "parametersSha256": "fa2372e19acfacc989dd02e4b01ae05765e870a2a7eb7ccbcb6cc1623d0113b5",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Combine mild Gaussian blur with a small translucent central overlay."
+    },
+    {
+      "id": "adversarial-metadata-label-v1",
+      "operation": "adversarial",
+      "parameters": { "profile": "metadata_label" },
+      "parametersSha256": "55268d6866c5a15dda102111b23f8df362f97a55cf0847972b267b591d5144c1",
+      "outputFormat": "png",
+      "metadataExpected": "removed",
+      "description": "Strip source metadata while adding a forged visible AI label."
+    }
+  ]
+}

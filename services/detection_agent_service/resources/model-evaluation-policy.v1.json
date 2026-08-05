@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "model-evaluation-policy.v1",
+  "targetFalsePositiveRate": 0.01,
+  "minimumCalibrationControls": 100,
+  "minimumEvaluationSamples": 100,
+  "abstentionMargin": 0.05,
+  "productionGate": {
+    "minimumGeneratedRecall": 0.9,
+    "maximumFalsePositiveRate": 0.01,
+    "minimumSubgroupRecords": 32,
+    "minimumTransformationRecords": 32,
+    "requiredSubgroups": [],
+    "requiredTransformations": [],
+    "requireBothLabels": true
+  },
+  "notes": [
+    "This policy is a release gate, not a promise that every generator reaches 90 percent recall.",
+    "Imported replay records must carry a rights-cleared manifest and an explicit productionGateEligible=true sidecar before promotion can pass.",
+    "A candidate can be used descriptively or in shadow mode while this gate remains blocked."
+  ]
+}

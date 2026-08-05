@@ -1,0 +1,1323 @@
+{
+  "schemaVersion": "1.1.0",
+  "registryVersion": "2026-07-29.2",
+  "researchedAt": "2026-07-29",
+  "policy": {
+    "commercialApisAllowed": false,
+    "manualVerifierResultsAreProductionEvidence": false,
+    "absenceIsNeutral": true,
+    "shortCircuitRequiresApprovedCalibration": true,
+    "commercialUseRequired": true
+  },
+  "schemes": [
+    {
+      "id": "c2pa",
+      "name": "C2PA Content Credentials",
+      "family": "authenticated_provenance",
+      "compatibility": [
+        "C2PA v2 claims in formats supported by the pinned c2pa-rs release",
+        "AI origin requires a trusted issuer plus an authenticated AI-generation assertion; C2PA presence alone is not AI evidence"
+      ],
+      "primarySources": [
+        "https://github.com/contentauth/c2pa-rs",
+        "https://c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "versioned trust list for authoritative issuer classification"
+      ],
+      "supportedProducts": [
+        "Any producer emitting conforming C2PA manifests; product identity is derived from validated signed assertions"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "c2pa-rs official fixtures plus owned trusted and untrusted manifests",
+      "owner": "provenance-runtime",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "c2pa-short-circuit-v1",
+        "reason": "Requires trust-chain, content-binding, issuer-policy, malformed-input, and false-positive gates."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Required implementation and artifacts have commercial-compatible terms; calibration still independently controls evidence strength."
+      },
+      "execution": {
+        "adapterId": "c2pa-local-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "in_process",
+        "timeoutMs": 10000,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "gb-45438-2025-metadata",
+      "name": "GB 45438-2025 implicit AIGC metadata",
+      "family": "regulatory_metadata",
+      "compatibility": [
+        "Files carrying the GB 45438-2025 implicit metadata field set",
+        "Unsigned fields are supporting indicators only; producer/propagator signatures require vendor-specific verification material"
+      ],
+      "primarySources": [
+        "https://std.samr.gov.cn/gb/search/gbDetailed?id=301E0388CB75788DE06397BE0A0AE1B4"
+      ],
+      "license": "National standard; implementation terms to be reviewed",
+      "accessClass": "local_standard_parser",
+      "requiredKeysOrModels": [
+        "none for safe field extraction",
+        "producer-specific key or secret for signature verification"
+      ],
+      "supportedProducts": [
+        "Chinese AIGC services and propagation platforms implementing GB 45438-2025"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "owned samples from conforming generators plus forged and stripped controls",
+      "owner": "metadata-runtime",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Unsigned or unverifiable metadata cannot establish AI origin."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Required implementation and artifacts have commercial-compatible terms; calibration still independently controls evidence strength."
+      },
+      "execution": {
+        "adapterId": "metadata-local-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "in_process",
+        "timeoutMs": 10000,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "sdxl-invisible-watermark",
+      "name": "Diffusers SDXL invisible-watermark",
+      "family": "open_watermark",
+      "compatibility": [
+        "Hugging Face Diffusers StableDiffusionXLPipeline outputs only when add_watermarker is enabled and invisible-watermark is installed",
+        "Not universal to Stable Diffusion, SDXL forks, or outputs that disabled or replaced the watermarker"
+      ],
+      "primarySources": [
+        "https://huggingface.co/docs/diffusers/api/pipelines/stable_diffusion/stable_diffusion_xl",
+        "https://github.com/ShieldMnt/invisible-watermark"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "pinned invisible-watermark decoder and exact payload/version configuration"
+      ],
+      "supportedProducts": [
+        "Compatible Diffusers SDXL pipelines with the default watermarker enabled"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "owned Diffusers SDXL marked/unmarked pairs for each pinned version",
+      "owner": "watermark-runtime",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "sdxl-invisible-watermark-short-circuit-v1",
+        "reason": "Exact payload semantics and fixed-FPR calibration are not yet approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Required implementation and artifacts have commercial-compatible terms; calibration still independently controls evidence strength."
+      },
+      "execution": {
+        "adapterId": "sdxl-dwt-dct-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 5000,
+        "artifacts": [
+          {
+            "id": "sdxl-default-payload-hex",
+            "kind": "payload",
+            "sha256": "49857f965e534fd56df0bf77d9bb4b4ff2d1132b704e89a20bc8bf9322d26f8c"
+          },
+          {
+            "id": "watermark-classic-uv-lock",
+            "kind": "dependency_lock",
+            "sha256": "79bc4bf88c162d07432a7dcb7ee883ad66bbb1aca8ec6c7f6de7974652d70344"
+          }
+        ],
+        "profiles": [
+          {
+            "id": "diffusers-sdxl-default-48bit-v1",
+            "settings": {
+              "method": "dwtDct",
+              "expectedPayloadHex": "b3ec907bb19e",
+              "expectedPayloadBits": 48,
+              "possibleMatchMinimum": 28,
+              "likelyMatchMinimum": 34,
+              "veryLikelyMatchMinimum": 36,
+              "maxBytes": 10485760,
+              "maxPixels": 40000000,
+              "maxCpuThreads": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "classic-dwt-dct-svd",
+      "name": "ShieldMnt DWT-DCT-SVD registered watermark",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images embedded with the MIT invisible-watermark dwtDctSvd algorithm and the registered 64-bit payload",
+        "Resize and aspect-ratio-changing crops require separate transformed-view calibration"
+      ],
+      "primarySources": [
+        "https://github.com/ShieldMnt/invisible-watermark"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "registered expected 64-bit payload",
+        "pinned DWT-DCT-SVD implementation"
+      ],
+      "supportedProducts": [
+        "Owned post-hoc image workflows using the registered ShieldMnt-compatible payload"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": { "status": "required", "artifact": null },
+      "sampleSource": "owned algorithm-generated marked images and deterministic unmarked controls",
+      "owner": "watermark-runtime",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "classic-dwt-dct-svd-short-circuit-v1",
+        "reason": "The exact payload decoder is runnable, but fixed-FPR and transformation calibration are not approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "The algorithm implementation is MIT-licensed, dependency-pinned, offline, and restricted to a registered payload."
+      },
+      "execution": {
+        "adapterId": "classic-invisible-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 15000,
+        "artifacts": [
+          { "id": "classic-dwt-dct-svd-owned-payload", "kind": "payload", "sha256": "5faba7c5e2a0b6c6337ec5f7032f31f94fd39999fbb8c4a6f9d6dd3ed49e7797" },
+          { "id": "watermark-classic-uv-lock", "kind": "dependency_lock", "sha256": "79bc4bf88c162d07432a7dcb7ee883ad66bbb1aca8ec6c7f6de7974652d70344" }
+        ],
+        "profiles": [{
+          "id": "classic-dwt-dct-svd-64bit-v1",
+          "settings": {
+            "method": "dwtDctSvd",
+            "expectedPayloadHex": "a17ec3d459b268f0",
+            "expectedPayloadBits": 64,
+            "possibleMatchMinimum": 44,
+            "likelyMatchMinimum": 48,
+            "veryLikelyMatchMinimum": 52,
+            "maxBytes": 10485760,
+            "maxPixels": 40000000,
+            "maxCpuThreads": 2
+          }
+        }]
+      }
+    },
+    {
+      "id": "classic-rivagan-32",
+      "name": "ShieldMnt RivaGAN registered watermark",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images embedded with the bundled RivaGAN ONNX encoder and registered 32-bit payload",
+        "The decoder is not evidence for unrelated RivaGAN models or unknown payloads"
+      ],
+      "primarySources": [
+        "https://github.com/ShieldMnt/invisible-watermark",
+        "https://github.com/DAI-Lab/RivaGAN"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "digest-verified RivaGAN decoder ONNX model",
+        "registered expected 32-bit payload"
+      ],
+      "supportedProducts": [
+        "Owned image workflows using the bundled RivaGAN model and registered payload"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": { "status": "required", "artifact": null },
+      "sampleSource": "owned ONNX-encoded marked images and deterministic unmarked controls",
+      "owner": "watermark-runtime",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "classic-rivagan-32-short-circuit-v1",
+        "reason": "The exact payload decoder is runnable, but fixed-FPR and transformation calibration are not approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "The MIT wheel and ONNX model are pinned by digest, provisioned before startup, and executed offline."
+      },
+      "execution": {
+        "adapterId": "classic-invisible-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 15000,
+        "artifacts": [
+          { "id": "classic-rivagan-owned-payload", "kind": "payload", "sha256": "fbde3ea5262dc3c973d669ee5dfc3abd8df119f40df1418461a208328983e01b" },
+          { "id": "classic-watermark-model-artifact-manifest", "kind": "configuration", "sha256": "b230d90ad4b8721726f473b270f20e4225a6b4a57f1513c11740ddca1f00af80" },
+          { "id": "rivagan-decoder-onnx", "kind": "model", "sha256": "6b006690cf352fa50a91a0b6d6241dbcded0a9957969e2c0665cf9a7011b3880" },
+          { "id": "watermark-classic-uv-lock", "kind": "dependency_lock", "sha256": "79bc4bf88c162d07432a7dcb7ee883ad66bbb1aca8ec6c7f6de7974652d70344" }
+        ],
+        "profiles": [{
+          "id": "classic-rivagan-32bit-v1",
+          "settings": {
+            "method": "rivaGan",
+            "expectedPayloadHex": "c0decafe",
+            "expectedPayloadBits": 32,
+            "possibleMatchMinimum": 24,
+            "likelyMatchMinimum": 27,
+            "veryLikelyMatchMinimum": 29,
+            "decoderThreshold": 0.52,
+            "maxBytes": 10485760,
+            "maxPixels": 40000000,
+            "maxCpuThreads": 2
+          }
+        }]
+      }
+    },
+    {
+      "id": "adobe-trustmark",
+      "name": "Adobe TrustMark",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images encoded by compatible TrustMark P or Q models and registered payload schema",
+        "A decoded payload is not an AI claim unless its registry binding says so"
+      ],
+      "primarySources": [
+        "https://github.com/adobe/trustmark"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "official TrustMark model checkpoint or ONNX model",
+        "trusted payload registry"
+      ],
+      "supportedProducts": [
+        "CAI workflows that explicitly embed TrustMark"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official repository examples plus owned marked/unmarked and transformed pairs",
+      "owner": "watermark-runtime",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "adobe-trustmark-short-circuit-v1",
+        "reason": "The payload registry and multi-view policy are implemented, but no AI-origin payload binding or false-positive calibration is approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "The MIT decoder, official P/Q artifacts, offline worker, and hashed payload registry are pinned; calibration still limits matches to supporting evidence."
+      },
+      "execution": {
+        "adapterId": "trustmark-pq-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 120000,
+        "artifacts": [
+          {
+            "id": "trustmark-0.9.1-sdist",
+            "kind": "dependency_lock",
+            "sha256": "dc79e3fb070f5d94765acf8868a51f50a612cc05b53223cf1e6b605d4ff1e0ae"
+          },
+          {
+            "id": "trustmark-p-config",
+            "kind": "configuration",
+            "sha256": "43f37103f92efa8bd6b1c5902bb537cc12a981dc699fca19d9bb7de8c62d03d9"
+          },
+          {
+            "id": "trustmark-p-decoder",
+            "kind": "model",
+            "sha256": "f5f1d570c889c5908c6e4a28c07dc90cf33990ebaf24037254ebe0b8849b1bdc"
+          },
+          {
+            "id": "trustmark-q-config",
+            "kind": "configuration",
+            "sha256": "43f37103f92efa8bd6b1c5902bb537cc12a981dc699fca19d9bb7de8c62d03d9"
+          },
+          {
+            "id": "trustmark-q-decoder",
+            "kind": "model",
+            "sha256": "e3d9cea5406a26590735719f8f15cb10802b11852ae69047eaf4cf17214df781"
+          },
+          {
+            "id": "trustmark-model-artifact-manifest",
+            "kind": "configuration",
+            "sha256": "8d023e822a4a88518b7cd2087a7a17f590dc4d33a77fb9d6b7597a2df1bb75a8"
+          },
+          {
+            "id": "trustmark-registered-payloads-v1",
+            "kind": "payload",
+            "sha256": "8795c47ade222331ca43f98c42fe826261d9b071b0e3c93cb11665362e019313"
+          },
+          {
+            "id": "trustmark-uv-lock",
+            "kind": "dependency_lock",
+            "sha256": "b9bac70208b1c4430a0b85b001786f22f72cd806cdecff1967720140c6c7ba43"
+          }
+        ],
+        "profiles": [
+          {
+            "id": "trustmark-pq-rotations-v1",
+            "settings": {
+              "models": "P,Q",
+              "rotations": "0,90,180,270",
+              "minimumConsistentViews": 2,
+              "calibrationApproved": false,
+              "maxBytes": 10485760,
+              "maxPixels": 40000000,
+              "minDimension": 64,
+              "maxCpuThreads": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "meta-watermark-anything-mit",
+      "name": "Meta Watermark Anything (wam_mit)",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images embedded with the official wam_mit checkpoint and compatible 32-bit message configuration",
+        "Decoded messages require a reviewed local payload binding before they become candidate evidence"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/watermark-anything"
+      ],
+      "license": "MIT for code and wam_mit weights",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "wam_mit checkpoint",
+        "message registry or expected message set"
+      ],
+      "supportedProducts": [
+        "Owned workflows explicitly embedding a registered WAM message"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official assets plus owned localized, spliced, and unmarked controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "meta-watermark-anything-mit-short-circuit-v1",
+        "reason": "The decoder is runnable, but fixed-FPR calibration and reviewed AI-origin payload semantics are not approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Official source and wam_mit weights are MIT-licensed, pinned, digest-verified, and executed offline."
+      },
+      "execution": {
+        "adapterId": "meta-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 180000,
+        "artifacts": [
+          { "id": "meta-wam-mit-model", "kind": "model", "sha256": "90ef232384e023bd63245eb0c131abd69d2afc7b8f17a71ccedceb542bf009e2" },
+          { "id": "meta-watermarks-model-artifact-manifest", "kind": "configuration", "sha256": "9f6a6ce0a40ecbf17901d1780387e1cbbe84d45df301502f7db6b7a10663dc06" },
+          { "id": "meta-watermarks-registered-payloads-v1", "kind": "payload", "sha256": "e950305b8c7090a2aa94e91267e22aeb277220136e0804c62657ea8fd11ea1ba" },
+          { "id": "meta-watermarks-uv-lock", "kind": "dependency_lock", "sha256": "b6de2a5ad7f9a9ebb20afa879f02aa9939ec33a14c204961a37783d1229be175" }
+        ],
+        "profiles": [
+          {
+            "id": "wam-mit",
+            "settings": {
+              "candidateDetectionThreshold": 0.95,
+              "calibrationApproved": false,
+              "device": "cuda:0",
+              "maxBytes": 10485760,
+              "maxPixels": 40000000,
+              "minDimension": 64,
+              "maxCpuThreads": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "meta-watermark-anything-coco",
+      "name": "Meta Watermark Anything (WAM COCO checkpoint)",
+      "family": "research_watermark",
+      "compatibility": [
+        "Images embedded with the separately published WAM COCO checkpoint",
+        "The COCO checkpoint is not interchangeable with wam_mit"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/watermark-anything"
+      ],
+      "license": "CC-BY-NC for the original COCO weights",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "wam_coco checkpoint",
+        "message registry or expected message set"
+      ],
+      "supportedProducts": [
+        "Noncommercial research evaluation only"
+      ],
+      "runtimeEligibility": "disabled_policy",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official research examples and owned noncommercial controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Noncommercial checkpoint terms are incompatible with the deployment policy."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "The published COCO checkpoint is noncommercial and must not be provisioned by this service."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "meta-videoseal-v1",
+      "name": "Meta VideoSeal v1.0 image decoder",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images or video frames embedded with the official VideoSeal v1.0 256-bit checkpoint",
+        "Decoded payloads require a reviewed local binding before they become candidate evidence"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/videoseal",
+        "https://ai.meta.com/research/publications/video-seal-open-and-efficient-video-watermarking/"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "official VideoSeal v1.0 checkpoint",
+        "registered expected payload when origin attribution is required"
+      ],
+      "supportedProducts": [
+        "Owned post-hoc image/video workflows using the registered Meta checkpoint"
+      ],
+      "runtimeEligibility": "planned_local",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official examples plus owned marked/unmarked image and transformed frame sets",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "candidate_after_gate",
+        "gateId": "meta-videoseal-v1-short-circuit-v1",
+        "reason": "The decoder is runnable, but fixed-FPR calibration and reviewed AI-origin payload semantics are not approved."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Official source and v1.0 weights are MIT-licensed, pinned, digest-verified, and executed offline."
+      },
+      "execution": {
+        "adapterId": "meta-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 180000,
+        "artifacts": [
+          { "id": "meta-videoseal-v1-model", "kind": "model", "sha256": "3d2ff2523d2a89e3532c6dfdcf693098799326e9b3e74c185e815e9baa8340a3" },
+          { "id": "meta-watermarks-model-artifact-manifest", "kind": "configuration", "sha256": "9f6a6ce0a40ecbf17901d1780387e1cbbe84d45df301502f7db6b7a10663dc06" },
+          { "id": "meta-watermarks-registered-payloads-v1", "kind": "payload", "sha256": "e950305b8c7090a2aa94e91267e22aeb277220136e0804c62657ea8fd11ea1ba" },
+          { "id": "meta-watermarks-uv-lock", "kind": "dependency_lock", "sha256": "b6de2a5ad7f9a9ebb20afa879f02aa9939ec33a14c204961a37783d1229be175" }
+        ],
+        "profiles": [
+          {
+            "id": "videoseal-v1",
+            "settings": {
+              "candidateDetectionThreshold": 0.95,
+              "calibrationApproved": false,
+              "device": "cuda:0",
+              "maxBytes": 10485760,
+              "maxPixels": 40000000,
+              "minDimension": 64,
+              "maxCpuThreads": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "meta-pixelseal",
+      "name": "Meta PixelSeal image decoder",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images embedded with the official PixelSeal 256-bit checkpoint",
+        "Detector identity and payload width are preserved in every result"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/videoseal"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "official PixelSeal checkpoint",
+        "registered expected payload when origin attribution is required"
+      ],
+      "supportedProducts": [
+        "Owned PixelSeal embedding workflows"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": { "status": "required", "artifact": null },
+      "sampleSource": "owned PixelSeal marked/unmarked and transformed pairs",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Persistent GPU residency, capacity, payload binding, and fixed-FPR calibration remain incomplete."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Official source and weights are MIT-licensed, pinned, digest-verified, and available for controlled evaluation."
+      },
+      "execution": {
+        "adapterId": "meta-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 300000,
+        "artifacts": [
+          { "id": "meta-pixelseal-model", "kind": "model", "sha256": "0c5665cff20eb6ce1b5aaa7d91c19dafb418bfee32d02dd3344e4ed60d9d75bd" },
+          { "id": "meta-watermarks-model-artifact-manifest", "kind": "configuration", "sha256": "9f6a6ce0a40ecbf17901d1780387e1cbbe84d45df301502f7db6b7a10663dc06" },
+          { "id": "meta-watermarks-registered-payloads-v1", "kind": "payload", "sha256": "e950305b8c7090a2aa94e91267e22aeb277220136e0804c62657ea8fd11ea1ba" },
+          { "id": "meta-watermarks-uv-lock", "kind": "dependency_lock", "sha256": "b6de2a5ad7f9a9ebb20afa879f02aa9939ec33a14c204961a37783d1229be175" }
+        ],
+        "profiles": [{
+          "id": "pixelseal",
+          "settings": {
+            "candidateDetectionThreshold": 0.95,
+            "calibrationApproved": false,
+            "device": "cuda:0",
+            "maxBytes": 10485760,
+            "maxPixels": 40000000,
+            "minDimension": 64,
+            "maxCpuThreads": 2
+          }
+        }]
+      }
+    },
+    {
+      "id": "meta-chunkyseal",
+      "name": "Meta ChunkySeal image decoder",
+      "family": "open_watermark",
+      "compatibility": [
+        "Images embedded with the official ChunkySeal 1024-bit checkpoint",
+        "The large checkpoint requires an explicit evaluation or capacity budget"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/videoseal"
+      ],
+      "license": "MIT",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "official ChunkySeal checkpoint",
+        "registered expected payload when origin attribution is required"
+      ],
+      "supportedProducts": [
+        "Owned ChunkySeal embedding workflows"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": { "status": "required", "artifact": null },
+      "sampleSource": "owned ChunkySeal marked/unmarked and transformed pairs",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-29",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Persistent GPU residency, capacity, payload binding, and fixed-FPR calibration remain incomplete."
+      },
+      "productionEligibility": {
+        "status": "approved",
+        "reason": "Official source and weights are MIT-licensed, pinned, digest-verified, and available for controlled evaluation."
+      },
+      "execution": {
+        "adapterId": "meta-watermarks-v1",
+        "protocolVersion": "1.0.0",
+        "transport": "process",
+        "timeoutMs": 600000,
+        "artifacts": [
+          { "id": "meta-chunkyseal-model", "kind": "model", "sha256": "d1c8f1f2db4ce6a3ba7014a538afc3e542a21e9e54b3b299695c6df68f8b0b05" },
+          { "id": "meta-watermarks-model-artifact-manifest", "kind": "configuration", "sha256": "9f6a6ce0a40ecbf17901d1780387e1cbbe84d45df301502f7db6b7a10663dc06" },
+          { "id": "meta-watermarks-registered-payloads-v1", "kind": "payload", "sha256": "e950305b8c7090a2aa94e91267e22aeb277220136e0804c62657ea8fd11ea1ba" },
+          { "id": "meta-watermarks-uv-lock", "kind": "dependency_lock", "sha256": "b6de2a5ad7f9a9ebb20afa879f02aa9939ec33a14c204961a37783d1229be175" }
+        ],
+        "profiles": [{
+          "id": "chunkyseal",
+          "settings": {
+            "candidateDetectionThreshold": 0.95,
+            "calibrationApproved": false,
+            "device": "cuda:0",
+            "maxBytes": 10485760,
+            "maxPixels": 40000000,
+            "minDimension": 64,
+            "maxCpuThreads": 2
+          }
+        }]
+      }
+    },
+    {
+      "id": "meta-stable-signature",
+      "name": "Meta Stable Signature",
+      "family": "research_watermark",
+      "compatibility": [
+        "Latent-diffusion outputs created with a specifically fine-tuned decoder and known key",
+        "The public extractor does not imply coverage of ordinary Stable Diffusion outputs"
+      ],
+      "primarySources": [
+        "https://github.com/facebookresearch/stable_signature"
+      ],
+      "license": "CC-BY-NC for most code and weights; bundled components vary",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "matching extractor",
+        "watermarked latent decoder identity",
+        "known bit key"
+      ],
+      "supportedProducts": [
+        "Owned Stable Signature experimental generators only"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official notebook outputs and owned keyed controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Noncommercial license and generator/key specificity prevent general production use."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "tree-ring",
+      "name": "Tree-Ring Watermarks",
+      "family": "research_watermark",
+      "compatibility": [
+        "Diffusion outputs generated with a known Tree-Ring Fourier pattern and invertible compatible diffusion pipeline",
+        "Detection requires the matching model/scheduler and key configuration"
+      ],
+      "primarySources": [
+        "https://github.com/YuxinWenRick/tree-ring-watermark",
+        "https://arxiv.org/abs/2305.20030"
+      ],
+      "license": "Research repository license must be reviewed before deployment",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "matching diffusion model and scheduler",
+        "watermark pattern/key",
+        "DDIM inversion"
+      ],
+      "supportedProducts": [
+        "Owned Tree-Ring instrumented diffusion workflows only"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official repository generation scripts plus owned keyed controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Keyed generator compatibility and adversarial false-positive gates are incomplete."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "gaussian-shading",
+      "name": "Gaussian Shading",
+      "family": "research_watermark",
+      "compatibility": [
+        "Official code documents Stable Diffusion 1.4, 2.0, and 2.1 with 4x64x64 latent space",
+        "Other model versions require parameter changes and separate calibration"
+      ],
+      "primarySources": [
+        "https://github.com/bsmhmmlf/Gaussian-Shading",
+        "https://openaccess.thecvf.com/content/CVPR2024/html/Yang_Gaussian_Shading_Provable_Performance-Lossless_Image_Watermarking_for_Diffusion_Models_CVPR_2024_paper.html"
+      ],
+      "license": "MIT",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "compatible Stable Diffusion model",
+        "watermark key and ChaCha20 configuration",
+        "DDIM inversion"
+      ],
+      "supportedProducts": [
+        "Owned Gaussian-Shading instrumented SD 1.4, 2.0, or 2.1 workflows"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official COCO experiment metadata plus owned keyed controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Key/model specificity and fixed-FPR robustness gates are incomplete."
+      },
+      "productionEligibility": {
+        "status": "candidate",
+        "reason": "Commercially compatible components exist, but exact artifacts, implementation, compatibility, or calibration gates remain incomplete."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "zodiac",
+      "name": "ZoDiac",
+      "family": "research_watermark",
+      "compatibility": [
+        "Post-hoc watermarking and detection using the documented pretrained Stable Diffusion workflow",
+        "Not evidence for unregistered private products"
+      ],
+      "primarySources": [
+        "https://github.com/zhanglijun95/ZoDiac",
+        "https://openaccess.thecvf.com/content/CVPR2024/html/Zhang_Attack-Resilient_Image_Watermarking_Using_Stable_Diffusion_CVPR_2024_paper.html"
+      ],
+      "license": "Repository and model licenses require legal review",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "documented Stable Diffusion checkpoint",
+        "watermark key and inversion/optimization configuration"
+      ],
+      "supportedProducts": [
+        "Owned ZoDiac-marked evaluation images only"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "official examples plus owned marked/unmarked controls",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Research compatibility, license, latency, and false-positive gates are incomplete."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "markdiffusion",
+      "name": "MarkDiffusion toolkit",
+      "family": "research_toolkit",
+      "compatibility": [
+        "Toolkit adapters are compatible only with each algorithm's exact generator, model, scheduler, key, and configuration",
+        "Toolkit availability does not create a universal watermark detector"
+      ],
+      "primarySources": [
+        "https://github.com/THU-BPM/MarkDiffusion"
+      ],
+      "license": "Apache-2.0 for toolkit; integrated algorithms and weights retain their own terms",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "per-algorithm dependencies, keys, models, and calibration"
+      ],
+      "supportedProducts": [
+        "Evaluation harness for explicitly registered compatible watermark workflows"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "toolkit tests plus per-algorithm official or owned samples",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Toolkit-level detection cannot bypass per-scheme production gates."
+      },
+      "productionEligibility": {
+        "status": "candidate",
+        "reason": "Commercially compatible components exist, but exact artifacts, implementation, compatibility, or calibration gates remain incomplete."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "visible-ai-mark",
+      "name": "Visible AI-generation labels",
+      "family": "visible_mark",
+      "compatibility": [
+        "Text or logo labels visible in image pixels, including Chinese 'AI生成' conventions",
+        "Visible marks can be copied, forged, cropped, or removed"
+      ],
+      "primarySources": [
+        "https://std.samr.gov.cn/gb/search/gbDetailed?id=301E0388CB75788DE06397BE0A0AE1B4"
+      ],
+      "license": "Local OCR and logo assets require per-asset review",
+      "accessClass": "local_open_source",
+      "requiredKeysOrModels": [
+        "OCR model",
+        "versioned logo/template set"
+      ],
+      "supportedProducts": [
+        "Any image with a recognized visible AIGC disclosure label"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "owned positive, forged-label, cropped, and no-label controls",
+      "owner": "visible-mark-runtime",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Visible labels are supporting evidence only because they are forgeable."
+      },
+      "productionEligibility": {
+        "status": "candidate",
+        "reason": "Commercially compatible components exist, but exact artifacts, implementation, compatibility, or calibration gates remain incomplete."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "openai-verify",
+      "name": "OpenAI image verifier",
+      "family": "closed_vendor_verifier",
+      "compatibility": [
+        "Images generated by supported ChatGPT, OpenAI API, or Codex image products",
+        "Checks OpenAI-origin C2PA and SynthID; does not cover other vendors or prove factual accuracy"
+      ],
+      "primarySources": [
+        "https://openai.com/verify",
+        "https://help.openai.com/en/articles/8912793-c2pa-in-images"
+      ],
+      "license": "Proprietary hosted verifier",
+      "accessClass": "manual_public_verifier",
+      "requiredKeysOrModels": [
+        "No documented local decoder or production verification API"
+      ],
+      "supportedProducts": [
+        "Supported OpenAI image generation products"
+      ],
+      "runtimeEligibility": "unavailable",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned OpenAI outputs for manual evaluation only",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Manual website results are not an online production dependency and must not be scraped."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "google-synthid",
+      "name": "Google SynthID image detection",
+      "family": "closed_vendor_verifier",
+      "compatibility": [
+        "Supported media watermarked by Google SynthID",
+        "Detection availability and producer coverage are controlled by Google"
+      ],
+      "primarySources": [
+        "https://deepmind.google/models/synthid/"
+      ],
+      "license": "Proprietary detector; text watermarking code does not provide the image detector",
+      "accessClass": "manual_limited_verifier",
+      "requiredKeysOrModels": [
+        "Access to Gemini or SynthID Detector early-tester portal"
+      ],
+      "supportedProducts": [
+        "Google AI products documented as embedding SynthID",
+        "OpenAI products documented as using OpenAI-origin SynthID"
+      ],
+      "runtimeEligibility": "unavailable",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned vendor outputs for manual evaluation only",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "No public local image decoder or approved production API."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "aws-bedrock-watermark-detection",
+      "name": "Amazon Bedrock watermark detection",
+      "family": "commercial_vendor_api",
+      "compatibility": [
+        "Amazon Titan Image Generator G1 and Amazon Nova Canvas watermarks",
+        "Preview API is region-limited and vendor-controlled"
+      ],
+      "primarySources": [
+        "https://docs.aws.amazon.com/bedrock/latest/userguide/titan-image-models.html"
+      ],
+      "license": "Commercial AWS service terms",
+      "accessClass": "authenticated_commercial_api",
+      "requiredKeysOrModels": [
+        "AWS account, credentials, supported preview SDK, and supported region"
+      ],
+      "supportedProducts": [
+        "Amazon Titan Image Generator G1",
+        "Amazon Nova Canvas"
+      ],
+      "runtimeEligibility": "disabled_policy",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned AWS-generated samples if commercial evaluation is separately approved",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Commercial APIs are excluded by current product policy."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "aliyun-aigc-marking",
+      "name": "Alibaba Cloud AIGC marking and inspection",
+      "family": "commercial_vendor_api",
+      "compatibility": [
+        "Alibaba Cloud workflows implementing its documented GB 45438-2025 marking chain",
+        "Do not infer support for all Qwen or Alibaba-generated images"
+      ],
+      "primarySources": [
+        "https://help.aliyun.com/zh/document_detail/2979119.html",
+        "https://help.aliyun.com/zh/sase/getting-started/aigc-image-logo-add-guide"
+      ],
+      "license": "Commercial Alibaba Cloud service terms",
+      "accessClass": "authenticated_commercial_api",
+      "requiredKeysOrModels": [
+        "Alibaba Cloud account, credentials, activated service, and product-specific signature material"
+      ],
+      "supportedProducts": [
+        "Explicitly documented Alibaba Cloud AIGC marking workflows"
+      ],
+      "runtimeEligibility": "disabled_policy",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned Alibaba Cloud outputs if commercial evaluation is separately approved",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Commercial APIs are excluded and local signature verification material is unavailable."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "tencent-cloud-aigc-detection",
+      "name": "Tencent Cloud image AIGC detection",
+      "family": "commercial_vendor_api",
+      "compatibility": [
+        "Tencent Cloud image-content-safety AIGC detection service",
+        "This is a commercial classifier service, not proof of a Tencent watermark"
+      ],
+      "primarySources": [
+        "https://cloud.tencent.com/document/product/1125/116997"
+      ],
+      "license": "Commercial Tencent Cloud service terms",
+      "accessClass": "authenticated_commercial_api",
+      "requiredKeysOrModels": [
+        "Tencent Cloud account, balance, credentials, service activation, and Biztype"
+      ],
+      "supportedProducts": [
+        "Input formats and scenarios documented by Tencent Cloud image content safety"
+      ],
+      "runtimeEligibility": "disabled_policy",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned evaluation samples only if commercial use is separately approved",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Commercial APIs and model inference are excluded by current policy."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "baidu-aigc-watermark",
+      "name": "Baidu AIGC invisible watermark",
+      "family": "closed_vendor_verifier",
+      "compatibility": [
+        "Baidu AI image products documented as embedding the vendor watermark",
+        "Extraction currently requires Baidu-side assistance for the documented legacy image product"
+      ],
+      "primarySources": [
+        "https://cloud.baidu.com/doc/NLP/s/1lg53dryv",
+        "https://cloud.baidu.com/doc/qianfan-docs/s/Xmf552dlk"
+      ],
+      "license": "Proprietary vendor detector and commercial service terms",
+      "accessClass": "vendor_assisted",
+      "requiredKeysOrModels": [
+        "Vendor assistance or product-specific private signature material"
+      ],
+      "supportedProducts": [
+        "Documented Baidu AI image products and Qianfan marking workflows"
+      ],
+      "runtimeEligibility": "unavailable",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned Baidu outputs for manual or vendor-assisted evaluation",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "No public local decoder and vendor-assisted results are not an online production dependency."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "huawei-cloud-aigc-marking",
+      "name": "Huawei Cloud AIGC image marking",
+      "family": "closed_vendor_verifier",
+      "compatibility": [
+        "Huawei Cloud products that explicitly enable visible or invisible image watermarking",
+        "Public documentation found during this review does not establish a general AIGC-origin detector"
+      ],
+      "primarySources": [
+        "https://support.huaweicloud.com/model-call-maas/"
+      ],
+      "license": "Proprietary Huawei Cloud service terms",
+      "accessClass": "vendor_assisted",
+      "requiredKeysOrModels": [
+        "Product-specific detector or signature material not publicly documented"
+      ],
+      "supportedProducts": [
+        "Only Huawei Cloud workflows with explicit, versioned marking documentation"
+      ],
+      "runtimeEligibility": "unavailable",
+      "calibration": {
+        "status": "not_applicable",
+        "artifact": null
+      },
+      "sampleSource": "owned Huawei Cloud outputs after exact product documentation is confirmed",
+      "owner": "vendor-verifier-watch",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "No verified public detector was identified; absence must be reported as unavailable."
+      },
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Private, commercial-service, noncommercial, unclear, or research-only terms prohibit the initial production runtime."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      }
+    },
+    {
+      "id": "google-synthid-reverse",
+      "name": "Third-party reverse-engineered Google SynthID research",
+      "family": "research_watermark",
+      "compatibility": [
+        "Research codebooks target selected Gemini and Nano Banana model versions and resolutions only",
+        "No documented compatibility with OpenAI-origin SynthID or Google official detector semantics"
+      ],
+      "primarySources": [
+        "https://github.com/aloshdenny/reverse-SynthID"
+      ],
+      "license": "Custom noncommercial research license; commercial deployment requires a separate agreement",
+      "accessClass": "research_only",
+      "requiredKeysOrModels": [
+        "model- and resolution-specific spectral codebooks",
+        "independent false-positive calibration"
+      ],
+      "supportedProducts": [
+        "Research evaluation of selected Google Gemini image versions only"
+      ],
+      "runtimeEligibility": "evaluation_only",
+      "productionEligibility": {
+        "status": "prohibited",
+        "reason": "Noncommercial license and insufficient independent false-positive validation prohibit production use."
+      },
+      "execution": {
+        "adapterId": null,
+        "protocolVersion": "1.0.0",
+        "transport": "none",
+        "timeoutMs": 1,
+        "artifacts": [],
+        "profiles": []
+      },
+      "calibration": {
+        "status": "required",
+        "artifact": null
+      },
+      "sampleSource": "owned Gemini outputs with manual official-verifier labels for offline evaluation only",
+      "owner": "watermark-research",
+      "lastVerifiedAt": "2026-07-28",
+      "shortCircuit": {
+        "policy": "prohibited",
+        "reason": "Reverse-engineered compatibility, commercial terms, and fixed-FPR gates are not approved."
+      }
+    }
+  ]
+}

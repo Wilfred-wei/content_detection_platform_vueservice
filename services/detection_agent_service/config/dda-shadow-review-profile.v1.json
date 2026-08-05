@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "dda-shadow-review-profile.v1",
+  "profileId": "dda-universal-shadow-review.v1",
+  "baseline": {
+    "detectorId": "dda-dinov2-lora",
+    "checkpointSha256": "b27a31d39374803ddeff02bfabb2be76e190b04300490cddfafb24f683f37e3e"
+  },
+  "candidate": {
+    "candidateId": "universal_allv_g2_r025_w100_seed5291_v1_step128",
+    "detectorId": "dda-dinov2-lora",
+    "checkpointSha256": "c115caaa33d200d6b014f056acb973a369cceeaa139b27b1bd8a9a7dd6f86352",
+    "manifestSha256": "84e8f988de9fa5013bbfd6d39b748804ab99cd173509878c583bacd05627b8ba"
+  },
+  "window": {
+    "minimumObservationHours": 168,
+    "maximumRecords": 100000
+  },
+  "minimums": {
+    "uniqueAssets": 10000,
+    "pairedCompletionRate": 0.99,
+    "labeledRecords": 2000,
+    "realRecords": 1000,
+    "generatedRecords": 1000,
+    "qualifyingSubgroups": 10,
+    "labeledPerClassPerSubgroup": 20,
+    "candidateGeneratedRecall": 0.8,
+    "candidateAccuracyDelta": 0
+  },
+  "maximums": {
+    "candidateFailureRate": 0.01,
+    "candidateRealFalsePositiveRate": 0.05,
+    "candidateP95LatencyRatio": 1.25
+  }
+}
