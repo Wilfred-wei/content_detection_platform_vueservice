@@ -28,7 +28,7 @@ uname -m
 
 `Repository -> Settings -> Actions -> Runners -> New self-hosted runner`
 
-选择 Linux、x64，并添加自定义标签 `agent-deploy`。页面会显示与当前 Runner 版本匹配的下载、解压和注册命令。直接复制 GitHub 页面生成的命令执行，不要把 registration token 写进文档、聊天记录或脚本。
+选择 Linux、x64。页面会显示与当前 Runner 版本匹配的下载、解压和注册命令。标签输入框可能不会出现在这个页面，先不要停在这里找标签；注册时用下面的方式加入自定义标签 `agent-deploy`。不要把 registration token 写进文档、聊天记录或脚本。
 
 ### 3. 在当前服务器执行
 
@@ -39,7 +39,13 @@ mkdir -p /sda/home/temp/weiwenfei/actions-runner-agent
 cd /sda/home/temp/weiwenfei/actions-runner-agent
 ```
 
-然后把 GitHub 页面中的下载、校验、解压和 `config.sh` 命令原样粘贴到这里。注册时确认：
+然后把 GitHub 页面中的下载、校验和解压命令原样粘贴到这里。执行注册命令时，在末尾追加 `--labels agent-deploy`，例如：
+
+```bash
+./config.sh --url https://github.com/Wilfred-wei/content_detection_platform_vueservice --token <GitHub 页面生成的临时 token> --labels agent-deploy
+```
+
+其中 `<GitHub 页面生成的临时 token>` 只替换为页面显示的值，不要把它提交或发到聊天中。注册时确认：
 
 - Runner name 使用容易识别的名字，例如 `weiwenfei-agent-server`
 - Labels 包含 `agent-deploy`
@@ -54,6 +60,8 @@ cd /sda/home/temp/weiwenfei/actions-runner-agent
 ```
 
 看到 `Listening for Jobs` 后，在 GitHub 的 Runner 页面确认状态为 `Idle`。验证完成后按 `Ctrl+C` 停止前台进程。
+
+如果 Runner 已经注册但没有这个标签，可以在 `Settings -> Actions -> Runners` 中找到该 Runner，点击右侧 `...`，选择 `Edit labels`，添加 `agent-deploy`。不同 GitHub 页面布局可能把编辑入口放在 Runner 名称详情页的 `Labels` 区域。
 
 ### 4. 配置常驻服务
 
