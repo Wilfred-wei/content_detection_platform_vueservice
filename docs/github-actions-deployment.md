@@ -2,6 +2,9 @@
 
 The repository now has one workflow at `.github/workflows/agent-ci-cd.yml`.
 
+For the complete server registration and collaborator onboarding procedure, see
+[`github-runner-and-contributor-guide.md`](github-runner-and-contributor-guide.md).
+
 - Pull requests and pushes to `master` or `agent-detection-current` run the frontend build, the Detection Agent test/build, Python syntax checks, and the CPU image-view worker tests.
 - A push to `agent-detection-current` runs the same checks and then deploys on a self-hosted runner labelled `agent-deploy`.
 - A manual workflow run can deploy a selected revision when the `deploy` input is enabled.
