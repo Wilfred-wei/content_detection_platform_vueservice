@@ -124,7 +124,7 @@ jobs:
       - name: Synchronize and build the server copy
         env:
           DEPLOY_ROOT: ${{ vars.AGENT_DEPLOY_ROOT }}
-          DEPLOY_RESTART_COMMAND: ${{ vars.AGENT_DEPLOY_RESTART_COMMAND }}
-          DEPLOY_HEALTH_URL: ${{ vars.AGENT_DEPLOY_HEALTH_URL }}
-          DEPLOY_REQUIRE_RESTART: ${{ vars.AGENT_DEPLOY_REQUIRE_RESTART || 'false' }}
+          DEPLOY_RESTART_COMMAND: ${{ vars.AGENT_DEPLOY_RESTART_COMMAND || 'bash scripts/restart-content-detection.sh' }}
+          DEPLOY_HEALTH_URL: ${{ vars.AGENT_DEPLOY_HEALTH_URL || 'http://127.0.0.1:8020/health' }}
+          DEPLOY_REQUIRE_RESTART: ${{ vars.AGENT_DEPLOY_REQUIRE_RESTART || 'true' }}
         run: bash scripts/deploy-self-hosted.sh

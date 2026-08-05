@@ -93,16 +93,41 @@ systemctl --user status content-detection-agent-runner.service
 
 如果希望用户退出登录后仍自动启动，需要管理员为该账号开启 user lingering；没有管理员权限时，保持服务器用户会话或使用管理员安装 `svc.sh`。
 
-### 5. 设置仓库变量
+### 5. 安装前端和 Detection Agent 服务
+
+CI/CD 的部署目录、Runner checkout 和运行时服务是三个不同概念。前端和
+Detection Agent 现在由当前账号的 user-level systemd 管理；网关 `28000`
+属于平台侧的独立服务，不由本仓库自动接管。
+
+在当前服务器的在线 checkout 中执行一次：
+
+```bash
+cd /sda/home/temp/weiwenfei/content_detection_platform_vueservice-master
+bash scripts/install-user-services.sh
+bash scripts/restart-content-detection.sh
+systemctl --user status content-detection-agent.service content-detection-frontend.service
+curl -fsS http://127.0.0.1:8020/health
+```
+
+两个服务都会在用户级 systemd 管理器中自动拉起并在异常退出后恢复。前端
+使用 `25173`，Agent 使用 `8020`。安装脚本假定在线目录是
+`$HOME/content_detection_platform_vueservice-master`；目录不同的服务器应先
+调整 `deploy/systemd/*.service` 中的路径。
+
+当前账号的 user manager 已在运行，但 `Linger=no`。因此异常退出会自动恢复；
+如果还要求服务器重启或用户退出后自动拉起，需要管理员执行
+`loginctl enable-linger weiwenfei`，或把这两个服务改由系统级 supervisor 管理。
+
+### 6. 设置仓库变量
 
 在 `Repository -> Settings -> Secrets and variables -> Actions -> Variables` 添加：
 
 | 变量 | 当前服务器建议值 | 用途 |
 | --- | --- | --- |
 | `AGENT_DEPLOY_ROOT` | `/sda/home/temp/weiwenfei/content_detection_platform_vueservice-master` | 在线项目目录 |
-| `AGENT_DEPLOY_RESTART_COMMAND` | 暂不设置 | 服务管理器准备好后再设置 |
-| `AGENT_DEPLOY_HEALTH_URL` | 暂不设置 | 后端服务常驻后再设置，例如 `http://127.0.0.1:8020/health` |
-| `AGENT_DEPLOY_REQUIRE_RESTART` | `false` | 未配置服务重启前保持 `false` |
+| `AGENT_DEPLOY_RESTART_COMMAND` | 留空即可 | Workflow 默认执行 `bash scripts/restart-content-detection.sh`；需要其他 supervisor 时再覆盖 |
+| `AGENT_DEPLOY_HEALTH_URL` | 留空即可 | Workflow 默认检查 `http://127.0.0.1:8020/health` |
+| `AGENT_DEPLOY_REQUIRE_RESTART` | 留空即可 | Workflow 默认要求重启成功；临时迁移 supervisor 时才显式设为 `false` |
 
 API key、模型路径、C2PA trust anchor 和分析数据放在服务器本地 `.env` 或受管存储中，不要放进这些变量，也不要提交到 GitHub。
 
@@ -203,4 +228,4 @@ git status --short
 
 ### 测试通过但页面没有变化
 
-当前前端仍是 Vite 开发进程，Agent 后端也还没有统一的 systemd/Docker 管理。部署脚本会同步并构建代码，但不会默认杀掉现有进程。完成服务化后，再配置 `AGENT_DEPLOY_RESTART_COMMAND` 和 `AGENT_DEPLOY_HEALTH_URL`。
+先检查 `content-detection-frontend.service` 和 `content-detection-agent.service` 的状态及日志。部署脚本会同步并构建两部分，然后默认重启这两个服务并检查 Agent 健康接口。网关 `28000` 是另一个账号管理的独立进程；如果改动了 `gateway/`，需要由网关服务负责人单独重启它。

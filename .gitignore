@@ -92,6 +92,9 @@ services/video_analysis/dir
 *.log
 logs/
 
+# Self-hosted deployment marker
+.deploy/
+
 # Temporary files
 *.tmp
 *.temp

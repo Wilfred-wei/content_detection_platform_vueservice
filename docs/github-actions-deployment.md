@@ -30,19 +30,50 @@ the current server path for this project. Set the repository variable
 
 ## Restart and health check
 
-The current server has a Vite development process on port `25173`, while the
-Detection Agent is not currently managed by a service supervisor. Therefore the
-first deployment synchronizes source and build output but does not kill or restart
-any existing process.
+The workflow deploys the frontend source/build output, Detection Agent source/build
+output, and gateway source snapshot together into one live checkout. They are not
+one runtime process:
 
-When systemd, Docker Compose, or another supervisor is configured, set these
-repository variables:
+- Vite frontend listens on `25173` and proxies browser requests.
+- The Flask gateway listens on `28000` and is a separate platform service.
+- Detection Agent listens on `8020`; the gateway forwards `/api/v1/agent/*` to it.
+
+On this staging server, the ignored `frontend/.env.local` sets
+`VITE_AGENT_TARGET=http://127.0.0.1:8020`, so the Agent calls use the local
+frontend proxy directly while the other legacy modules keep their gateway
+target. Removing that override returns Agent traffic to the gateway route.
+
+The current project owns the frontend and Detection Agent services through
+user-level systemd. Install them once on the deployment server:
+
+```bash
+cd /sda/home/temp/weiwenfei/content_detection_platform_vueservice-master
+bash scripts/install-user-services.sh
+bash scripts/restart-content-detection.sh
+```
+
+After that, a push to `agent-detection-current` builds and synchronizes the
+revision, runs the restart script, and checks `http://127.0.0.1:8020/health`.
+The workflow has these defaults; repository variables are only needed to override
+them:
 
 - `AGENT_DEPLOY_RESTART_COMMAND`: the exact restart command, for example a
-  user-level systemd restart command.
+  custom supervisor command. The default is
+  `bash scripts/restart-content-detection.sh`.
 - `AGENT_DEPLOY_HEALTH_URL`: a local health endpoint such as
-  `http://127.0.0.1:8020/health`.
-- `AGENT_DEPLOY_REQUIRE_RESTART`: `true` once a restart command is mandatory.
+  `http://127.0.0.1:8020/health`; this is the default.
+- `AGENT_DEPLOY_REQUIRE_RESTART`: defaults to `true` so a deployment cannot be
+  reported successful while the managed services were not restarted.
+
+The checked-in Agent unit uses `NODE_ENV=staging` because the existing local
+analysis state is plaintext. Before enabling production mode, migrate that state
+to encrypted envelopes and set `AGENT_STORAGE_ENCRYPTION_KEY` in the server-only
+`.env`; never commit the key.
+
+The gateway currently runs outside this account and is not restarted by this
+workflow. Changes under `gateway/` are synchronized, but they take effect only
+when the platform service owner restarts the gateway. This boundary prevents a
+deployment job from killing another user's process on the shared server.
 
 The deployment script preserves `.env`, `.data`, `.tools`, `node_modules`, Python
 virtual environments, model checkpoints, and the target `.git` directory. API

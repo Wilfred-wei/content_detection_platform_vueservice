@@ -1,0 +1,20 @@
+[Unit]
+Description=Content Detection frontend (Vite)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/content_detection_platform_vueservice-master/frontend
+Environment=PATH=%h/.nvm/versions/node/v22.19.0/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+# HMR polling is a development convenience and can trigger unwanted page reloads.
+Environment=VITE_HMR_DISABLED=true
+ExecStart=/usr/bin/env npm run dev -- --host 0.0.0.0 --port 25173
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=30
+LimitNOFILE=65536
+
+[Install]
+WantedBy=default.target

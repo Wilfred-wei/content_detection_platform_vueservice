@@ -1,0 +1,22 @@
+[Unit]
+Description=Content Detection Pi Agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/content_detection_platform_vueservice-master/services/detection_agent_service
+EnvironmentFile=-%h/content_detection_platform_vueservice-master/services/detection_agent_service/.env
+Environment=PATH=%h/.nvm/versions/node/v22.19.0/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+# Existing staging data is currently plaintext; switch to production only after
+# migrating the stored state to encrypted envelopes.
+Environment=NODE_ENV=staging
+ExecStart=/usr/bin/env npm start
+Restart=on-failure
+RestartSec=10
+KillSignal=SIGTERM
+TimeoutStopSec=45
+LimitNOFILE=65536
+
+[Install]
+WantedBy=default.target
