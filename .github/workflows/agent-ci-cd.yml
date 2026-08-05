@@ -1,0 +1,126 @@
+name: Agent CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - agent-detection-current
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy this revision on the self-hosted server"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend build and contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run presentation contract
+        run: npm run test:agent-contract
+      - name: Build frontend
+        run: npm run build
+
+  agent:
+    name: Detection Agent tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: services/detection_agent_service
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+          cache-dependency-path: services/detection_agent_service/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Agent tests
+        run: npm test
+      - name: Build Agent
+        run: npm run build
+
+  python-and-workers:
+    name: Python syntax and UV worker tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check Python syntax
+        run: >-
+          find gateway shared services/detection_agent_service/workers
+          -type f -name '*.py' -not -path '*/.venv/*'
+          -not -path '*/venv/*' -print0 |
+          xargs -0 -r python -m py_compile
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.7.12"
+          enable-cache: true
+          cache-dependency-glob: services/detection_agent_service/workers/image_views/uv.lock
+      - name: Install the CPU image-view worker
+        run: uv sync --project services/detection_agent_service/workers/image_views --frozen
+      - name: Test the CPU image-view worker
+        run: uv run --project services/detection_agent_service/workers/image_views --frozen --no-sync python -m unittest discover -s services/detection_agent_service/workers/image_views/tests
+
+  deploy:
+    name: Deploy on this server
+    needs:
+      - frontend
+      - agent
+      - python-and-workers
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/agent-detection-current') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy == true)
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+      - agent-deploy
+    timeout-minutes: 30
+    environment: staging
+    steps:
+      - name: Checkout deploy revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Synchronize and build the server copy
+        env:
+          DEPLOY_ROOT: ${{ vars.AGENT_DEPLOY_ROOT }}
+          DEPLOY_RESTART_COMMAND: ${{ vars.AGENT_DEPLOY_RESTART_COMMAND }}
+          DEPLOY_HEALTH_URL: ${{ vars.AGENT_DEPLOY_HEALTH_URL }}
+          DEPLOY_REQUIRE_RESTART: ${{ vars.AGENT_DEPLOY_REQUIRE_RESTART || 'false' }}
+        run: bash scripts/deploy-self-hosted.sh
