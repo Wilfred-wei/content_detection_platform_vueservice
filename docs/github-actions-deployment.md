@@ -9,6 +9,11 @@ For the complete server registration and collaborator onboarding procedure, see
 - A push to `agent-detection-current` runs the same checks and then deploys on a self-hosted runner labelled `agent-deploy`.
 - A manual workflow run can deploy a selected revision when the `deploy` input is enabled.
 
+The Agent CI job runs `npm run test:ci`. This is the portable test set: the C2PA
+inspector and provenance fixture tests are kept out of CI because their sample
+assets and local `c2patool` binary are intentionally not stored in Git. Run the
+full `npm test` locally when those optional fixtures are available.
+
 ## One-time runner setup
 
 On GitHub open `Settings -> Actions -> Runners -> New self-hosted runner`, choose

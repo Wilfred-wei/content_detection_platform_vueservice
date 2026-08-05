@@ -153,9 +153,11 @@ Detection Agent：
 ```bash
 cd services/detection_agent_service
 npm ci
-npm test
+npm run test:ci
 npm run build
 ```
+
+`npm run test:ci` 是不依赖本机 C2PA 样例图片和本地 `c2patool` 二进制的可移植测试集，适合在 GitHub Actions 中运行。若已准备好这些不入库的本地资源，可以额外运行完整的 `npm test`。
 
 CPU image-view worker：
 

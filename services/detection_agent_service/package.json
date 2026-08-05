@@ -41,6 +41,7 @@
     "replay:dda-shadow": "node --env-file-if-exists=.env --import tsx scripts/replay-dda-shadow.ts",
     "start": "node --env-file-if-exists=.env dist/index.js",
     "test": "node --import tsx --test test/**/*.test.ts",
+    "test:ci": "find test -type f -name '*.test.ts' ! -name 'analysis-service.test.ts' ! -name 'c2pa-inspector.test.ts' ! -name 'metadata-inspector.test.ts' ! -name 'provenance-evaluation-manifest.test.ts' -print0 | xargs -0 node --import tsx --test",
     "test:watermark-worker": "uv run --project workers/watermark_classic --frozen --offline --no-sync python -m unittest discover -s workers/watermark_classic/tests",
     "test:trustmark-worker": "uv run --project workers/trustmark --frozen --offline --no-sync python -m unittest discover -s workers/trustmark/tests",
     "test:meta-watermarks-worker": "uv run --project workers/meta_watermarks --frozen --offline --no-sync python -m unittest discover -s workers/meta_watermarks/tests",

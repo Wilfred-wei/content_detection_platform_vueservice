@@ -64,7 +64,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run Agent tests
-        run: npm test
+        run: npm run test:ci
       - name: Build Agent
         run: npm run build
 
