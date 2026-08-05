@@ -114,9 +114,9 @@ curl -fsS http://127.0.0.1:8020/health
 `$HOME/content_detection_platform_vueservice-master`；目录不同的服务器应先
 调整 `deploy/systemd/*.service` 中的路径。
 
-当前账号的 user manager 已在运行，但 `Linger=no`。因此异常退出会自动恢复；
-如果还要求服务器重启或用户退出后自动拉起，需要管理员执行
-`loginctl enable-linger weiwenfei`，或把这两个服务改由系统级 supervisor 管理。
+当前服务器账号已开启 `Linger=yes`，因此异常退出、用户退出和服务器重启后都能
+由 user manager 自动拉起。其他服务器如果检查到 `Linger=no`，需要管理员执行
+`loginctl enable-linger <部署用户名>`，或改由系统级 supervisor 管理。
 
 ### 6. 设置仓库变量
 
