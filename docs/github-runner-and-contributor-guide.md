@@ -1,6 +1,9 @@
 # Runner 注册与协作指南
 
-本文说明如何把当前服务器注册为 GitHub Actions self-hosted Runner，以及新合作者如何加入项目。
+本文说明如何把当前服务器注册为 GitHub Actions self-hosted Runner，以及项目管理员如何维护协作权限。
+
+如果你是普通代码合作者，请先阅读
+[`collaborator-quickstart.md`](collaborator-quickstart.md)，不需要执行本文的 Runner 注册步骤。
 
 仓库地址：
 
